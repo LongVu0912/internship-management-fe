@@ -1,0 +1,7 @@
+.bg-app-primary {
+    @apply bg-white dark:bg-gray-900;
+}
+
+.bg-content {
+    @apply bg-gray-200 dark:bg-gray-800;
+}

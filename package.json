@@ -1,0 +1,27 @@
+{
+    "name": "internship-management",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "nuxt build",
+        "dev": "nuxt dev",
+        "generate": "nuxt generate",
+        "preview": "nuxt preview",
+        "postinstall": "nuxt prepare",
+        "clean": "nuxi cleanup && yarn cache clean",
+        "update": "yarn upgrade-interactive --latest"
+    },
+    "dependencies": {
+        "@nuxt/icon": "^1.5.1",
+        "@nuxt/ui": "^2.18.4",
+        "@nuxtjs/color-mode": "^3.4.4",
+        "@nuxtjs/i18n": "^8.5.2",
+        "@pinia/nuxt": "^0.5.4",
+        "@vueuse/nuxt": "^11.0.3",
+        "nuxt": "3.12.4",
+        "vue": "latest"
+    },
+    "devDependencies": {
+        "@iconify-json/material-symbols": "^1.2.1"
+    }
+}
