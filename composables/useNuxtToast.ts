@@ -1,16 +1,17 @@
 interface ToastOptions {
-    title: string;
+    title?: string;
     description: string;
     timeout?: number;
     type?: "success" | "error" | "info";
     onCallback?: () => void | null;
 }
 
-export default defineNuxtPlugin((nuxtApp) => {
+export const useNuxtToast = () => {
     const toast = useToast();
+    const { t } = useI18n();
 
     const showToast = ({
-        title = "Notification",
+        title = t('notification'),
         description,
         timeout = 2000,
         type = "info",
@@ -44,9 +45,5 @@ export default defineNuxtPlugin((nuxtApp) => {
         });
     };
 
-    return {
-        provide: {
-            showToast,
-        },
-    };
-});
+    return showToast;
+};

@@ -1,7 +1,16 @@
+:root {
+    --sidebar-width: 280px;
+}
+
 .bg-app-primary {
     @apply bg-white dark:bg-gray-900;
 }
 
 .bg-content {
     @apply bg-gray-200 dark:bg-gray-800;
+}
+
+/* * Link active of side bar */
+.link-active {
+    @apply bg-gray-300 text-gray-900 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-50 dark:hover:bg-gray-700;
 }

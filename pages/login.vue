@@ -4,10 +4,10 @@ definePageMeta({
     colorMode: "light",
 });
 import Role from '~/types/enums/Role';
-const { $showToast, $api } = useNuxtApp();
-const { t } = useI18n();
+const { $api } = useNuxtApp();
 
 const userRepository = UserRepository($api);
+const nuxtToast = useNuxtToast();
 
 const isOpen = ref(false);
 
@@ -28,8 +28,7 @@ onMounted(() => {
 
 const handleLogin = async () => {
     if (username.value === "" || password.value === "") {
-        $showToast({
-            title: t('notification'),
+        nuxtToast({
             description: 'Please enter username and password',
         });
         return;
@@ -42,30 +41,27 @@ const handleLogin = async () => {
         });
 
         if (response.code === 200) {
-            $showToast({
-                title: t('notification'),
+            nuxtToast({
                 description: 'Login successfully',
                 type: 'success',
             });
         }
         else {
-            $showToast({
-                title: t('notification'),
+            nuxtToast({
                 description: response.message,
                 type: 'error',
             });
         }
     } catch (error) {
-        $showToast({
-            title: t('notification'),
-            description: 'Login failed',
+        nuxtToast({
+            description: (error as Error).message,
             type: 'error',
         });
     }
 };
 
 const handleForgotPassword = () => {
-    $showToast({
+    nuxtToast({
         title: 'Notification',
         description: 'Reset password successfully',
         type: 'success',

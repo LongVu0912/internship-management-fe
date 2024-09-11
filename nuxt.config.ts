@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
     devtools: { enabled: true },
     compatibilityDate: "2024-09-10",
-    ssr: true,
+    ssr: false,
     css: ["~/assets/css/main.css"],
     postcss: {
         plugins: {
@@ -27,7 +27,6 @@ export default defineNuxtConfig({
         "@nuxtjs/color-mode",
         "@nuxtjs/i18n",
         "@vueuse/nuxt",
-        "@pinia/nuxt",
     ],
     i18n: {
         vueI18n: "./i18n.config.ts",
