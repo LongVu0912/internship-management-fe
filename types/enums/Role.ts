@@ -1,8 +1,8 @@
 enum Role {
-    GUEST = "Guest",
-    STUDENT = "Student",
-    PROFESSOR = "Professor",
-    COMPANY = "Company",
+    GUEST = "Khách",
+    STUDENT = "Sinh viên",
+    PROFESSOR = "Giảng viên",
+    COMPANY = "Công ty",
     ADMIN = "Admin",
 }
 
