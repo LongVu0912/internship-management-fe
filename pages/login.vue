@@ -1,25 +1,21 @@
 <script setup lang="ts">
 definePageMeta({
-    layout: "blank",
     colorMode: "light",
 });
-import Role from '~/types/enums/Role';
 const { $api } = useNuxtApp();
 
-const userRepository = UserRepository($api);
+const authRepository = AuthRepository($api);
+const jwtRepository = JwtRepository();
 const nuxtToast = useNuxtToast();
 
 const isOpen = ref(false);
 
-const roles = Object.values(Role);
-// * Remove guest role
-roles.shift();
-const role = ref(roles[0])
-
 // * For login and forgot password
-const username = ref("");
-const password = ref("");
-const email = ref("");
+const state = reactive({
+    username: undefined,
+    password: undefined,
+    email: undefined,
+});
 
 onMounted(() => {
     // * Set primary color in login page
@@ -27,34 +23,40 @@ onMounted(() => {
 });
 
 const handleLogin = async () => {
-    if (username.value === "" || password.value === "") {
+    if (!state.username || !state.password) {
         nuxtToast({
-            description: 'Please enter username and password',
+            description: 'Hãy nhập đầy đủ thông tin',
+            type: 'info',
         });
         return;
     }
 
     try {
-        const response = await userRepository.login({
-            username: username.value,
-            password: password.value,
+        const response = await authRepository.login({
+            username: state.username,
+            password: state.password,
         });
 
         if (response.code === 200) {
             nuxtToast({
-                description: 'Login successfully',
+                description: 'Đăng nhập thành công',
                 type: 'success',
+                timeout: 1000,
+                onCallback: () => {
+                    navigateTo('/');
+                }
             });
+            jwtRepository.saveToken(response.result.token);
         }
         else {
             nuxtToast({
-                description: response.message,
+                description: 'Tài khoản hoặc mật khẩu không đúng',
                 type: 'error',
             });
         }
     } catch (error) {
         nuxtToast({
-            description: (error as Error).message,
+            description: 'Có lỗi, vui lòng thử lại sau',
             type: 'error',
         });
     }
@@ -63,7 +65,7 @@ const handleLogin = async () => {
 const handleForgotPassword = () => {
     nuxtToast({
         title: 'Notification',
-        description: 'Reset password successfully',
+        description: 'Cài lại mật khẩu thành công',
         type: 'success',
     });
 };
@@ -77,38 +79,36 @@ const handleForgotPassword = () => {
             <img src="/hcmute.png" class="h-36 w-36" alt="hcmute" />
             <div class="mt-2 text-xl font-extrabold">HCMUTE INTERNSHIP</div>
             <div class="flex w-full flex-col items-center justify-center">
-                <form class="flex w-full flex-col sm:w-3/5 md:w-2/3" @submit.prevent="handleLogin">
-                    <div class="mb-2 mt-4 text-sm font-medium">Username</div>
-                    <UInput v-model="username"
+                <UForm :state="state" class="w-full sm:w-3/5 md:w-2/3" @submit="handleLogin">
+                    <div class="mb-2 mt-4 text-sm font-medium">Tài khoản</div>
+                    <UInput v-model="state.username"
                             type="text"
                             icon="material-symbols:account-circle-full"
                             size="lg"
                             color="primary"
                             autocomplete="on" />
-                    <div class="mb-2 mt-4 text-sm font-medium">Password</div>
-                    <UInput v-model="password"
+                    <div class="mb-2 mt-4 text-sm font-medium">Mật khẩu</div>
+                    <UInput v-model="state.password"
                             type="password"
                             icon="material-symbols:password"
                             size="lg"
                             color="primary"
                             autocomplete="on" />
-                    <div class="mb-2 mt-4 text-sm font-medium">Role</div>
-                    <USelect v-model="role"
-                             icon="material-symbols:manage-accounts-outline"
-                             :options="roles"
-                             color="primary"
-                             size="lg" />
                     <div class="mt-4 text-sm font-medium">
-                        Forgot password?
+                        Quên mật khẩu?
                         <button class="text-primary" @click="isOpen = true" type="button">
-                            Click here
+                            Nhấn vào đây
                         </button>
                     </div>
 
                     <UButton class="mt-4 w-full rounded-md" size="lg" type="submit" block>
-                        Login
+                        Đăng nhập
                     </UButton>
-                </form>
+
+                    <UButton class="mt-2 w-full rounded-md" size="lg" variant="outline" block>
+                        Đăng ký
+                    </UButton>
+                </UForm>
             </div>
         </div>
     </div>
@@ -119,7 +119,7 @@ const handleForgotPassword = () => {
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-                        Forgot password
+                        Quên mật khẩu
                     </h3>
                     <UButton color="gray" variant="ghost" icon="material-symbols:close-rounded" class="-my-1"
                              @click="isOpen = false" />
@@ -127,16 +127,14 @@ const handleForgotPassword = () => {
             </template>
             <div>
                 <form class="flex w-full flex-col justify-start" @submit.prevent="handleForgotPassword">
-                    <div class="mb-2 mt-4 text-sm font-medium">Username</div>
-                    <UInput v-model="username" type="text" icon="material-symbols:account-circle-full" size="lg"
-                            color="primary"
-                            autocomplete="on" />
+                    <div class="mb-2 mt-4 text-sm font-medium">Tài khoản</div>
+                    <UInput v-model="state.username" type="text" icon="material-symbols:account-circle-full" size="lg"
+                            color="primary" autocomplete="on" />
                     <div class="mb-2 mt-4 text-sm font-medium">Email</div>
-                    <UInput v-model="email" type="email" icon="material-symbols:mail-outline-rounded" size="lg"
-                            color="primary"
-                            autocomplete="on" />
-                    <UButton class="mt-4 w-full rounded-md" size="lg" type="submit" block>
-                        Forgot password
+                    <UInput v-model="state.email" type="email" icon="material-symbols:mail-outline-rounded" size="lg"
+                            color="primary" autocomplete="on" />
+                    <UButton class="mt-6 w-full rounded-md" size="lg" type="submit" block>
+                        Quên mật khẩu
                     </UButton>
                 </form>
             </div>
