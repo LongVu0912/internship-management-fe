@@ -8,5 +8,10 @@ export default defineAppConfig({
                 base: 'text-gray-900 dark:text-gray-50',
             },
         },
+        button: {
+            default: {
+                loadingIcon: 'mingcute:loading-fill',
+            }
+        }
     },
 });

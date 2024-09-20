@@ -1,7 +1,8 @@
 export default defineNuxtRouteMiddleware(async (to, from) => {
-    const jwtRepository = JwtRepository();
+    const { $api } = useNuxtApp();
+    const jwtRepository = JwtRepository($api);
 
-    if (jwtRepository.isLogged() && to.path === "/login") {
+    if (await jwtRepository.isLogged() && to.path === "/login") {
         return navigateTo("/");
     }
 });

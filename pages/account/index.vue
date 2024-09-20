@@ -2,6 +2,67 @@
 definePageMeta({
     layout: "account",
 });
+
+const { $api } = useNuxtApp();
+const userRepository = UserRepository($api);
+const nuxtToast = useNuxtToast();
+
+const isModalOpen = ref(false);
+const isLoading = ref(false);
+
+const state = reactive({
+    oldPassword: undefined,
+    newPassword: undefined,
+    confirmPassword: undefined
+});
+
+const submitChangePassword = async () => {
+    if (!state.oldPassword || !state.newPassword || !state.confirmPassword) {
+        nuxtToast({
+            description: "Hãy nhập đầy đủ thông tin",
+            type: "info",
+        });
+        return;
+    }
+
+    if (state.newPassword !== state.confirmPassword) {
+        nuxtToast({
+            description: "Mật khẩu xác nhận không khớp",
+            type: "error",
+        });
+        return;
+    }
+
+    if (state.oldPassword == state.newPassword) {
+        nuxtToast({
+            description: "Mật khẩu mới không được trùng với mật khẩu cũ",
+            type: "error",
+        });
+        return;
+    }
+
+    isLoading.value = true;
+
+    const apiResponse = await userRepository.changePassword({
+        oldPassword: state.oldPassword,
+        newPassword: state.newPassword,
+    });
+
+    if (apiResponse.code === 200) {
+        nuxtToast({
+            description: apiResponse.message,
+            type: "success",
+        });
+        isModalOpen.value = false;
+    } else {
+        nuxtToast({
+            description: apiResponse.message,
+            type: 'error',
+        });
+    }
+    isLoading.value = false;
+};
+
 </script>
 
 <template>
@@ -51,28 +112,28 @@ definePageMeta({
         </div>
         <div class="flex flex-col gap-2">
             <div class="flex items-center gap-2">
-                <UIcon name="heroicons:user-circle" class="h-6 w-6" />
+                <UIcon name="mingcute:user-4-line" class="h-6 w-6" />
                 <UBadge
                         size="md"
                         color="gray"
                         label="Hoàng Long Vũ" />
             </div>
             <div class="flex items-center gap-2">
-                <UIcon name="heroicons:calendar-20-solid" class="h-6 w-6" />
+                <UIcon name="mingcute:birthday-2-line" class="h-6 w-6" />
                 <UBadge
                         size="md"
                         color="gray"
                         label="22/12/2003" />
             </div>
             <div class="flex items-center gap-2">
-                <UIcon name="heroicons:envelope" class="h-6 w-6" />
+                <UIcon name="mingcute:mail-line" class="h-6 w-6" />
                 <UBadge
                         size="md"
                         color="gray"
                         label="21110113@student.hcmute.edu.vn" />
             </div>
             <div class="flex items-center gap-2">
-                <UIcon name="heroicons:device-phone-mobile-20-solid" class="h-6 w-6" />
+                <UIcon name="mingcute:phone-line" class="h-6 w-6" />
                 <UBadge
                         size="md"
                         color="gray"
@@ -89,14 +150,14 @@ definePageMeta({
         </div>
         <div class="flex flex-col gap-2">
             <div class="flex items-center gap-2">
-                <UIcon name="heroicons:academic-cap" class="h-6 w-6" />
+                <UIcon name="mingcute:school-line" class="h-6 w-6" />
                 <UBadge
                         size="md"
                         color="gray"
                         label="2021" />
             </div>
             <div class="flex items-center gap-2">
-                <UIcon name="heroicons:book-open" class="h-6 w-6" />
+                <UIcon name="mingcute:book-3-line" class="h-6 w-6" />
                 <UBadge
                         size="md"
                         color="gray"
@@ -133,8 +194,42 @@ definePageMeta({
     <div class="flex flex-row justify-between gap-2">
         <div></div>
         <div class="flex gap-2">
-            <UButton color="primary" variant="outline">Đổi mật khẩu</UButton>
+            <UButton color="primary" variant="outline" @click="isModalOpen = true">Đổi mật khẩu</UButton>
             <UButton color="primary">Cập nhật</UButton>
         </div>
     </div>
+
+    <UModal v-model="isModalOpen" prevent-close>
+        <UCard
+               :ui="{ body: { padding: 'px-4 pb-4 lg:px-8 lg:pb-8' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800', strategy: 'override' }">
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                        Quên mật khẩu
+                    </h3>
+                    <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                             @click="isModalOpen = false" />
+                </div>
+            </template>
+            <div>
+                <form class="flex w-full flex-col justify-start" :state="state" @submit.prevent="submitChangePassword">
+                    <div class="mb-2 mt-4 text-sm font-medium">Mật khẩu cũ</div>
+                    <UInput v-model="state.oldPassword" type="password" icon="mingcute:user-4-line" size="lg"
+                            color="primary"
+                            autocomplete="on" />
+                    <div class="mb-2 mt-4 text-sm font-medium">Mật khẩu mới</div>
+                    <UInput v-model="state.newPassword" type="password" icon="mingcute:mail-line" size="lg"
+                            color="primary"
+                            autocomplete="on" />
+                    <div class="mb-2 mt-4 text-sm font-medium">Xác nhận mật khẩu</div>
+                    <UInput v-model="state.confirmPassword" type="password" icon="mingcute:mail-line" size="lg"
+                            color="primary"
+                            autocomplete="on" />
+                    <UButton :loading="isLoading" class="mt-6 w-full rounded-md" size="lg" type="submit" block>
+                        Đổi mật khẩu
+                    </UButton>
+                </form>
+            </div>
+        </UCard>
+    </UModal>
 </template>

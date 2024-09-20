@@ -15,20 +15,20 @@ const sidebarState = useSidebarState();
                      color="gray"
                      variant="ghost"
                      @click="sidebarState = false"
-                     icon="heroicons:x-mark-solid">
+                     icon="mingcute:close-fill">
             </UButton>
         </div>
 
         <div class="flex flex-col gap-2 p-2">
             <UDivider label="" size="xs" />
-            <UButton icon="heroicons:user-16-solid"
+            <UButton icon="mingcute:user-setting-line"
                      color="gray"
                      variant="ghost"
                      label="Account"
                      to="/account"
                      activeClass="link-active">
             </UButton>
-            <UButton icon="heroicons:identification-16-solid"
+            <UButton icon="mingcute:profile-line"
                      color="gray"
                      variant="ghost"
                      label="Profile"
