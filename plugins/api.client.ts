@@ -1,11 +1,14 @@
-export default defineNuxtPlugin((nuxtApp) => {
+export default defineNuxtPlugin(async (nuxtApp) => {
     const token = useCookie("token");
-    const jwtRepository = JwtRepository();
+    const { $api } = useNuxtApp();
+    const jwtRepository = JwtRepository($api);
+
+    const isTokenValid = await jwtRepository.isTokenValid(token.value as string);
 
     const api = $fetch.create({
         baseURL: useRuntimeConfig().public.backendUrl,
         onRequest({ request, options, error }) {
-            if (token.value && jwtRepository.isTokenValid(token.value)) {
+            if (token.value && isTokenValid) {
                 const headers = (options.headers ||= {});
                 if (Array.isArray(headers)) {
                     headers.push(["Authorization", `Bearer ${token.value}`]);
@@ -17,9 +20,9 @@ export default defineNuxtPlugin((nuxtApp) => {
             }
         },
         async onResponseError({ response }) {
-            if (response.status === 401) {
-                await nuxtApp.runWithContext(() => navigateTo("/login"));
-            }
+            // if (response.status === 401) {
+            //     await nuxtApp.runWithContext(() => navigateTo("/login"));
+            // }
         },
     });
 

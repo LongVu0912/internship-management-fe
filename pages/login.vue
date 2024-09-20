@@ -5,10 +5,11 @@ definePageMeta({
 const { $api } = useNuxtApp();
 
 const authRepository = AuthRepository($api);
-const jwtRepository = JwtRepository();
+const jwtRepository = JwtRepository($api);
 const nuxtToast = useNuxtToast();
 
-const isOpen = ref(false);
+const isModelOpen = ref(false);
+const isLoading = ref(false);
 
 // * For login and forgot password
 const state = reactive({
@@ -31,40 +32,35 @@ const handleLogin = async () => {
         return;
     }
 
-    try {
-        const response = await authRepository.login({
-            username: state.username,
-            password: state.password,
-        });
+    isLoading.value = true;
 
-        if (response.code === 200) {
-            nuxtToast({
-                description: 'Đăng nhập thành công',
-                type: 'success',
-                timeout: 1000,
-                onCallback: () => {
-                    navigateTo('/');
-                }
-            });
-            jwtRepository.saveToken(response.result.token);
-        }
-        else {
-            nuxtToast({
-                description: 'Tài khoản hoặc mật khẩu không đúng',
-                type: 'error',
-            });
-        }
-    } catch (error) {
+    const apiResponse = await authRepository.login({
+        username: state.username,
+        password: state.password,
+    });
+
+    if (apiResponse.code === 200) {
         nuxtToast({
-            description: 'Có lỗi, vui lòng thử lại sau',
+            description: 'Đăng nhập thành công',
+            type: 'success',
+            timeout: 1000,
+            onCallback: () => {
+                navigateTo('/');
+            }
+        });
+        jwtRepository.saveTokenToCookie(apiResponse.result.token);
+    } else {
+        nuxtToast({
+            description: apiResponse.message,
             type: 'error',
         });
     }
+
+    isLoading.value = false;
 };
 
 const handleForgotPassword = () => {
     nuxtToast({
-        title: 'Notification',
         description: 'Cài lại mật khẩu thành công',
         type: 'success',
     });
@@ -83,25 +79,25 @@ const handleForgotPassword = () => {
                     <div class="mb-2 mt-4 text-sm font-medium">Tài khoản</div>
                     <UInput v-model="state.username"
                             type="text"
-                            icon="material-symbols:account-circle-full"
+                            icon="mingcute:user-4-line"
                             size="lg"
                             color="primary"
                             autocomplete="on" />
                     <div class="mb-2 mt-4 text-sm font-medium">Mật khẩu</div>
                     <UInput v-model="state.password"
                             type="password"
-                            icon="material-symbols:password"
+                            icon="mingcute:key-2-line"
                             size="lg"
                             color="primary"
                             autocomplete="on" />
                     <div class="mt-4 text-sm font-medium">
                         Quên mật khẩu?
-                        <button class="text-primary" @click="isOpen = true" type="button">
+                        <button class="text-primary" @click="isModelOpen = true" type="button">
                             Nhấn vào đây
                         </button>
                     </div>
 
-                    <UButton class="mt-4 w-full rounded-md" size="lg" type="submit" block>
+                    <UButton :loading="isLoading" class="mt-4 w-full rounded-md" size="lg" type="submit" block>
                         Đăng nhập
                     </UButton>
 
@@ -113,7 +109,7 @@ const handleForgotPassword = () => {
         </div>
     </div>
 
-    <UModal v-model="isOpen" prevent-close>
+    <UModal v-model="isModelOpen" prevent-close>
         <UCard
                :ui="{ body: { padding: 'px-4 pb-4 lg:px-8 lg:pb-8' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800', strategy: 'override' }">
             <template #header>
@@ -121,18 +117,18 @@ const handleForgotPassword = () => {
                     <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
                         Quên mật khẩu
                     </h3>
-                    <UButton color="gray" variant="ghost" icon="material-symbols:close-rounded" class="-my-1"
-                             @click="isOpen = false" />
+                    <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                             @click="isModelOpen = false" />
                 </div>
             </template>
             <div>
                 <form class="flex w-full flex-col justify-start" @submit.prevent="handleForgotPassword">
                     <div class="mb-2 mt-4 text-sm font-medium">Tài khoản</div>
-                    <UInput v-model="state.username" type="text" icon="material-symbols:account-circle-full" size="lg"
-                            color="primary" autocomplete="on" />
+                    <UInput v-model="state.username" type="text" icon="mingcute:user-4-line" size="lg" color="primary"
+                            autocomplete="on" />
                     <div class="mb-2 mt-4 text-sm font-medium">Email</div>
-                    <UInput v-model="state.email" type="email" icon="material-symbols:mail-outline-rounded" size="lg"
-                            color="primary" autocomplete="on" />
+                    <UInput v-model="state.email" type="email" icon="mingcute:mail-line" size="lg" color="primary"
+                            autocomplete="on" />
                     <UButton class="mt-6 w-full rounded-md" size="lg" type="submit" block>
                         Quên mật khẩu
                     </UButton>

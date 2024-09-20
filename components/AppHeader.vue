@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const { $api } = useNuxtApp();
 const authRepository = AuthRepository($api);
-const jwtRepository = JwtRepository();
+const jwtRepository = JwtRepository($api);
 
 const username = ref<string>('');
 const isLogged = ref(false);
@@ -10,8 +10,7 @@ onMounted(async () => {
     isLogged.value = await jwtRepository.isLogged();
 
     if (isLogged.value) {
-        const user = await jwtRepository.getUserDecodedToken();
-        username.value = user?.sub;
+        username.value = "Tester";
     }
 })
 
@@ -36,7 +35,7 @@ const items = [
         {
             slot: 'setting',
             label: 'Setting',
-            icon: 'material-symbols:settings-outline',
+            icon: 'mingcute:settings-5-line',
             click: () => navigateTo('/account'),
         }
     ],
@@ -44,7 +43,7 @@ const items = [
         {
             slot: 'logout',
             label: 'Logout',
-            icon: 'material-symbols:logout',
+            icon: 'mingcute:exit-fill',
             click: () => logout(),
         }
     ]
@@ -57,7 +56,7 @@ const items = [
         <!-- * Start -->
         <div class="ml-4">
             <UButton class="lg:hidden"
-                     icon="material-symbols:menu-rounded"
+                     icon="mingcute:menu-line"
                      color="gray"
                      variant="ghost"
                      aria-label="Theme" />

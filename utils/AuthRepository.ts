@@ -4,23 +4,31 @@ import type ApiResponse from "~/types/ApiResponse";
 export const AuthRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
     const token = useCookie("token");
 
+    // * login with username and password
     const login = async (payload: {
         username: string;
         password: string;
     }): Promise<ApiResponse> => {
-        const response: ApiResponse = await fetch(
-            `/authentication/Authenticate`,
-            {
-                method: "POST",
-                body: JSON.stringify(payload),
-            }
-        );
+        try {
+            const response: ApiResponse = await fetch(
+                `/authentication/Authenticate`,
+                {
+                    method: "POST",
+                    body: JSON.stringify(payload),
+                }
+            );
 
-        return response;
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
     };
 
+    // * remove token from cookie
     const logout = (): void => {
         token.value = null;
+
+        // TODO: login at backend
     };
 
     return {
