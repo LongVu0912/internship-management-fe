@@ -93,12 +93,12 @@ const submitChangePassword = async () => {
                                 size="md"
                                 color="green"
                                 variant="outline"
-                                label="Seeking" />
+                                label="Đang tìm việc" />
                         <UBadge
                                 size="md"
                                 color="red"
                                 variant="outline"
-                                label="Not Seeking" />
+                                label="Không tìm việc" />
                     </div>
                 </div>
             </div>

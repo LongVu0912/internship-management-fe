@@ -22,15 +22,15 @@ export const useNuxtToast = () => {
 
         switch (type) {
             case "success":
-                toastIcon = "i-heroicons-check-circle";
+                toastIcon = "mingcute:check-circle-line";
                 toastColor = "green";
                 break;
             case "error":
-                toastIcon = "heroicons:x-circle";
+                toastIcon = "mingcute:close-circle-line";
                 toastColor = "red";
                 break;
             case "info":
-                toastIcon = "heroicons:information-circle";
+                toastIcon = "mingcute:information-line";
                 toastColor = "primary";
                 break;
         }

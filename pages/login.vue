@@ -8,23 +8,26 @@ const authRepository = AuthRepository($api);
 const jwtRepository = JwtRepository($api);
 const nuxtToast = useNuxtToast();
 
-const isModelOpen = ref(false);
+const isPasswordModalOpen = ref(false);
+const isRegisterModalOpen = ref(false);
 const isLoading = ref(false);
 
 // * For login and forgot password
-const state = reactive({
+const loginState = reactive({
     username: undefined,
     password: undefined,
     email: undefined,
 });
 
-onMounted(() => {
-    // * Set primary color in login page
-    useAppConfig().ui.primary = "blue";
+const registerState = reactive({
+    username: undefined,
+    studentId: undefined,
+    email: undefined,
+    password: undefined,
 });
 
-const handleLogin = async () => {
-    if (!state.username || !state.password) {
+const handleLoginSubmit = async () => {
+    if (!loginState.username || !loginState.password) {
         nuxtToast({
             description: 'Hãy nhập đầy đủ thông tin',
             type: 'info',
@@ -35,8 +38,8 @@ const handleLogin = async () => {
     isLoading.value = true;
 
     const apiResponse = await authRepository.login({
-        username: state.username,
-        password: state.password,
+        username: loginState.username,
+        password: loginState.password,
     });
 
     if (apiResponse.code === 200) {
@@ -59,13 +62,19 @@ const handleLogin = async () => {
     isLoading.value = false;
 };
 
-const handleForgotPassword = () => {
+const handleForgotPasswordSubmit = () => {
     nuxtToast({
-        description: 'Cài lại mật khẩu thành công',
-        type: 'success',
+        description: 'Chưa làm xong',
+        type: 'info',
     });
 };
 
+const handleRegisterSubmit = () => {
+    nuxtToast({
+        description: 'Chưa làm xong',
+        type: 'info',
+    });
+};
 </script>
 
 <template>
@@ -75,33 +84,34 @@ const handleForgotPassword = () => {
             <img src="/hcmute.png" class="h-36 w-36" alt="hcmute" />
             <div class="mt-2 text-xl font-extrabold">HCMUTE INTERNSHIP</div>
             <div class="flex w-full flex-col items-center justify-center">
-                <UForm :state="state" class="w-full sm:w-3/5 md:w-2/3" @submit="handleLogin">
+                <UForm :state="loginState" class="w-full sm:w-3/5 md:w-2/3" @submit="handleLoginSubmit">
                     <div class="mb-2 mt-4 text-sm font-medium">Tài khoản</div>
-                    <UInput v-model="state.username"
+                    <UInput v-model="loginState.username"
                             type="text"
                             icon="mingcute:user-4-line"
                             size="lg"
-                            color="primary"
+                            color="blue"
                             autocomplete="on" />
                     <div class="mb-2 mt-4 text-sm font-medium">Mật khẩu</div>
-                    <UInput v-model="state.password"
+                    <UInput v-model="loginState.password"
                             type="password"
                             icon="mingcute:key-2-line"
                             size="lg"
-                            color="primary"
+                            color="blue"
                             autocomplete="on" />
                     <div class="mt-4 text-sm font-medium">
                         Quên mật khẩu?
-                        <button class="text-primary" @click="isModelOpen = true" type="button">
+                        <button class="text-blue-500" @click="isPasswordModalOpen = true" type="button">
                             Nhấn vào đây
                         </button>
                     </div>
 
-                    <UButton :loading="isLoading" class="mt-4 w-full rounded-md" size="lg" type="submit" block>
+                    <UButton :loading="isLoading" class="mt-4 w-full rounded-md" color="blue" size="lg" type="submit" block>
                         Đăng nhập
                     </UButton>
 
-                    <UButton class="mt-2 w-full rounded-md" size="lg" variant="outline" block>
+                    <UButton class="mt-2 w-full rounded-md" color="blue" @click="isRegisterModalOpen = true" size="lg"
+                             variant="outline" block>
                         Đăng ký
                     </UButton>
                 </UForm>
@@ -109,7 +119,7 @@ const handleForgotPassword = () => {
         </div>
     </div>
 
-    <UModal v-model="isModelOpen" prevent-close>
+    <UModal v-model="isPasswordModalOpen" prevent-close>
         <UCard
                :ui="{ body: { padding: 'px-4 pb-4 lg:px-8 lg:pb-8' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800', strategy: 'override' }">
             <template #header>
@@ -118,19 +128,55 @@ const handleForgotPassword = () => {
                         Quên mật khẩu
                     </h3>
                     <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
-                             @click="isModelOpen = false" />
+                             @click="isPasswordModalOpen = false" />
                 </div>
             </template>
             <div>
-                <form class="flex w-full flex-col justify-start" @submit.prevent="handleForgotPassword">
+                <form class="flex w-full flex-col justify-start" @submit.prevent="handleForgotPasswordSubmit">
                     <div class="mb-2 mt-4 text-sm font-medium">Tài khoản</div>
-                    <UInput v-model="state.username" type="text" icon="mingcute:user-4-line" size="lg" color="primary"
+                    <UInput v-model="loginState.username" type="text" icon="mingcute:user-4-line" size="lg"
+                            color="blue"
                             autocomplete="on" />
                     <div class="mb-2 mt-4 text-sm font-medium">Email</div>
-                    <UInput v-model="state.email" type="email" icon="mingcute:mail-line" size="lg" color="primary"
+                    <UInput v-model="loginState.email" type="email" icon="mingcute:mail-line" size="lg" color="blue"
                             autocomplete="on" />
                     <UButton class="mt-6 w-full rounded-md" size="lg" type="submit" block>
                         Quên mật khẩu
+                    </UButton>
+                </form>
+            </div>
+        </UCard>
+    </UModal>
+
+    <UModal v-model="isRegisterModalOpen" prevent-close>
+        <UCard
+               :ui="{ body: { padding: 'px-4 pb-4 lg:px-8 lg:pb-8' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800', strategy: 'override' }">
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                        Đăng ký
+                    </h3>
+                    <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                             @click="isRegisterModalOpen = false" />
+                </div>
+            </template>
+            <div>
+                <form class="flex w-full flex-col justify-start" :state="registerState" @submit.prevent="handleRegisterSubmit">
+                    <div class="mb-2 mt-4 text-sm font-medium">Tài khoản</div>
+                    <UInput v-model="registerState.username" type="text" icon="mingcute:user-4-line" size="lg"
+                            color="blue" autocomplete="on" />
+                    <div class="mb-2 mt-4 text-sm font-medium">Mã số sinh viên</div>
+                    <UInput v-model="registerState.studentId" type="text" icon="mingcute:idcard-line" size="lg"
+                            color="blue" autocomplete="on" />
+                    <div class="mb-2 mt-4 text-sm font-medium">Email sinh viên</div>
+                    <UInput v-model="registerState.email" type="email" icon="mingcute:mail-line" size="lg"
+                            color="blue"
+                            autocomplete="on" />
+                    <div class="mb-2 mt-4 text-sm font-medium">Mật khẩu</div>
+                    <UInput v-model="registerState.password" type="email" icon="mingcute:key-2-line" size="lg"
+                            color="blue" autocomplete="on" />
+                    <UButton class="mt-6 w-full rounded-md" size="lg" type="submit" block>
+                        Đăng ký
                     </UButton>
                 </form>
             </div>
