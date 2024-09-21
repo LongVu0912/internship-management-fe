@@ -8,10 +8,9 @@ interface ToastOptions {
 
 export const useNuxtToast = () => {
     const toast = useToast();
-    const { t } = useI18n();
 
     const showToast = ({
-        title = t('notification'),
+        title = "Thông báo",
         description,
         timeout = 2000,
         type = "info",

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
-    layout: "account",
+    layout: "student",
 });
 
 const { $api } = useNuxtApp();

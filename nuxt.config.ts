@@ -25,10 +25,6 @@ export default defineNuxtConfig({
         "@nuxt/ui",
         "@nuxt/icon",
         "@nuxtjs/color-mode",
-        "@nuxtjs/i18n",
         "@vueuse/nuxt",
     ],
-    i18n: {
-        vueI18n: "./i18n.config.ts",
-    },
 });

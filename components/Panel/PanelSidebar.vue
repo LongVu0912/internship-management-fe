@@ -1,5 +1,14 @@
-<script setup>
+<script setup lang="ts">
+import type SidebarItem from '~/types/SidebarItem';
+
 const sidebarState = useSidebarState();
+
+const props = defineProps({
+    items: {
+        type: Array as PropType<SidebarItem[]>,
+        required: true,
+    },
+});
 </script>
 
 <template>
@@ -21,19 +30,14 @@ const sidebarState = useSidebarState();
 
         <div class="flex flex-col gap-2 p-2">
             <UDivider label="" size="xs" />
-            <UButton icon="mingcute:user-setting-line"
+            <UButton v-for="item in props.items"
+                     :icon="item.icon"
                      color="gray"
                      variant="ghost"
-                     label="Account"
-                     to="/account"
+                     :label="item.label"
+                     :to="item.to"
                      activeClass="link-active">
             </UButton>
-            <UButton icon="mingcute:profile-line"
-                     color="gray"
-                     variant="ghost"
-                     label="Profile"
-                     to="/account/profile"
-                     activeClass="link-active" />
             <UDivider label="" size="xs" class="mb-2 mt-2" />
         </div>
     </div>

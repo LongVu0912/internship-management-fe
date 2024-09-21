@@ -1,11 +1,10 @@
 <script setup lang="ts">
-const { t } = useI18n();
 </script>
 
 <template>
 
     <Head>
-        <title>{{ t('title') }}</title>
+        <title>HCMUTE INTERNSHIP</title>
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
     </Head>
     <NuxtLoadingIndicator color="primary" />
