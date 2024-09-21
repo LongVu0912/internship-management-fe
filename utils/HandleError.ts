@@ -1,5 +1,5 @@
 import type ApiResponse from "~/types/ApiResponse";
-import { ErrorApiResponse } from "~/types/enums/ErrorApiResponse";
+import { ErrorApiResponse } from "~/types/const/ErrorApiResponse";
 
 // * Handle the return when api callings are failed
 export const HandleError = (error: any) => {
