@@ -1,10 +1,11 @@
 <script setup lang="ts">
 definePageMeta({
-    layout: "account",
+    layout: "student",
+    middleware: "student",
 });
 
-const { $api } = useNuxtApp();
-const userRepository = UserRepository($api);
+const { $apiToken } = useNuxtApp();
+const userRepository = UserRepository($apiToken);
 const nuxtToast = useNuxtToast();
 
 const isModalOpen = ref(false);
@@ -50,7 +51,7 @@ const submitChangePassword = async () => {
 
     if (apiResponse.code === 200) {
         nuxtToast({
-            description: apiResponse.message,
+            description: "Đổi mật khẩu thành công",
             type: "success",
         });
         isModalOpen.value = false;

@@ -1,9 +1,10 @@
 enum Role {
-    GUEST = "Khách",
-    STUDENT = "Sinh viên",
-    PROFESSOR = "Giảng viên",
-    COMPANY = "Công ty",
-    ADMIN = "Admin",
+    GUEST = "GUEST",
+    STUDENT = "STUDENT",
+    INSTRUCTOR = "INSTRUCTOR",
+    BUSINESS = "BUSINESS",
+    MANAGER = "MANAGER",
+    ADMIN = "ADMIN",
 }
 
 export default Role;

@@ -1,27 +1,10 @@
 <script setup lang="ts">
-const { $api, $apiToken } = useNuxtApp();
-const authRepository = AuthRepository($api);
-const jwtRepository = JwtRepository($api);
+import type AvatarItem from '~/types/AvatarItem';
+const sidebarState = useSidebarState();
 
-const username = ref<string>('');
-const isLogged = ref(false);
-
-onBeforeMount(async () => {
-    isLogged.value = await jwtRepository.isLogged();
-
-    if (isLogged.value) {
-        username.value = "Tester";
-    }
+const props = defineProps({
+    avatarItem: Object as PropType<AvatarItem>
 })
-
-const handleLoginButton = () => {
-    navigateTo('/login');
-}
-
-const logout = async () => {
-    await authRepository.logout();
-    navigateTo('/login');
-}
 
 const items = [
     [
@@ -36,7 +19,6 @@ const items = [
             slot: 'setting',
             label: 'Setting',
             icon: 'mingcute:settings-5-line',
-            click: () => navigateTo('/student'),
         }
     ],
     [
@@ -44,7 +26,9 @@ const items = [
             slot: 'logout',
             label: 'Logout',
             icon: 'mingcute:exit-fill',
-            click: () => logout(),
+            click: () => {
+                props.avatarItem?.logout();
+            }
         }
     ]
 ]
@@ -52,37 +36,30 @@ const items = [
 
 <template>
     <div
-         class="bg-app-primary fixed z-40 flex h-16 w-full flex-row items-center justify-between border-b border-gray-200 shadow-sm dark:border-gray-800">
-        <!-- * Start -->
-        <div class="ml-4">
-            <UButton class="lg:hidden"
+         class="bg-app-primary fixed z-40 flex h-16 w-full flex-row items-center justify-between border-b border-gray-200 shadow-sm lg:pr-[--sidebar-width] dark:border-gray-800">
+        <div class="flex flex-row">
+            <UButton class="ml-2 lg:hidden"
                      icon="mingcute:menu-line"
                      color="gray"
                      variant="ghost"
-                     aria-label="Theme" />
-            <div class="hidden flex-row items-center gap-2 lg:flex">
-                <img src="/hcmute.png" class="h-10 w-10" alt="hcmute" />
-                <div class="font-bold">
-                    TRƯỜNG ĐẠI HỌC SƯ PHẠM KỸ THUẬT TP.HCM
-                </div>
+                     aria-label="Theme"
+                     @click="sidebarState = true" />
+            <div class="ml-4 hidden font-bold lg:block">
+                TRƯỜNG ĐẠI HỌC SƯ PHẠM KỸ THUẬT TP.HCM
             </div>
         </div>
 
-        <!-- * Center -->
         <div>
 
         </div>
-
-        <!-- * End -->
-        <div class="mr-2 flex flex-row items-center">
+        <div class="mr-2 flex flex-row">
             <ColorPicker />
             <ColorMode />
-
             <div class="ml-1 flex items-center">
-                <UDropdown v-if="isLogged" :items="items"
+                <UDropdown :items="items"
                            :ui="{ width: 'w-auto min-w-40', padding: 'p-1.5', item: { disabled: 'cursor-text select-text' } }"
                            :popper="{ placement: 'bottom-start' }">
-                    <UAvatar src="/avatar.png" />
+                    <UAvatar :src="props.avatarItem?.avatar" :alt="props.avatarItem?.username" />
 
                     <template #account="{ item }">
                         <div class="text-left">
@@ -90,7 +67,7 @@ const items = [
                                 Đăng nhập bởi
                             </div>
                             <div class="font-semibold">
-                                {{ username }}
+                                {{ props.avatarItem?.username }}
                             </div>
                         </div>
                     </template>
@@ -119,8 +96,6 @@ const items = [
                                class="ms-auto h-4 w-4 flex-shrink-0" />
                     </template>
                 </UDropdown>
-
-                <UButton v-else label="Đăng nhập" variant="outline" color="primary" @click="handleLoginButton" />
             </div>
         </div>
     </div>
