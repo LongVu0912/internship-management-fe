@@ -95,7 +95,11 @@ const selected = ref([people[1]])
 </script>
 
 <template>
-    <div>
+    <div class="flex flex-col gap-2">
+        <div class="flex flex-row justify-between">
+            <div></div>
+            <UButton>Import</UButton>
+        </div>
         <UTable class="rounded-lg border border-gray-100 dark:border-gray-700" v-model="selected" :rows="people"
                 :columns="columns">
             <template #name-data="{ row }">

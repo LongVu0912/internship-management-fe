@@ -2,6 +2,9 @@
 import type AvatarItem from '~/types/AvatarItem';
 import type SidebarItem from '~/types/SidebarItem';
 
+const { $api } = useNuxtApp();
+const authRepository = AuthRepository($api);
+
 const sidebarState = useSidebarState();
 
 const sidebarItems: SidebarItem[] = [
@@ -21,7 +24,7 @@ const avatarItem: AvatarItem = {
     username: "Tester",
     avatar: "/avatar.png",
     logout: () => {
-        console.log("Logged out");
+        authRepository.logout();
     }
 }
 

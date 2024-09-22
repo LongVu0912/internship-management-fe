@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { $api } = useNuxtApp();
+const { $api, $apiToken } = useNuxtApp();
 const authRepository = AuthRepository($api);
 const jwtRepository = JwtRepository($api);
 

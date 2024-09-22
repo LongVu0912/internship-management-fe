@@ -27,6 +27,7 @@ export const AuthRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
     // * remove token from cookie
     const logout = (): void => {
         token.value = null;
+        navigateTo("/login");
 
         // TODO: login at backend
     };
