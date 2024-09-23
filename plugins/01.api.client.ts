@@ -1,6 +1,6 @@
 export default defineNuxtPlugin(async (nuxtApp) => {
     const api = $fetch.create({
-        baseURL: useRuntimeConfig().public.backendUrl,
+        baseURL: window.localStorage.getItem('backendUrl') || 'http://localhost:8080/api',
     });
 
     return {

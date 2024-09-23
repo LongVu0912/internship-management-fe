@@ -1,6 +1,8 @@
 export default defineNuxtRouteMiddleware(async (to, from) => {
     if (import.meta.server) return;
 
+    // return;
+
     const { $api } = useNuxtApp();
 
     const jwtRepository = JwtRepository($api);

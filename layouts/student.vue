@@ -31,7 +31,7 @@ const avatarItem: AvatarItem = {
 </script>
 
 <template>
-    <div class="min-h-screen bg-white dark:bg-gray-900">
+    <div class="bg-app-primary min-h-screen">
         <PanelSidebar :items="sidebarItems" />
         <div class="lg:ml-[--sidebar-width]">
             <PanelHeader :avatarItem="avatarItem" />

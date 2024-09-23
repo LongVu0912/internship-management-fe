@@ -1,7 +1,7 @@
 export default defineNuxtConfig({
     devtools: { enabled: true },
     compatibilityDate: "2024-09-10",
-    ssr: true,
+    ssr: false,
     css: ["~/assets/css/main.css"],
     postcss: {
         plugins: {
@@ -17,7 +17,7 @@ export default defineNuxtConfig({
     ],
     runtimeConfig: {
         public: {
-            backendUrl: process.env.BACKEND_URL || "http://localhost:8080",
+            backendUrl: process.env.BACKEND_URL || "http://localhost:8080/api",
         },
     },
     modules: ["@nuxt/ui", "@nuxt/icon", "@nuxtjs/color-mode", "@vueuse/nuxt"],
