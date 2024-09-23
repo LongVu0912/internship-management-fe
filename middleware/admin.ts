@@ -8,9 +8,11 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     const { $api } = useNuxtApp();
 
     const jwtRepository = JwtRepository($api);
+    const authRepository = AuthRepository($api);
     const role = await jwtRepository.getRole();
 
-    if (role != Role.STUDENT) {
+    if (role != Role.ADMIN) {
+        authRepository.logout();
         return navigateTo("/login");
     }
 });

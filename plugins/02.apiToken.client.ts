@@ -5,7 +5,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     const authRepository = AuthRepository($api);
 
     const apiToken = $fetch.create({
-        baseURL: useRuntimeConfig().public.backendUrl,
+        baseURL: window.localStorage.getItem('backendUrl') || 'http://localhost:8080/api',
         async onRequest({ request, options, error }) {
             if (token.value && (await jwtRepository.isLogged())) {
                 const headers: any = options.headers;

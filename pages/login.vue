@@ -19,6 +19,7 @@ const loginState = reactive({
 });
 
 onMounted(() => {
+    useAppConfig().ui.primary = "blue";
 })
 
 const handleLoginSubmit = async () => {

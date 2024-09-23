@@ -52,7 +52,7 @@ const items = [
         <div>
 
         </div>
-        <div class="mr-2 flex flex-row">
+        <div class="mr-2 flex flex-row items-center gap-1">
             <ColorPicker />
             <ColorMode />
             <div class="ml-1 flex items-center">
