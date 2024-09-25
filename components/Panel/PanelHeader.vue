@@ -55,11 +55,17 @@ const items = [
         <div class="mr-2 flex flex-row items-center gap-1">
             <ColorPicker />
             <ColorMode />
-            <div class="ml-1 flex items-center">
-                <UDropdown :items="items"
+            <div class="flex items-center">
+                <UButton icon="mingcute:home-3-line"
+                         color="gray"
+                         variant="ghost"
+                         class="h-8 w-8"
+                         @click="navigateTo('/')">
+                </UButton>
+                <!-- <UDropdown :items="items"
                            :ui="{ width: 'w-auto min-w-40', padding: 'p-1.5', item: { disabled: 'cursor-text select-text' } }"
                            :popper="{ placement: 'bottom-start' }">
-                    <UAvatar :src="props.avatarItem?.avatar" :alt="props.avatarItem?.username" />
+                    <UAvatar src="" :alt="props.avatarItem?.username" />
 
                     <template #account="{ item }">
                         <div class="text-left">
@@ -72,14 +78,14 @@ const items = [
                         </div>
                     </template>
 
-                    <template #item="{ item }">
+<template #item="{ item }">
                         <span class="truncate">{{ item.label }}</span>
 
                         <UIcon :name="item.icon"
                                class="ms-auto h-4 w-4 flex-shrink-0" />
                     </template>
 
-                    <template #setting="{ item }">
+<template #setting="{ item }">
                         <div class="text-left">
                             Cài đặt
                         </div>
@@ -87,7 +93,7 @@ const items = [
                                class="ms-auto h-4 w-4 flex-shrink-0" />
                     </template>
 
-                    <template #logout="{ item }">
+<template #logout="{ item }">
                         <div class="text-left">
                             Đăng xuất
                         </div>
@@ -95,7 +101,7 @@ const items = [
                         <UIcon :name="item.icon"
                                class="ms-auto h-4 w-4 flex-shrink-0" />
                     </template>
-                </UDropdown>
+</UDropdown> -->
             </div>
         </div>
     </div>
