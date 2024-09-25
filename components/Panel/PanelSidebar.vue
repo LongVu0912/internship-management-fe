@@ -17,7 +17,8 @@ const props = defineProps({
          :class="sidebarState ? 'translate-x-0' : 'translate-x-[-100%]'">
         <div class="flex flex-row items-center justify-between p-2">
             <div class="flex flex-row items-center">
-                <img src="/hcmute.png" class="h-10 w-10" alt="hcmute" />
+                <NuxtImg src="/hcmute.png" width="40" height="40" quality="80" alt="hcmute" loading="lazy"
+                         placeholder />
                 <a class="m-2 font-sans text-xl font-bold" href="/">HCMUTE</a>
             </div>
             <UButton class="lg:hidden"

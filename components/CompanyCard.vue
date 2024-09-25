@@ -2,7 +2,7 @@
     <div
          class="hover:border-primary-500 dark:hover:border-primary-500 bg-content flex h-auto w-full flex-row gap-3 rounded-md border p-3 md:h-40 md:w-[800px] dark:border-gray-800">
         <div class="flex flex-shrink-0 items-center">
-            <img src="/hcmute.png" class="h-24 w-24 bg-gray-100">
+            <NuxtImg src="/hcmute.png" width="96" height="96" quality="80" alt="hcmute" loading="lazy" placeholder />
         </div>
         <div class="flex w-full flex-col justify-between gap-1">
             <div class="flex flex-col justify-between gap-1">

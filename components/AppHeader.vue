@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Role from '~/types/enums/Role';
+
 const { $api, $apiToken } = useNuxtApp();
 const authRepository = AuthRepository($api);
 const jwtRepository = JwtRepository($api);
@@ -6,11 +8,14 @@ const jwtRepository = JwtRepository($api);
 const username = ref<string>('');
 const isLogged = ref(false);
 
+const userRole = ref<Role>();
+
 onBeforeMount(async () => {
     isLogged.value = await jwtRepository.isLogged();
+    userRole.value = await jwtRepository.getRole();
 
     if (isLogged.value) {
-        username.value = "Tester";
+        username.value = await jwtRepository.getProfileName();
     }
 })
 
@@ -36,7 +41,14 @@ const items = [
             slot: 'setting',
             label: 'Setting',
             icon: 'mingcute:settings-5-line',
-            click: () => navigateTo('/student'),
+            click: () => {
+                if (userRole.value == Role.ADMIN) {
+                    navigateTo("/admin");
+                }
+                else {
+                    navigateTo("/student");
+                }
+            },
         }
     ],
     [
@@ -61,7 +73,8 @@ const items = [
                      variant="ghost"
                      aria-label="Theme" />
             <div class="hidden flex-row items-center gap-2 lg:flex">
-                <img src="/hcmute.png" class="h-10 w-10" alt="hcmute" />
+                <NuxtImg src="/hcmute.png" width="40" height="40" quality="80" alt="hcmute" loading="lazy"
+                         placeholder />
                 <div class="font-bold">
                     TRƯỜNG ĐẠI HỌC SƯ PHẠM KỸ THUẬT TP.HCM
                 </div>
@@ -82,7 +95,7 @@ const items = [
                 <UDropdown v-if="isLogged" :items="items"
                            :ui="{ width: 'w-auto min-w-40', padding: 'p-1.5', item: { disabled: 'cursor-text select-text' } }"
                            :popper="{ placement: 'bottom-start' }">
-                    <UAvatar src="/avatar.png" />
+                    <UAvatar alt="Tester" />
 
                     <template #account="{ item }">
                         <div class="text-left">

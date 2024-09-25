@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type Student from '~/types/student/Student';
+
 definePageMeta({
     layout: "student",
     middleware: "student",
@@ -6,15 +8,34 @@ definePageMeta({
 
 const { $apiToken } = useNuxtApp();
 const userRepository = UserRepository($apiToken);
+const studentRepository = StudentRepository($apiToken);
+const appUtils = AppUtils();
 const nuxtToast = useNuxtToast();
 
 const isModalOpen = ref(false);
 const isLoading = ref(false);
+const isDataFirstFetching = ref(true);
+
+const student = ref<Student>();
 
 const state = reactive({
     oldPassword: undefined,
     newPassword: undefined,
     confirmPassword: undefined
+});
+
+onMounted(async () => {
+    const apiResponse = await studentRepository.getStudentProfile();
+
+    if (apiResponse.code === 200) {
+        student.value = apiResponse.result;
+        isDataFirstFetching.value = false;
+    } else {
+        nuxtToast({
+            description: apiResponse.message,
+            type: 'error',
+        });
+    }
 });
 
 const submitChangePassword = async () => {
@@ -67,170 +88,168 @@ const submitChangePassword = async () => {
 </script>
 
 <template>
-    <div class="flex flex-col gap-2">
-        <div class="text-xl font-medium">
-            Tài khoản
-        </div>
-        <div class="text-sm font-normal">
-            Thông tin tài khoản của bạn
-        </div>
-        <div class="flex flex-row items-center">
-            <div>
-                <UAvatar
-                         size="lg"
-                         src="/avatar.png"
-                         alt="Avatar" />
+    <div v-if="isDataFirstFetching">
+        <Loading />
+    </div>
+    <div v-else>
+        <div class="flex flex-col gap-2">
+            <div class="text-xl font-medium">
+                Tài khoản
             </div>
-            <div class="ml-4 flex flex-col justify-center gap-1">
-                <div class="flex flex-col gap-2">
-                    <div>
-                        <UBadge
-                                size="md"
-                                color="gray"
-                                label="21110113" />
-                    </div>
-                    <div class="flex gap-2">
-                        <UBadge
-                                size="md"
-                                color="green"
-                                variant="outline"
-                                label="Đang tìm việc" />
-                        <UBadge
-                                size="md"
-                                color="red"
-                                variant="outline"
-                                label="Không tìm việc" />
+            <div class="text-sm font-normal">
+                Thông tin tài khoản của bạn
+            </div>
+            <div class="flex flex-row items-center">
+                <div>
+                    <UAvatar
+                             size="lg"
+                             :alt="student?.profile.fullname" />
+                </div>
+                <div class="ml-4 flex flex-col justify-center gap-1">
+                    <div class="flex flex-col gap-2">
+                        <div>
+                            <UBadge
+                                    size="md"
+                                    color="gray"
+                                    :label="student?.profile.username" />
+                        </div>
+                        <div class="flex gap-2">
+                            <UBadge v-if="student?.isSeekingIntern"
+                                    size="md"
+                                    color="green"
+                                    variant="outline"
+                                    label="Đang tìm việc" />
+                            <UBadge v-else
+                                    size="md"
+                                    color="red"
+                                    variant="outline"
+                                    label="Không tìm việc" />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <UDivider label="" size="xs" class="my-4" />
+        <UDivider label="" size="xs" class="my-4" />
 
-    <div class="flex flex-col gap-2">
-        <div class="text-xl font-semibold">
-            Thông tin cá nhân
-        </div>
         <div class="flex flex-col gap-2">
-            <div class="flex items-center gap-2">
-                <UIcon name="mingcute:user-4-line" class="h-6 w-6" />
-                <UBadge
-                        size="md"
-                        color="gray"
-                        label="Hoàng Long Vũ" />
+            <div class="text-xl font-semibold">
+                Thông tin cá nhân
             </div>
-            <div class="flex items-center gap-2">
-                <UIcon name="mingcute:birthday-2-line" class="h-6 w-6" />
-                <UBadge
-                        size="md"
-                        color="gray"
-                        label="22/12/2003" />
-            </div>
-            <div class="flex items-center gap-2">
-                <UIcon name="mingcute:mail-line" class="h-6 w-6" />
-                <UBadge
-                        size="md"
-                        color="gray"
-                        label="21110113@student.hcmute.edu.vn" />
-            </div>
-            <div class="flex items-center gap-2">
-                <UIcon name="mingcute:phone-line" class="h-6 w-6" />
-                <UBadge
-                        size="md"
-                        color="gray"
-                        label="0987654321" />
-            </div>
-        </div>
-    </div>
-
-    <UDivider label="" size="xs" class="my-4" />
-
-    <div class="flex flex-col gap-2">
-        <div class="text-xl font-medium">
-            Bio
-        </div>
-        <div class="flex flex-col gap-2">
-            <div class="flex items-center gap-2">
-                <UIcon name="mingcute:school-line" class="h-6 w-6" />
-                <UBadge
-                        size="md"
-                        color="gray"
-                        label="2021" />
-            </div>
-            <div class="flex items-center gap-2">
-                <UIcon name="mingcute:book-3-line" class="h-6 w-6" />
-                <UBadge
-                        size="md"
-                        color="gray"
-                        label="Công nghệ thông tin" />
-            </div>
-            <div class="text-justify text-sm font-normal">
-                I am a dedicated software developer with expertise in Java, Spring Boot, and Vue.js. I specialize in
-                designing, coding, and maintaining robust software applications. My experience includes developing
-                efficient
-                backend systems, creating dynamic front-end interfaces, and ensuring seamless database connections.
-                I am
-                passionate about solving complex problems and continuously improving my skills to deliver
-                high-quality
-                software solutions.
-            </div>
-        </div>
-    </div>
-    <UDivider label="" size="xs" class="my-4" />
-
-    <div class="flex flex-col items-start gap-2">
-        <div class="text-lg font-medium">
-            CV
-        </div>
-        <ULink
-               to=""
-               active-class="text-primary"
-               inactive-class="text-primary-500 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-200">
-            21110113_HoangLongVu_CV.pdf
-        </ULink>
-    </div>
-
-    <UDivider label="" size="xs" class="my-4" />
-
-    <div class="flex flex-row justify-between gap-2">
-        <div></div>
-        <div class="flex gap-2">
-            <UButton color="primary" variant="outline" @click="isModalOpen = true">Đổi mật khẩu</UButton>
-            <UButton color="primary">Cập nhật</UButton>
-        </div>
-    </div>
-
-    <UModal v-model="isModalOpen" prevent-close>
-        <UCard
-               :ui="{ body: { padding: 'px-4 pb-4 lg:px-8 lg:pb-8' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800', strategy: 'override' }">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-                        Quên mật khẩu
-                    </h3>
-                    <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
-                             @click="isModalOpen = false" />
+            <div class="flex flex-col gap-2">
+                <div class="flex items-center gap-2">
+                    <UIcon name="mingcute:user-4-line" class="h-6 w-6" />
+                    <UBadge
+                            size="md"
+                            color="gray"
+                            :label="student?.profile.fullname" />
                 </div>
-            </template>
-            <div>
-                <form class="flex w-full flex-col justify-start" :state="state" @submit.prevent="submitChangePassword">
-                    <div class="mb-2 mt-4 text-sm font-medium">Mật khẩu cũ</div>
-                    <UInput v-model="state.oldPassword" type="password" icon="mingcute:user-4-line" size="lg"
-                            color="primary"
-                            autocomplete="on" />
-                    <div class="mb-2 mt-4 text-sm font-medium">Mật khẩu mới</div>
-                    <UInput v-model="state.newPassword" type="password" icon="mingcute:mail-line" size="lg"
-                            color="primary"
-                            autocomplete="on" />
-                    <div class="mb-2 mt-4 text-sm font-medium">Xác nhận mật khẩu</div>
-                    <UInput v-model="state.confirmPassword" type="password" icon="mingcute:mail-line" size="lg"
-                            color="primary"
-                            autocomplete="on" />
-                    <UButton :loading="isLoading" class="mt-6 w-full rounded-md" size="lg" type="submit" block>
-                        Đổi mật khẩu
-                    </UButton>
-                </form>
+                <div class="flex items-center gap-2">
+                    <UIcon name="mingcute:birthday-2-line" class="h-6 w-6" />
+                    <UBadge
+                            size="md"
+                            color="gray"
+                            :label="appUtils.formatDate(student?.dob ?? '')" />
+                </div>
+                <div class="flex items-center gap-2">
+                    <UIcon name="mingcute:mail-line" class="h-6 w-6" />
+                    <UBadge
+                            size="md"
+                            color="gray"
+                            :label="student?.profile.email" />
+                </div>
+                <div class="flex items-center gap-2">
+                    <UIcon name="mingcute:phone-line" class="h-6 w-6" />
+                    <UBadge
+                            size="md"
+                            color="gray"
+                            :label="student?.profile.phoneNumber" />
+                </div>
             </div>
-        </UCard>
-    </UModal>
+        </div>
+
+        <UDivider label="" size="xs" class="my-4" />
+
+        <div class="flex flex-col gap-2">
+            <div class="text-xl font-medium">
+                Bio
+            </div>
+            <div class="flex flex-col gap-2">
+                <div class="flex items-center gap-2">
+                    <UIcon name="mingcute:school-line" class="h-6 w-6" />
+                    <UBadge
+                            size="md"
+                            color="gray"
+                            :label="student?.year" />
+                </div>
+                <div class="flex items-center gap-2">
+                    <UIcon name="mingcute:book-3-line" class="h-6 w-6" />
+                    <UBadge
+                            size="md"
+                            color="gray"
+                            :label="student?.major.name" />
+                </div>
+                <div class="text-justify text-sm font-normal">
+                    {{ student?.profile.bio }}
+                </div>
+            </div>
+        </div>
+        <UDivider label="" size="xs" class="my-4" />
+
+        <div class="flex flex-col items-start gap-2">
+            <div class="text-lg font-medium">
+                CV
+            </div>
+            <ULink
+                   to=""
+                   active-class="text-primary"
+                   inactive-class="text-primary-500 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-200">
+                My CV
+            </ULink>
+        </div>
+
+        <UDivider label="" size="xs" class="my-4" />
+
+        <div class="flex flex-row justify-between gap-2">
+            <div></div>
+            <div class="flex gap-2">
+                <UButton color="primary" variant="outline" @click="isModalOpen = true">Đổi mật khẩu</UButton>
+                <UButton color="primary">Cập nhật</UButton>
+            </div>
+        </div>
+
+        <UModal v-model="isModalOpen" prevent-close>
+            <UCard
+                   :ui="{ body: { padding: 'px-4 pb-4 lg:px-8 lg:pb-8' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800', strategy: 'override' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                            Quên mật khẩu
+                        </h3>
+                        <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                                 @click="isModalOpen = false" />
+                    </div>
+                </template>
+                <div>
+                    <form class="flex w-full flex-col justify-start" :state="state"
+                          @submit.prevent="submitChangePassword">
+                        <div class="mb-2 mt-4 text-sm font-medium">Mật khẩu cũ</div>
+                        <UInput v-model="state.oldPassword" type="password" icon="mingcute:user-4-line" size="lg"
+                                color="primary"
+                                autocomplete="on" />
+                        <div class="mb-2 mt-4 text-sm font-medium">Mật khẩu mới</div>
+                        <UInput v-model="state.newPassword" type="password" icon="mingcute:mail-line" size="lg"
+                                color="primary"
+                                autocomplete="on" />
+                        <div class="mb-2 mt-4 text-sm font-medium">Xác nhận mật khẩu</div>
+                        <UInput v-model="state.confirmPassword" type="password" icon="mingcute:mail-line" size="lg"
+                                color="primary"
+                                autocomplete="on" />
+                        <UButton :loading="isLoading" class="mt-6 w-full rounded-md" size="lg" type="submit" block>
+                            Đổi mật khẩu
+                        </UButton>
+                    </form>
+                </div>
+            </UCard>
+        </UModal>
+    </div>
 </template>

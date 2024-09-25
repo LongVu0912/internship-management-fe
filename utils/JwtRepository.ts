@@ -45,11 +45,23 @@ export const JwtRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
     };
 
     // * Get role from the token
-    const getRole = async (): Promise<Role> => {
-        if ((await isLogged()) && tokenCookie.value) {     
+    const getRole = async () => {
+        if ((await isLogged()) && tokenCookie.value) {
             return decodeToken(tokenCookie.value).scope as Role;
         }
         return Role.GUEST;
+    };
+
+    // * Get profile name from sub
+    const getProfileName = async () => {
+        try {
+            if (await isLogged()) {
+                return decodeToken(tokenCookie.value || "").sub;
+            }
+            return "No login";
+        } catch {
+            return "Error";
+        }
     };
 
     return {
@@ -57,5 +69,6 @@ export const JwtRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         saveTokenToCookie,
         isLogged,
         getRole,
+        getProfileName
     };
 };
