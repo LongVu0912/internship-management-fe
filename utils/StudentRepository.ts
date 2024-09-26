@@ -13,7 +13,26 @@ export const StudentRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         }
     };
 
+    // * Get the student profile by id
+    const getStudentProfileById = async (payload: {
+        studentId: string;
+    }): Promise<ApiResponse> => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/student/${payload.studentId}`,
+                {
+                    method: "POST",
+                }
+            );
+
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
     return {
         getStudentProfile,
+        getStudentProfileById,
     };
 };

@@ -9,6 +9,10 @@ definePageMeta({
 
 const { $apiToken } = useNuxtApp();
 const adminRepository = AdminRepository($apiToken);
+const appUtils = AppUtils();
+const nuxtToast = useNuxtToast();
+
+const isInputModalOpen = ref(false);
 
 const searchTerm = ref('');
 const currentPage = ref(1);
@@ -45,16 +49,12 @@ watch([currentPage, pageSize], () => {
 
 const columns = [
     {
-        key: 'id',
-        label: 'MSSV'
-    },
-    {
         key: 'name',
         label: 'Tên'
     },
     {
-        key: 'gender',
-        label: 'Giới tính'
+        key: 'dob',
+        label: 'Ngày sinh'
     },
     {
         key: 'email',
@@ -69,31 +69,48 @@ const columns = [
     }
 ]
 
+const handleUndoneButton = () => {
+    nuxtToast({
+        description: "Chưa làm xong",
+    })
+}
+
 const items = (row: any) => [
     [
         {
-            label: 'Sửa',
-            icon: 'i-heroicons-pencil-square-20-solid',
+            label: 'Hồ sơ',
+            icon: 'mingcute:profile-line',
+            click: () => {
+                navigateTo(`/student/${row.studentId}`, {
+                    open: {
+                        target: '_blank',
+                    }
+                })
+            }
         },
         {
-            label: 'Nhân bản',
-            icon: 'i-heroicons-document-duplicate-20-solid'
-        }
+            label: 'Sửa',
+            icon: 'i-heroicons-pencil-square-20-solid',
+            click: handleUndoneButton,
+        },
     ],
     [
         {
             label: 'Lưu trữ',
-            icon: 'i-heroicons-archive-box-20-solid'
+            icon: 'i-heroicons-archive-box-20-solid',
+            click: handleUndoneButton,
         },
         {
             label: 'Di chuyển',
-            icon: 'i-heroicons-arrow-right-circle-20-solid'
+            icon: 'i-heroicons-arrow-right-circle-20-solid',
+            click: handleUndoneButton,
         }
     ],
     [
         {
             label: 'Xoá',
-            icon: 'i-heroicons-trash-20-solid'
+            icon: 'i-heroicons-trash-20-solid',
+            click: handleUndoneButton,
         }
     ]
 ]
@@ -111,19 +128,25 @@ const items = (row: any) => [
                     </template>
                 </UInput>
             </UForm>
-            <UButton>Import</UButton>
+            <UButton @click="isInputModalOpen = true">Nhập</UButton>
         </div>
         <UTable class="rounded-lg border border-gray-100 dark:border-gray-700" :columns="columns" :rows="studentList">
-            <template #id-data="{ row }">
-                {{ row.studentId }}
-            </template>
-
             <template #name-data="{ row }">
-                {{ row.profile.fullname }}
+                <div class="font-medium">
+                    {{ row.profile.fullname }}
+                </div>
+                <UBadge class="mt-1" color="primary" variant="outline">
+                    {{ row.studentId }}
+                </UBadge>
             </template>
 
-            <template #gender-data="{ row }">
-                {{ row.profile.gender }}
+            <template #dob-data="{ row }">
+                <div class="font-medium">
+                    {{ appUtils.formatDate(row.dob) }}
+                </div>
+                <UBadge class="mt-1 w-10 justify-center" color="gray" variant="outline">
+                    {{ row.profile.isMale ? "Nam" : "Nữ" }}
+                </UBadge>
             </template>
 
             <template #email-data="{ row }">
@@ -153,4 +176,25 @@ const items = (row: any) => [
             </div>
         </div>
     </div>
+
+    <UModal v-model="isInputModalOpen" prevent-close>
+        <UCard
+               :ui="{ body: { padding: 'px-4 pb-4 lg:px-8 lg:pb-8' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800', strategy: 'override' }">
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                        Nhập dữ liệu từ file excel
+                    </h3>
+                    <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                             @click="isInputModalOpen = false" />
+                </div>
+            </template>
+            <div>
+                <UInput type="file" size="sm" icon="i-heroicons-folder" />
+                <UButton class="mt-6 w-full rounded-md" size="lg" block @click="handleUndoneButton">
+                    Nhập dữ liệu
+                </UButton>
+            </div>
+        </UCard>
+    </UModal>
 </template>

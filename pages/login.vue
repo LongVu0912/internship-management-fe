@@ -79,7 +79,7 @@ const handleForgotPasswordSubmit = () => {
     <div class="flex min-h-screen items-center justify-center bg-background-login bg-cover bg-center">
         <div
              class="flex w-3/4 flex-col items-center justify-center rounded-md bg-gray-100 p-6 shadow-xl sm:p-8 md:w-1/2 lg:w-1/2 xl:w-1/3 dark:bg-gray-800">
-            <NuxtImg src="/hcmute.png" quality="80" width="144" height="144" alt="hcmute" loading="lazy" placeholder />
+            <NuxtImg src="/hcmute.png" quality="80" width="144" height="144" alt="hcmute" />
             <div class="mt-2 text-xl font-extrabold">HCMUTE INTERNSHIP</div>
             <div class="flex w-full flex-col items-center justify-center">
                 <UForm :state="loginState" class="w-full sm:w-3/5 md:w-2/3" @submit="handleLoginSubmit">
