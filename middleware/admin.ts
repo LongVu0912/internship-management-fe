@@ -12,7 +12,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     const role = await jwtRepository.getRole();
 
     if (role != Role.ADMIN) {
-        authRepository.logout();
-        return navigateTo("/login");
+        return navigateTo("/");
     }
 });

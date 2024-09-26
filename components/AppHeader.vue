@@ -73,8 +73,7 @@ const items = [
                      variant="ghost"
                      aria-label="Theme" />
             <div class="hidden flex-row items-center gap-2 lg:flex">
-                <NuxtImg src="/hcmute.png" width="40" height="40" quality="80" alt="hcmute" loading="lazy"
-                         placeholder />
+                <NuxtImg src="/hcmute.png" width="40" height="40" quality="80" alt="hcmute"/>
                 <div class="font-bold">
                     TRƯỜNG ĐẠI HỌC SƯ PHẠM KỸ THUẬT TP.HCM
                 </div>
