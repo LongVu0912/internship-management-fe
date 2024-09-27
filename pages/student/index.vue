@@ -11,11 +11,14 @@ const { $apiToken } = useNuxtApp();
 const userRepository = UserRepository($apiToken);
 const studentRepository = StudentRepository($apiToken);
 const nuxtToast = useNuxtToast();
+const backendUrl = window.localStorage.getItem("backendUrl") || useRuntimeConfig().public.backendUrl;
 
 // * Refs
 const isPageLoading = ref(true);
-const isModalOpen = ref(false);
+const isForgotPasswordModalOpen = ref(false);
+const isCVModalOpen = ref(false);
 const isSubmitting = ref(false);
+const cvFile = ref<File | null>(null);
 
 const student = ref<Student>();
 
@@ -27,6 +30,13 @@ const state = reactive({
 
 // * Lifecycle
 onBeforeMount(async () => {
+    fetchData();
+});
+
+// * Functions
+const fetchData = async () => {
+    isPageLoading.value = true;
+
     const apiResponse = await studentRepository.getStudentProfile();
 
     if (apiResponse.code === 200) {
@@ -38,9 +48,8 @@ onBeforeMount(async () => {
             type: 'error',
         });
     }
-});
+}
 
-// * Functions
 const submitChangePassword = async () => {
     if (!state.oldPassword || !state.newPassword || !state.confirmPassword) {
         nuxtToast({
@@ -78,7 +87,7 @@ const submitChangePassword = async () => {
             description: "Đổi mật khẩu thành công",
             type: "success",
         });
-        isModalOpen.value = false;
+        isForgotPasswordModalOpen.value = false;
     } else {
         nuxtToast({
             description: apiResponse.message,
@@ -87,6 +96,45 @@ const submitChangePassword = async () => {
     }
     isSubmitting.value = false;
 };
+
+const handleInputCVFile = (event: any) => {
+    if (event && event.length > 0) {
+        cvFile.value = event[0];
+    } else {
+        cvFile.value = null;
+    }
+};
+
+const handleUploadCV = async () => {
+    isSubmitting.value = true;
+
+    if (cvFile.value == null) {
+        nuxtToast({
+            description: "Hãy chọn file PDF"
+        })
+        isSubmitting.value = false;
+        return;
+    }
+
+    const apiResponse = await studentRepository.uploadCV({
+        cv: cvFile.value,
+    });
+
+    if (apiResponse.code === 200) {
+        nuxtToast({
+            description: "Cập nhật CV thành công",
+            type: "success",
+        });
+        fetchData();
+        isCVModalOpen.value = false;
+    } else {
+        nuxtToast({
+            description: apiResponse.message,
+            type: 'error',
+        });
+    }
+    isSubmitting.value = false;
+}
 </script>
 
 <template>
@@ -208,12 +256,16 @@ const submitChangePassword = async () => {
             <div class="text-lg font-medium">
                 CV
             </div>
-            <ULink
-                   to=""
-                   active-class="text-primary"
-                   inactive-class="text-primary-500 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-200">
-                My CV
-            </ULink>
+            <div class="flex flex-row gap-2">
+                <UButton v-if="student?.profile.uploadContent != undefined" variant="outline"
+                         color="gray"
+                         target="_blank"
+                         :to="backendUrl + `/file/${student?.profile.uploadContent.uploadContentId}`">
+                    {{ student?.profile.uploadContent?.fileName }}
+                </UButton>
+                <UButton variant="outline" color="gray" icon="mingcute:upload-2-fill" @click="isCVModalOpen = true">
+                </UButton>
+            </div>
         </div>
 
         <UDivider label="" size="xs" class="my-4" />
@@ -221,44 +273,66 @@ const submitChangePassword = async () => {
         <div class="flex flex-row justify-between gap-2">
             <div></div>
             <div class="flex gap-2">
-                <UButton color="primary" variant="outline" @click="isModalOpen = true">Đổi mật khẩu</UButton>
+                <UButton color="primary" variant="outline" @click="isForgotPasswordModalOpen = true">Đổi mật khẩu
+                </UButton>
                 <UButton color="primary">Cập nhật</UButton>
             </div>
         </div>
-
-        <UModal v-model="isModalOpen" prevent-close>
-            <UCard
-                   :ui="{ body: { padding: 'px-4 pb-4 lg:px-8 lg:pb-8' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800', strategy: 'override' }">
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-                            Quên mật khẩu
-                        </h3>
-                        <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
-                                 @click="isModalOpen = false" />
-                    </div>
-                </template>
-                <div>
-                    <form class="flex w-full flex-col justify-start" :state="state"
-                          @submit.prevent="submitChangePassword">
-                        <div class="mb-2 mt-4 text-sm font-medium">Mật khẩu cũ</div>
-                        <UInput v-model="state.oldPassword" type="password" icon="mingcute:user-4-line" size="lg"
-                                color="primary"
-                                autocomplete="on" />
-                        <div class="mb-2 mt-4 text-sm font-medium">Mật khẩu mới</div>
-                        <UInput v-model="state.newPassword" type="password" icon="mingcute:mail-line" size="lg"
-                                color="primary"
-                                autocomplete="on" />
-                        <div class="mb-2 mt-4 text-sm font-medium">Xác nhận mật khẩu</div>
-                        <UInput v-model="state.confirmPassword" type="password" icon="mingcute:mail-line" size="lg"
-                                color="primary"
-                                autocomplete="on" />
-                        <UButton :loading="isSubmitting" class="mt-6 w-full rounded-md" size="lg" type="submit" block>
-                            Đổi mật khẩu
-                        </UButton>
-                    </form>
-                </div>
-            </UCard>
-        </UModal>
     </div>
+
+    <!-- * Forgot password -->
+    <UModal v-model="isForgotPasswordModalOpen" prevent-close>
+        <UCard
+               :ui="{ body: { padding: 'px-4 pb-4 lg:px-8 lg:pb-8' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800', strategy: 'override' }">
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                        Quên mật khẩu
+                    </h3>
+                    <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                             @click="isForgotPasswordModalOpen = false" />
+                </div>
+            </template>
+            <div>
+                <form class="flex w-full flex-col justify-start" :state="state" @submit.prevent="submitChangePassword">
+                    <div class="mb-2 mt-4 text-sm font-medium">Mật khẩu cũ</div>
+                    <UInput v-model="state.oldPassword" type="password" icon="mingcute:user-4-line" size="lg"
+                            color="primary"
+                            autocomplete="on" />
+                    <div class="mb-2 mt-4 text-sm font-medium">Mật khẩu mới</div>
+                    <UInput v-model="state.newPassword" type="password" icon="mingcute:mail-line" size="lg"
+                            color="primary"
+                            autocomplete="on" />
+                    <div class="mb-2 mt-4 text-sm font-medium">Xác nhận mật khẩu</div>
+                    <UInput v-model="state.confirmPassword" type="password" icon="mingcute:mail-line" size="lg"
+                            color="primary"
+                            autocomplete="on" />
+                    <UButton :loading="isSubmitting" class="mt-6 w-full rounded-md" size="lg" type="submit" block>
+                        Đổi mật khẩu
+                    </UButton>
+                </form>
+            </div>
+        </UCard>
+    </UModal>
+
+    <UModal v-model="isCVModalOpen" prevent-close>
+        <UCard
+               :ui="{ body: { padding: 'px-4 pb-4 lg:px-8 lg:pb-8' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800', strategy: 'override' }">
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                        Cập nhật CV
+                    </h3>
+                    <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                             @click="isCVModalOpen = false" />
+                </div>
+            </template>
+            <div>
+                <UInput type="file" size="sm" icon="i-heroicons-folder" accept=".pdf" @change="handleInputCVFile" />
+                <UButton class="mt-6 w-full rounded-md" size="lg" block @click="handleUploadCV" :loading="isSubmitting">
+                    Cập nhật
+                </UButton>
+            </div>
+        </UCard>
+    </UModal>
 </template>

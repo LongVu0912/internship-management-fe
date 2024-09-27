@@ -10,6 +10,7 @@ const route = useRoute();
 const { $apiToken } = useNuxtApp();
 const appUtils = AppUtils();
 const studentRepository = StudentRepository($apiToken);
+const backendUrl = window.localStorage.getItem("backendUrl") || useRuntimeConfig().public.backendUrl;
 
 // * Refs
 const student = ref<Student>();
@@ -143,12 +144,12 @@ onBeforeMount(async () => {
                     <div class="text-lg font-medium">
                         CV
                     </div>
-                    <ULink
-                           to=""
-                           active-class="text-primary"
-                           inactive-class="text-primary-500 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-200">
-                        My CV
-                    </ULink>
+                    <UButton v-if="student?.profile.uploadContent != undefined" variant="outline"
+                             color="gray"
+                             target="_blank"
+                             :to="backendUrl + `/file/${student?.profile.uploadContent.uploadContentId}`">
+                        {{ student?.profile.uploadContent?.fileName }}
+                    </UButton>
                 </div>
             </div>
         </div>
