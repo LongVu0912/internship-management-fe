@@ -4,13 +4,18 @@ import type Student from '~/types/student/Student';
 definePageMeta({
     layout: 'home',
 })
+
+// * Imports
+const route = useRoute();
 const { $apiToken } = useNuxtApp();
 const appUtils = AppUtils();
 const studentRepository = StudentRepository($apiToken);
 
-const route = useRoute();
+// * Refs
 const student = ref<Student>();
+const isPageLoading = ref(true);
 
+// * Lifecycle
 onBeforeMount(async () => {
     const studentId = route.params.studentId as string;
     const response = await studentRepository.getStudentProfileById({
@@ -18,19 +23,20 @@ onBeforeMount(async () => {
     });
 
     if (response.code != 200) {
-        throw createError({
+        showError({
             statusCode: 404,
             statusMessage: "Page not found",
-            fatal: true
         })
     }
 
     student.value = response.result;
+    isPageLoading.value = false;
 })
 </script>
 
 <template>
-    <div class="flex flex-col">
+    <Loading v-if="isPageLoading" />
+    <div v-else class="flex flex-col">
         <div class="flex flex-col justify-between gap-2 md:flex-row">
             <div class="h-auto w-full border border-gray-500 p-4">
                 <div class="flex flex-row items-center">
@@ -80,7 +86,7 @@ onBeforeMount(async () => {
                             <UBadge
                                     size="md"
                                     color="gray"
-                                    :label="appUtils.formatDate(student?.dob ?? '')" />
+                                    :label="student?.dob" />
                         </div>
                         <div class="flex items-center gap-2">
                             <UIcon name="mingcute:mail-line" class="h-6 w-6" />
@@ -111,6 +117,13 @@ onBeforeMount(async () => {
                                     size="md"
                                     color="gray"
                                     :label="student?.year" />
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <UIcon name="mingcute:building-3-line" class="h-6 w-6" />
+                            <UBadge
+                                    size="md"
+                                    color="gray"
+                                    :label="student?.major.faculty.name" />
                         </div>
                         <div class="flex items-center gap-2">
                             <UIcon name="mingcute:book-3-line" class="h-6 w-6" />

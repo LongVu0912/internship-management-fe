@@ -2,6 +2,7 @@
 // ? Emit event to parent component to close dialog
 const emit = defineEmits(['hideDialog']);
 
+// * Props
 const props = defineProps<{
     isOpen: boolean;
     title: string;
@@ -10,12 +11,15 @@ const props = defineProps<{
     onConfirm: () => void;
 }>();
 
+// * Refs
 const isOpen = ref(false);
 
+// * Watches
 watch(() => props.isOpen, (newValue) => {
     isOpen.value = newValue;
 });
 
+// * Functions
 const hideDialog = () => {
     isOpen.value = false;
     emit('hideDialog');

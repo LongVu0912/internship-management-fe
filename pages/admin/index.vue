@@ -7,27 +7,29 @@ definePageMeta({
     middleware: 'admin',
 })
 
+// * Imports
 const { $apiToken } = useNuxtApp();
 const adminRepository = AdminRepository($apiToken);
 const appUtils = AppUtils();
 const nuxtToast = useNuxtToast();
 
+// * Refs
+const isPageLoading = ref(true);
 const isInputModalOpen = ref(false);
-
 const searchTerm = ref('');
 const currentPage = ref(1);
-const pageSize = ref(6);
-
-const numericPageSize = computed({
-    get: () => pageSize.value,
-    set: (value) => {
-        pageSize.value = Number(value);
-    },
-});
+const pageSize = ref<number>(6);
 
 const pageConfig = ref(new PageConfig());
 const studentList = ref<Student[]>([]);
 
+// * Lifecycle
+onBeforeMount(async () => {
+    await fetchData();
+    isPageLoading.value = false;
+});
+
+// * Functions
 const fetchData = async () => {
     pageConfig.value.update({
         currentPage: currentPage.value,
@@ -39,42 +41,18 @@ const fetchData = async () => {
     pageConfig.value.update(apiResponse.result.pageConfig);
 }
 
-onMounted(async () => {
-    await fetchData();
-});
-
-watch([currentPage, pageSize], () => {
-    fetchData();
-});
-
-const columns = [
-    {
-        key: 'name',
-        label: 'Tên'
-    },
-    {
-        key: 'dob',
-        label: 'Ngày sinh'
-    },
-    {
-        key: 'email',
-        label: 'Email'
-    },
-    {
-        key: 'major',
-        label: 'Ngành'
-    },
-    {
-        key: 'actions'
-    }
-]
-
 const handleUndoneButton = () => {
     nuxtToast({
         description: "Chưa làm xong",
     })
 }
 
+// * Watches
+watch([currentPage, pageSize], () => {
+    fetchData();
+});
+
+// * Data
 const items = (row: any) => [
     [
         {
@@ -114,10 +92,37 @@ const items = (row: any) => [
         }
     ]
 ]
+
+const columns = [
+    {
+        key: 'name',
+        label: 'Tên'
+    },
+    {
+        key: 'dob',
+        label: 'Ngày sinh'
+    },
+    {
+        key: 'email',
+        label: 'Email'
+    },
+    {
+        key: 'major',
+        label: 'Ngành'
+    },
+    {
+        key: 'year',
+        label: 'Khoá'
+    },
+    {
+        key: 'actions'
+    }
+]
 </script>
 
 <template>
-    <div class="flex flex-col gap-2">
+    <Loading v-if="isPageLoading" />
+    <div v-else class="flex flex-col gap-2">
         <div class="flex flex-row justify-between">
             <UForm :state="pageConfig" @submit.prevent="fetchData">
                 <UInput v-model="searchTerm" placeholder="Tìm tên sinh viên..."
@@ -142,7 +147,7 @@ const items = (row: any) => [
 
             <template #dob-data="{ row }">
                 <div class="font-medium">
-                    {{ appUtils.formatDate(row.dob) }}
+                    {{ row.dob }}
                 </div>
                 <UBadge class="mt-1 w-10 justify-center" color="gray" variant="outline">
                     {{ row.profile.isMale ? "Nam" : "Nữ" }}
@@ -150,11 +155,24 @@ const items = (row: any) => [
             </template>
 
             <template #email-data="{ row }">
-                {{ row.profile.email }}
+                <div class="font-medium">
+                    {{ row.profile.email }}
+                </div>
             </template>
 
             <template #major-data="{ row }">
-                {{ row.major.name }}
+                <div class="font-medium">
+                    {{ row.major.name }}
+                </div>
+                <UBadge class="mt-1 justify-center" color="gray" variant="outline">
+                    {{ row.major.faculty.name }}
+                </UBadge>
+            </template>
+
+            <template #year-data="{ row }">
+                <div class="font-medium">
+                    {{ row.year }}
+                </div>
             </template>
 
             <template #actions-data="{ row }">
@@ -169,9 +187,9 @@ const items = (row: any) => [
             </div>
             <div class="flex flex-row items-center gap-2">
                 <div>
-                    <USelect v-model="numericPageSize" :options="[5, 6, 7, 8, 9, 10]" />
+                    <USelect v-model="pageSize" :options="[5, 6, 7, 8, 9, 10]" />
                 </div>
-                <UPagination :max="7" v-model="currentPage" :page-count="pageSize"
+                <UPagination :max="7" v-model.number="currentPage" :currentPage-count="pageSize"
                              :total="pageConfig?.totalRecords || 0" />
             </div>
         </div>

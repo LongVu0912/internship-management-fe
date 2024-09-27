@@ -56,52 +56,7 @@ const items = [
             <ColorPicker />
             <ColorMode />
             <div class="flex items-center">
-                <UButton icon="mingcute:home-3-line"
-                         color="gray"
-                         variant="ghost"
-                         class="h-8 w-8"
-                         @click="navigateTo('/')">
-                </UButton>
-                <!-- <UDropdown :items="items"
-                           :ui="{ width: 'w-auto min-w-40', padding: 'p-1.5', item: { disabled: 'cursor-text select-text' } }"
-                           :popper="{ placement: 'bottom-start' }">
-                    <UAvatar src="" :alt="props.avatarItem?.username" />
-
-                    <template #account="{ item }">
-                        <div class="text-left">
-                            <div class="font-normal">
-                                Đăng nhập bởi
-                            </div>
-                            <div class="font-semibold">
-                                {{ props.avatarItem?.username }}
-                            </div>
-                        </div>
-                    </template>
-
-<template #item="{ item }">
-                        <span class="truncate">{{ item.label }}</span>
-
-                        <UIcon :name="item.icon"
-                               class="ms-auto h-4 w-4 flex-shrink-0" />
-                    </template>
-
-<template #setting="{ item }">
-                        <div class="text-left">
-                            Cài đặt
-                        </div>
-                        <UIcon :name="item.icon"
-                               class="ms-auto h-4 w-4 flex-shrink-0" />
-                    </template>
-
-<template #logout="{ item }">
-                        <div class="text-left">
-                            Đăng xuất
-                        </div>
-
-                        <UIcon :name="item.icon"
-                               class="ms-auto h-4 w-4 flex-shrink-0" />
-                    </template>
-</UDropdown> -->
+                <AvatarHeader />
             </div>
         </div>
     </div>

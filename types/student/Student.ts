@@ -4,11 +4,10 @@ import type Profile from "../profile/Profile";
 
 export default interface Student {
     studentId: string;
-    year: string;
+    year: number;
     isSeekingIntern: boolean;
     dob: string;
     classId: null;
     profile: Profile;
-    faculty: Faculty;
     major: Major;
 }

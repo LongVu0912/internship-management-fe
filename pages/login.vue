@@ -4,12 +4,14 @@ import Role from '~/types/enums/Role';
 definePageMeta({
     colorMode: "light",
 });
-const { $api, $apiToken } = useNuxtApp();
 
+// * Imports
+const { $api } = useNuxtApp();
+const nuxtToast = useNuxtToast();
 const authRepository = AuthRepository($api);
 const jwtRepository = JwtRepository($api);
-const nuxtToast = useNuxtToast();
 
+// * Refs
 const isPasswordModalOpen = ref(false);
 const isLoading = ref(false);
 
@@ -20,10 +22,13 @@ const loginState = reactive({
     email: undefined,
 });
 
-onMounted(() => {
+// * Lifecycle
+onBeforeMount(() => {
     useAppConfig().ui.primary = "blue";
 })
 
+
+// * Functions
 const handleLoginSubmit = async () => {
     if (!loginState.username || !loginState.password) {
         nuxtToast({
