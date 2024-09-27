@@ -7,12 +7,17 @@ const sidebarState = useSidebarState();
 const sidebarItems: SidebarItem[] = [
     {
         icon: "mingcute:user-setting-line",
-        label: "Student",
+        label: "Sinh viên",
         to: "/admin",
     },
     {
+        icon: "mingcute:building-3-line",
+        label: "Khoa",
+        to: "/admin/faculty",
+    },
+    {
         icon: "mingcute:settings-3-line",
-        label: "Settings",
+        label: "Cài đặt",
         to: "/admin/settings",
     }
 ]

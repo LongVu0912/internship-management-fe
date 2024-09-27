@@ -7,6 +7,11 @@ const props = defineProps({
 </script>
 
 <template>
+
+    <Head>
+        <title>HCMUTE INTERNSHIP</title>
+        <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    </Head>
     <div class="bg-app-primary">
         <div class="flex min-h-screen items-center justify-center bg-cover bg-center">
             <div

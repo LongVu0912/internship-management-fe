@@ -6,15 +6,16 @@ definePageMeta({
     middleware: "student",
 });
 
+// * Imports
 const { $apiToken } = useNuxtApp();
 const userRepository = UserRepository($apiToken);
 const studentRepository = StudentRepository($apiToken);
-const appUtils = AppUtils();
 const nuxtToast = useNuxtToast();
 
+// * Refs
+const isPageLoading = ref(true);
 const isModalOpen = ref(false);
-const isLoading = ref(false);
-const isDataFirstFetching = ref(true);
+const isSubmitting = ref(false);
 
 const student = ref<Student>();
 
@@ -24,12 +25,13 @@ const state = reactive({
     confirmPassword: undefined
 });
 
-onMounted(async () => {
+// * Lifecycle
+onBeforeMount(async () => {
     const apiResponse = await studentRepository.getStudentProfile();
 
     if (apiResponse.code === 200) {
         student.value = apiResponse.result;
-        isDataFirstFetching.value = false;
+        isPageLoading.value = false;
     } else {
         nuxtToast({
             description: apiResponse.message,
@@ -38,6 +40,7 @@ onMounted(async () => {
     }
 });
 
+// * Functions
 const submitChangePassword = async () => {
     if (!state.oldPassword || !state.newPassword || !state.confirmPassword) {
         nuxtToast({
@@ -63,7 +66,7 @@ const submitChangePassword = async () => {
         return;
     }
 
-    isLoading.value = true;
+    isSubmitting.value = true;
 
     const apiResponse = await userRepository.changePassword({
         oldPassword: state.oldPassword,
@@ -82,13 +85,12 @@ const submitChangePassword = async () => {
             type: 'error',
         });
     }
-    isLoading.value = false;
+    isSubmitting.value = false;
 };
-
 </script>
 
 <template>
-    <div v-if="isDataFirstFetching">
+    <div v-if="isPageLoading">
         <Loading />
     </div>
     <div v-else>
@@ -148,7 +150,7 @@ const submitChangePassword = async () => {
                     <UBadge
                             size="md"
                             color="gray"
-                            :label="appUtils.formatDate(student?.dob ?? '')" />
+                            :label="student?.dob" />
                 </div>
                 <div class="flex items-center gap-2">
                     <UIcon name="mingcute:mail-line" class="h-6 w-6" />
@@ -180,6 +182,13 @@ const submitChangePassword = async () => {
                             size="md"
                             color="gray"
                             :label="student?.year" />
+                </div>
+                <div class="flex items-center gap-2">
+                    <UIcon name="mingcute:building-3-line" class="h-6 w-6" />
+                    <UBadge
+                            size="md"
+                            color="gray"
+                            :label="student?.major.faculty.name" />
                 </div>
                 <div class="flex items-center gap-2">
                     <UIcon name="mingcute:book-3-line" class="h-6 w-6" />
@@ -244,7 +253,7 @@ const submitChangePassword = async () => {
                         <UInput v-model="state.confirmPassword" type="password" icon="mingcute:mail-line" size="lg"
                                 color="primary"
                                 autocomplete="on" />
-                        <UButton :loading="isLoading" class="mt-6 w-full rounded-md" size="lg" type="submit" block>
+                        <UButton :loading="isSubmitting" class="mt-6 w-full rounded-md" size="lg" type="submit" block>
                             Đổi mật khẩu
                         </UButton>
                     </form>

@@ -3,6 +3,7 @@ definePageMeta({
     layout: 'home',
 })
 
+// * Refs
 const page = ref(1)
 const items = ref(Array(55))
 </script>

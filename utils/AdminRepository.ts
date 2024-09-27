@@ -4,7 +4,9 @@ import { PageConfig } from "~/types/student/PageConfig";
 
 export const AdminRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
     // * Get the student profile using jwt token in header
-    const getAllStudentPaging = async (payload: PageConfig): Promise<ApiResponse> => {
+    const getAllStudentPaging = async (
+        payload: PageConfig
+    ): Promise<ApiResponse> => {
         try {
             const response: ApiResponse = await fetch(
                 `/student/GetAllStudentPaging`,
@@ -12,7 +14,36 @@ export const AdminRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
                     method: "POST",
                     body: JSON.stringify(payload),
                 }
-                    
+            );
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
+    const getAllFaculties = async (): Promise<ApiResponse> => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/faculty/GetAllFaculties`,
+                {
+                    method: "GET",
+                }
+            );
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
+    const getMajorsByFacultyId = async (payload: {
+        facultyId: string;
+    }): Promise<ApiResponse> => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/major/GetMajorsByFacultyId/${payload.facultyId}`,
+                {
+                    method: "GET",
+                }
             );
             return response;
         } catch (error: any) {
@@ -22,5 +53,7 @@ export const AdminRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
 
     return {
         getAllStudentPaging,
+        getAllFaculties,
+        getMajorsByFacultyId,
     };
 };
