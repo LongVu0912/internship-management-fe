@@ -17,6 +17,7 @@ const isPageLoading = ref(true);
 const isMajorModalOpen = ref(false);
 const facultyList = ref<Faculty[]>();
 const majorList = ref<Major[]>();
+const currentFacultyId = ref('');
 const currentPage = ref(1)
 const pageSize = ref(5);
 
@@ -46,6 +47,7 @@ const fetchData = async () => {
 }
 
 const handleOpenMajorModal = async (facultyId: string) => {
+    currentFacultyId.value = facultyId;
     const apiResponse = await adminRepository.getMajorsByFacultyId({
         facultyId: facultyId
     });
@@ -160,7 +162,7 @@ const columns = [
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-                        Các ngành
+                        Các ngành {{ currentFacultyId }}
                     </h3>
                     <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
                              @click="isMajorModalOpen = false" />

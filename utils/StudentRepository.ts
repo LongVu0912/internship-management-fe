@@ -31,8 +31,25 @@ export const StudentRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         }
     };
 
+    const uploadCV = async (payload: { cv: File }) => {
+        const formData = new FormData();
+        formData.append("cv", payload.cv);
+
+        try {
+            const response: ApiResponse = await fetch(`/student/UploadCV`, {
+                method: "POST",
+                body: formData,
+            });
+
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
     return {
         getStudentProfile,
         getStudentProfileById,
+        uploadCV,
     };
 };

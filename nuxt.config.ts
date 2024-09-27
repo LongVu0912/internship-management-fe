@@ -20,5 +20,11 @@ export default defineNuxtConfig({
             backendUrl: process.env.BACKEND_URL || "http://localhost:8080/api",
         },
     },
-    modules: ["@nuxt/ui", "@nuxt/icon", "@nuxtjs/color-mode", "@vueuse/nuxt", "@nuxt/image"],
+    modules: [
+        "@nuxt/ui",
+        "@nuxt/icon",
+        "@nuxtjs/color-mode",
+        "@vueuse/nuxt",
+        "@nuxt/image",
+    ],
 });
