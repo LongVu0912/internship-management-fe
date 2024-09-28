@@ -6,7 +6,7 @@ const emit = defineEmits(['hideDialog']);
 const props = defineProps<{
     isOpen: boolean;
     title: string;
-    message: string;
+    description: string;
     onCancel: () => void;
     onConfirm: () => void;
 }>();
@@ -48,16 +48,16 @@ const onConfirmButton = () => {
             </template>
 
             <div>
-                {{ props.message }}
+                {{ props.description }}
             </div>
 
             <template #footer>
                 <div class="flex justify-end">
                     <UButton class="mr-2" color="gray" variant="ghost" @click="onCancelButton">
-                        Cancel
+                        Huỷ
                     </UButton>
                     <UButton color="primary" @click="onConfirmButton">
-                        Confirm
+                        Xác nhận
                     </UButton>
                 </div>
             </template>

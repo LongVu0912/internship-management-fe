@@ -19,13 +19,34 @@ const isForgotPasswordModalOpen = ref(false);
 const isCVModalOpen = ref(false);
 const isSubmitting = ref(false);
 const cvFile = ref<File | null>(null);
+const isConfirmDialogOpen = ref(false);
+const isUpdating = ref(false);
 
 const student = ref<Student>();
+const updateInformationStudent = ref<Student>();
 
 const state = reactive({
     oldPassword: undefined,
     newPassword: undefined,
     confirmPassword: undefined
+});
+
+const studentInformation = reactive({
+    dob: '',
+    phoneNumber: '',
+    bio: '',
+    isMale: false,
+    isSeekingIntern: false,
+});
+
+// Computed property to map boolean to string
+const genderOptions = ['Nữ', 'Nam'];
+
+const gender = computed({
+    get: () => (studentInformation.isMale ? 'Nam' : 'Nữ'),
+    set: (value: string) => {
+        studentInformation.isMale = (value === 'Nam');
+    }
 });
 
 // * Lifecycle
@@ -41,6 +62,13 @@ const fetchData = async () => {
 
     if (apiResponse.code === 200) {
         student.value = apiResponse.result;
+
+        studentInformation.bio = student.value?.profile.bio || '';
+        studentInformation.dob = student.value?.dob || '';
+        studentInformation.isMale = student.value?.profile.isMale || false;
+        studentInformation.isSeekingIntern = student.value?.isSeekingIntern || false;
+        studentInformation.phoneNumber = student.value?.profile.phoneNumber || '';
+
         isPageLoading.value = false;
     } else {
         nuxtToast({
@@ -135,6 +163,30 @@ const handleUploadCV = async () => {
     }
     isSubmitting.value = false;
 }
+
+const handleUpdateButton = () => {
+    if (isUpdating.value == false) {
+        isUpdating.value = true;
+        nuxtToast({
+            description: "Hãy điền thông tin mới",
+        })
+    }
+    else {
+        isConfirmDialogOpen.value = true;
+    }
+}
+
+const onDialogConfirm = () => {
+    nuxtToast({
+        description: "Chưa làm xong",
+    })
+    isUpdating.value = false;
+}
+
+const onDialogCancel = () => {
+    isUpdating.value = false;
+}
+
 </script>
 
 <template>
@@ -143,7 +195,7 @@ const handleUploadCV = async () => {
     </div>
     <div v-else>
         <div class="flex flex-col gap-2">
-            <div class="text-xl font-medium">
+            <div class="text-lg font-medium">
                 Tài khoản
             </div>
             <div class="text-sm font-normal">
@@ -158,13 +210,15 @@ const handleUploadCV = async () => {
                 <div class="ml-4 flex flex-col justify-center gap-1">
                     <div class="flex flex-col gap-2">
                         <div>
-                            <UBadge
-                                    size="md"
+                            <UInput
+                                    class="w-full"
+                                    size="sm"
                                     color="gray"
-                                    :label="student?.profile.username" />
+                                    :placeholder="student?.profile.username"
+                                    disabled />
                         </div>
                         <div class="flex gap-2">
-                            <UBadge v-if="student?.isSeekingIntern"
+                            <UBadge v-if="studentInformation.isSeekingIntern"
                                     size="md"
                                     color="green"
                                     variant="outline"
@@ -174,6 +228,9 @@ const handleUploadCV = async () => {
                                     color="red"
                                     variant="outline"
                                     label="Không tìm việc" />
+                            <UButton v-if="isUpdating" variant="solid" color="gray" icon="mingcute:refresh-3-line"
+                                     @click="studentInformation.isSeekingIntern = !studentInformation.isSeekingIntern">
+                            </UButton>
                         </div>
                     </div>
                 </div>
@@ -181,90 +238,130 @@ const handleUploadCV = async () => {
         </div>
         <UDivider label="" size="xs" class="my-4" />
 
-        <div class="flex flex-col gap-2">
-            <div class="text-xl font-semibold">
-                Thông tin cá nhân
+        <div class="flex flex-col justify-between gap-2 md:flex-row">
+            <div class="mr-16 flex w-full flex-col gap-2">
+                <div class="text-lg font-semibold">
+                    Thông tin cá nhân
+                </div>
+                <div class="flex flex-col gap-2">
+                    <div class="flex items-center gap-2">
+                        <UInput
+                                size="sm"
+                                color="gray"
+                                icon="mingcute:user-4-line"
+                                class="w-full"
+                                :placeholder="student?.profile.fullname"
+                                disabled />
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <UInput
+                                size="sm"
+                                color="gray"
+                                icon="mingcute:birthday-2-line"
+                                class="w-full"
+                                v-model="studentInformation.dob"
+                                :disabled="!isUpdating" />
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <UInput
+                                size="sm"
+                                color="gray"
+                                icon="mingcute:mail-line"
+                                class="w-full"
+                                :placeholder="student?.profile.email"
+                                disabled />
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <UInput
+                                size="sm"
+                                color="gray"
+                                icon="mingcute:phone-line"
+                                class="w-full"
+                                v-model="studentInformation.phoneNumber"
+                                :disabled="!isUpdating" />
+                    </div>
+                </div>
             </div>
-            <div class="flex flex-col gap-2">
-                <div class="flex items-center gap-2">
-                    <UIcon name="mingcute:user-4-line" class="h-6 w-6" />
-                    <UBadge
-                            size="md"
-                            color="gray"
-                            :label="student?.profile.fullname" />
+
+            <div class="mr-16 flex w-full flex-col gap-2">
+                <div class="text-lg font-medium">
+                    Bio
                 </div>
-                <div class="flex items-center gap-2">
-                    <UIcon name="mingcute:birthday-2-line" class="h-6 w-6" />
-                    <UBadge
-                            size="md"
-                            color="gray"
-                            :label="student?.dob" />
-                </div>
-                <div class="flex items-center gap-2">
-                    <UIcon name="mingcute:mail-line" class="h-6 w-6" />
-                    <UBadge
-                            size="md"
-                            color="gray"
-                            :label="student?.profile.email" />
-                </div>
-                <div class="flex items-center gap-2">
-                    <UIcon name="mingcute:phone-line" class="h-6 w-6" />
-                    <UBadge
-                            size="md"
-                            color="gray"
-                            :label="student?.profile.phoneNumber" />
+                <div class="flex flex-col gap-2">
+                    <div class="flex items-center gap-2">
+                        <USelect
+                                 icon="mingcute:user-info-line"
+                                 color="white"
+                                 size="sm"
+                                 class="w-full"
+                                 :options="genderOptions"
+                                 v-model="gender"
+                                 :disabled="!isUpdating" />
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <UInput
+                                size="sm"
+                                color="gray"
+                                icon="mingcute:school-line"
+                                class="w-full"
+                                :placeholder="student?.year.toString()"
+                                disabled />
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <UInput
+                                size="sm"
+                                color="gray"
+                                icon="mingcute:building-3-line"
+                                class="w-full"
+                                :placeholder="student?.major.faculty.name"
+                                disabled />
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <UInput
+                                size="sm"
+                                color="gray"
+                                icon="mingcute:book-3-line"
+                                class="w-full"
+                                :placeholder="student?.major.name"
+                                disabled />
+                    </div>
+
                 </div>
             </div>
         </div>
 
         <UDivider label="" size="xs" class="my-4" />
 
-        <div class="flex flex-col gap-2">
-            <div class="text-xl font-medium">
-                Bio
+        <div class="flex flex-col justify-center gap-2 md:flex-row">
+            <div class="flex w-full flex-col gap-2">
+                <div class="text-lg font-medium">
+                    CV
+                </div>
+                <div class="flex flex-row gap-2">
+                    <UButton v-if="student?.profile.uploadContent != undefined" variant="outline"
+                             color="gray"
+                             target="_blank"
+                             :to="backendUrl + `/file/${student?.profile.uploadContent.uploadContentId}`">
+                        {{ student?.profile.uploadContent?.fileName }}
+                    </UButton>
+                    <UButton variant="outline" color="gray" icon="mingcute:upload-2-fill" @click="isCVModalOpen = true">
+                    </UButton>
+                </div>
             </div>
-            <div class="flex flex-col gap-2">
-                <div class="flex items-center gap-2">
-                    <UIcon name="mingcute:school-line" class="h-6 w-6" />
-                    <UBadge
-                            size="md"
-                            color="gray"
-                            :label="student?.year" />
+
+            <div class="flex w-full flex-col gap-2">
+                <div class="text-lg font-medium">
+                    Mô tả
                 </div>
-                <div class="flex items-center gap-2">
-                    <UIcon name="mingcute:building-3-line" class="h-6 w-6" />
-                    <UBadge
-                            size="md"
-                            color="gray"
-                            :label="student?.major.faculty.name" />
-                </div>
-                <div class="flex items-center gap-2">
-                    <UIcon name="mingcute:book-3-line" class="h-6 w-6" />
-                    <UBadge
-                            size="md"
-                            color="gray"
-                            :label="student?.major.name" />
-                </div>
-                <div class="text-justify text-sm font-normal">
+
+                <div v-if="!isUpdating" class="text-justify text-sm font-normal">
                     {{ student?.profile.bio }}
                 </div>
-            </div>
-        </div>
-        <UDivider label="" size="xs" class="my-4" />
-
-        <div class="flex flex-col items-start gap-2">
-            <div class="text-lg font-medium">
-                CV
-            </div>
-            <div class="flex flex-row gap-2">
-                <UButton v-if="student?.profile.uploadContent != undefined" variant="outline"
-                         color="gray"
-                         target="_blank"
-                         :to="backendUrl + `/file/${student?.profile.uploadContent.uploadContentId}`">
-                    {{ student?.profile.uploadContent?.fileName }}
-                </UButton>
-                <UButton variant="outline" color="gray" icon="mingcute:upload-2-fill" @click="isCVModalOpen = true">
-                </UButton>
+                <UTextarea v-else
+                           size="lg"
+                           color="gray"
+                           v-model="studentInformation.bio"
+                           class="w-full"></UTextarea>
             </div>
         </div>
 
@@ -275,12 +372,13 @@ const handleUploadCV = async () => {
             <div class="flex gap-2">
                 <UButton color="primary" variant="outline" @click="isForgotPasswordModalOpen = true">Đổi mật khẩu
                 </UButton>
-                <UButton color="primary">Cập nhật</UButton>
+                <UButton color="primary" @click="handleUpdateButton">{{ isUpdating == true ? "Xác nhận" : "Cập nhật" }}
+                </UButton>
             </div>
         </div>
     </div>
 
-    <!-- * Forgot password -->
+    <!-- * Modal for forgot password -->
     <UModal v-model="isForgotPasswordModalOpen" prevent-close>
         <UCard
                :ui="{ body: { padding: 'px-4 pb-4 lg:px-8 lg:pb-8' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800', strategy: 'override' }">
@@ -315,6 +413,7 @@ const handleUploadCV = async () => {
         </UCard>
     </UModal>
 
+    <!-- * Modal for uploading CV -->
     <UModal v-model="isCVModalOpen" prevent-close>
         <UCard
                :ui="{ body: { padding: 'px-4 pb-4 lg:px-8 lg:pb-8' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800', strategy: 'override' }">
@@ -327,12 +426,17 @@ const handleUploadCV = async () => {
                              @click="isCVModalOpen = false" />
                 </div>
             </template>
-            <div>
+            <div class="mt-4">
                 <UInput type="file" size="sm" icon="i-heroicons-folder" accept=".pdf" @change="handleInputCVFile" />
                 <UButton class="mt-6 w-full rounded-md" size="lg" block @click="handleUploadCV" :loading="isSubmitting">
-                    Cập nhật
+                    Xác nhận
                 </UButton>
             </div>
         </UCard>
     </UModal>
+
+    <ConfirmDialog :isOpen="isConfirmDialogOpen" title="Cập nhật thông tin"
+                   description="Bạn có chắc muốn cập nhật thông tin?" :onConfirm="onDialogConfirm"
+                   :onCancel="onDialogCancel"
+                   @hideDialog="isConfirmDialogOpen = false" />
 </template>
