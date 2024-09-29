@@ -17,6 +17,6 @@
 }
 
 /* Apply transition to body */
-body {
+/* body {
     @apply transition-colors duration-500;
-}
+} */

@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type Student from '~/types/student/Student';
+import { format } from 'date-fns';
+import { vi } from 'date-fns/locale';
 
 definePageMeta({
     layout: 'home',
@@ -37,120 +39,130 @@ onBeforeMount(async () => {
 
 <template>
     <Loading v-if="isPageLoading" />
-    <div v-else class="flex flex-col">
-        <div class="flex flex-col justify-between gap-2 md:flex-row">
-            <div class="h-auto w-full border border-gray-500 p-4">
-                <div class="flex flex-row items-center">
-                    <div>
-                        <UAvatar
-                                 size="lg"
-                                 :alt="student?.profile.fullname" />
-                    </div>
-                    <div class="ml-4 flex flex-col justify-center gap-1">
-                        <div class="flex flex-col gap-2">
-                            <div>
-                                <UBadge
-                                        size="md"
-                                        color="gray"
-                                        :label="student?.profile.username" />
-                            </div>
-                            <div class="flex gap-2">
-                                <UBadge v-if="student?.isSeekingIntern"
-                                        size="md"
-                                        color="green"
-                                        variant="outline"
-                                        label="Đang tìm việc" />
-                                <UBadge v-else
-                                        size="md"
-                                        color="red"
-                                        variant="outline"
-                                        label="Không tìm việc" />
-                            </div>
-                        </div>
-                    </div>
+    <div v-else class="px-4 lg:px-12">
+        <div class="flex flex-col gap-2">
+            <div class="text-lg font-medium">
+                Tài khoản
+            </div>
+            <div class="flex flex-row items-center">
+                <div>
+                    <UAvatar
+                             size="xl"
+                             :alt="student?.profile.fullname" />
                 </div>
-                <UDivider label="" size="xs" class="my-4" />
-                <div class="flex flex-col gap-2">
-                    <div class="text-xl font-semibold">
-                        Thông tin cá nhân
-                    </div>
+                <div class="ml-4 flex flex-col justify-center gap-1">
                     <div class="flex flex-col gap-2">
-                        <div class="flex items-center gap-2">
-                            <UIcon name="mingcute:user-4-line" class="h-6 w-6" />
+                        <div>
                             <UBadge
-                                    size="md"
+                                    size="lg"
                                     color="gray"
-                                    :label="student?.profile.fullname" />
+                                    variant="solid"
+                                    :label="student?.profile.username" />
                         </div>
-                        <div class="flex items-center gap-2">
-                            <UIcon name="mingcute:birthday-2-line" class="h-6 w-6" />
-                            <UBadge
-                                    size="md"
-                                    color="gray"
-                                    :label="student?.dob" />
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <UIcon name="mingcute:mail-line" class="h-6 w-6" />
-                            <UBadge
-                                    size="md"
-                                    color="gray"
-                                    :label="student?.profile.email" />
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <UIcon name="mingcute:phone-line" class="h-6 w-6" />
-                            <UBadge
-                                    size="md"
-                                    color="gray"
-                                    :label="student?.profile.phoneNumber" />
+                        <div class="flex gap-2">
+                            <UBadge v-if="student?.isSeekingIntern"
+                                    size="lg"
+                                    color="green"
+                                    variant="outline"
+                                    label="Đang tìm việc" />
+                            <UBadge v-else
+                                    size="lg"
+                                    color="red"
+                                    variant="outline"
+                                    label="Không tìm việc" />
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="h-auto w-full border border-gray-500 p-4">
+        </div>
+        <UDivider label="" size="xs" class="my-4" />
+
+        <div class="flex flex-col justify-between gap-2 md:flex-row md:gap-12">
+            <div class="flex w-full flex-col gap-2">
+                <div class="text-lg font-semibold">
+                    Thông tin cá nhân
+                </div>
                 <div class="flex flex-col gap-2">
-                    <div class="text-xl font-medium">
-                        Bio
+                    <div class="flex items-center gap-2">
+                        <UInput
+                                size="sm"
+                                color="gray"
+                                icon="mingcute:user-4-line"
+                                class="w-full"
+                                :placeholder="student?.profile.fullname"
+                                disabled />
                     </div>
-                    <div class="flex flex-col gap-2">
-                        <div class="flex items-center gap-2">
-                            <UIcon name="mingcute:school-line" class="h-6 w-6" />
-                            <UBadge
-                                    size="md"
-                                    color="gray"
-                                    :label="student?.year" />
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <UIcon name="mingcute:building-3-line" class="h-6 w-6" />
-                            <UBadge
-                                    size="md"
-                                    color="gray"
-                                    :label="student?.major.faculty.name" />
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <UIcon name="mingcute:book-3-line" class="h-6 w-6" />
-                            <UBadge
-                                    size="md"
-                                    color="gray"
-                                    :label="student?.major.name" />
-                        </div>
-                        <div class="text-justify text-sm font-normal">
-                            {{ student?.profile.bio }}
-                        </div>
+                    <div class="flex items-center gap-2">
+                        <UInput
+                                size="sm"
+                                color="gray"
+                                icon="mingcute:birthday-2-line"
+                                class="w-full"
+                                :placeholder="format(student?.dob ? new Date(student.dob) : new Date(), 'd MMM, yyy', { locale: vi })"
+                                disabled />
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <UInput size="sm" color="gray" icon="mingcute:mail-line" class="w-full"
+                                :placeholder="student?.profile.email"
+                                disabled />
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <UInput size="sm" icon="mingcute:phone-line" :class="['w-full rounded-md']"
+                                :placeholder="student?.profile.phoneNumber" color="gray" disabled />
                     </div>
                 </div>
-                <UDivider label="" size="xs" class="my-4" />
+            </div>
 
-                <div class="flex flex-col items-start gap-2">
-                    <div class="text-lg font-medium">
-                        CV
+            <div class="flex w-full flex-col gap-2">
+                <div class="text-lg font-medium">
+                    Bio
+                </div>
+                <div class="flex flex-col gap-2">
+                    <div class="flex items-center gap-2">
+                        <UInput size="sm" color="gray" icon="mingcute:user-info-line" class="w-full"
+                                :placeholder="student?.profile.isMale ? 'Nam' : 'Nữ'" disabled />
                     </div>
-                    <UButton v-if="student?.profile.uploadContent != undefined" variant="outline"
-                             color="gray"
+                    <div class="flex items-center gap-2">
+                        <UInput size="sm" color="gray" icon="mingcute:school-line" class="w-full"
+                                :placeholder="student?.year.toString()" disabled />
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <UInput size="sm" color="gray" icon="mingcute:building-3-line" class="w-full"
+                                :placeholder="student?.major.faculty.name" disabled />
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <UInput size="sm" color="gray" icon="mingcute:book-3-line" class="w-full"
+                                :placeholder="student?.major.name"
+                                disabled />
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <UDivider label="" size="xs" class="my-4" />
+
+        <div class="flex flex-col justify-between gap-2 md:flex-row md:gap-12">
+            <div class="flex w-full flex-col gap-2">
+                <div class="text-lg font-medium">
+                    CV
+                </div>
+                <div class="flex flex-row gap-2">
+                    <UButton v-if="student?.profile.uploadContent != undefined" variant="outline" color="gray"
                              target="_blank"
                              :to="backendUrl + `/file/${student?.profile.uploadContent.uploadContentId}`">
                         {{ student?.profile.uploadContent?.fileName }}
                     </UButton>
                 </div>
+            </div>
+
+            <div class="flex w-full flex-col gap-2">
+                <div class="text-lg font-medium">
+                    Mô tả
+                </div>
+                <UTextarea :ui="{ placeholder: 'placeholder-gray-900 dark:placeholder-gray-100' }" disabled size="lg"
+                           color="gray" :rows="5" :placeholder="student?.profile.bio" class="w-full">
+                </UTextarea>
             </div>
         </div>
     </div>
