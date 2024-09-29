@@ -3,22 +3,25 @@ export default defineAppConfig({
         primary: "blue",
         gray: "slate",
         select: {
-            base: "font-semibold",
-            placeholder: "text-gray-900 dark:text-gray-50",
+            base: "font-medium",
+            placeholder: "text-gray-900 dark:text-gray-100",
             icon: {
-                base: "text-gray-900 dark:text-gray-50",
+                base: "",
             },
         },
         button: {
             default: {
                 loadingIcon: "mingcute:loading-fill",
             },
+            icon: {
+                base: "",
+            },
         },
         input: {
-            placeholder: "placeholder-gray-900 dark:placeholder-gray-50",
-            base: "font-semibold",
+            base: "font-medium",
+            placeholder: "placeholder-gray-900 dark:placeholder-gray-100",
             icon: {
-                base: "text-gray-600 dark:text-gray-50",
+                base: "",
             },
         },
     },

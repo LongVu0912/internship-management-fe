@@ -10,12 +10,12 @@ const sidebarState = useSidebarState();
 const sidebarItems: SidebarItem[] = [
     {
         icon: "mingcute:user-setting-line",
-        label: "Student",
+        label: "Cài đặt",
         to: "/student",
     },
     {
         icon: "mingcute:profile-line",
-        label: "Profile",
+        label: "Hồ sơ",
         to: "/student/profile",
     }
 ]

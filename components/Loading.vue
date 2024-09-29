@@ -1,3 +1,3 @@
 <template>
-    Loading
+    Đang tải
 </template>
