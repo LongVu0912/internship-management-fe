@@ -4,13 +4,13 @@ export default defineAppConfig({
         gray: "slate",
         select: {
             base: "font-medium",
-            placeholder: "text-gray-900 dark:text-gray-100",
             icon: {
                 base: "",
             },
         },
         button: {
             default: {
+                color: "gray",
                 loadingIcon: "mingcute:loading-fill",
             },
             icon: {
@@ -18,11 +18,16 @@ export default defineAppConfig({
             },
         },
         input: {
-            base: "font-medium",
-            placeholder: "placeholder-gray-900 dark:placeholder-gray-100",
+            base: "font-medium disabled:cursor-text disabled:select-text",
             icon: {
                 base: "",
             },
+            default: {
+                size: "md",
+            },
+        },
+        textarea: {
+            base: "font-medium",
         },
     },
 });

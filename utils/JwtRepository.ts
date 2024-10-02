@@ -49,7 +49,7 @@ export const JwtRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         if ((await isLogged()) && tokenCookie.value) {
             return decodeToken(tokenCookie.value).scope as Role;
         }
-        return Role.GUEST;
+        return Role.ROLE_GUEST;
     };
 
     // * Get profile name from sub

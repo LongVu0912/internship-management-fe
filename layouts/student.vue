@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type AvatarItem from '~/types/AvatarItem';
-import type SidebarItem from '~/types/SidebarItem';
+import type AvatarItem from '~/types/ui/AvatarItem';
+import type SidebarItem from '~/types/ui/SidebarItem';
 
 const { $api } = useNuxtApp();
 const authRepository = AuthRepository($api);
@@ -9,13 +9,13 @@ const sidebarState = useSidebarState();
 
 const sidebarItems: SidebarItem[] = [
     {
-        icon: "mingcute:user-setting-line",
-        label: "Cài đặt",
+        icon: "mingcute:profile-line",
+        label: "Hồ sơ",
         to: "/student",
     },
     {
-        icon: "mingcute:profile-line",
-        label: "Hồ sơ",
+        icon: "mingcute:user-setting-line",
+        label: "Cài đặt",
         to: "/student/profile",
     }
 ]

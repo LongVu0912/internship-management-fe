@@ -1,13 +1,11 @@
-import Role from "~/types/enums/Role";
-
 export default defineNuxtRouteMiddleware(async (to, from) => {
     if (import.meta.server) return;
     const { $api } = useNuxtApp();
 
     const jwtRepository = JwtRepository($api);
-    const role = await jwtRepository.getRole();
+    const isLogged = await jwtRepository.isLogged();
 
-    if (role != Role.ROLE_STUDENT) {
+    if (!isLogged) {
         return navigateTo("/login");
     }
 });

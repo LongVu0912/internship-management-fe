@@ -18,7 +18,7 @@ const isMajorModalOpen = ref(false);
 const facultyList = ref<Faculty[]>();
 const majorList = ref<Major[]>();
 const currentFacultyId = ref('');
-const currentPage = ref(1)
+const currentPage = ref(1);
 const pageSize = ref(5);
 
 const rows = computed(() => {
@@ -109,7 +109,8 @@ const items = (row: any) => [
 const columns = [
     {
         key: 'facultyId',
-        label: 'ID'
+        label: 'ID',
+        class: '',
     },
     {
         key: 'name',
@@ -126,13 +127,11 @@ const columns = [
     <div v-else>
         <UTable class="rounded-lg border border-gray-100 dark:border-gray-700" :columns="columns" :rows="rows">
             <template #facultyId-data="{ row }">
-                <div class="font-medium">
-                    {{ row.facultyId }}
-                </div>
+                <UBadge class="flex w-14 justify-center" size="md" variant="outline" :label="row.facultyId" />
             </template>
 
             <template #name-data="{ row }">
-                <div class="font-normal">
+                <div class="font-medium">
                     {{ row.name }}
                 </div>
             </template>

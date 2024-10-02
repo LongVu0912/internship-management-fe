@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type AvatarItem from '~/types/AvatarItem';
+import type AvatarItem from '~/types/ui/AvatarItem';
 const sidebarState = useSidebarState();
 
 const props = defineProps({
