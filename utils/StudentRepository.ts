@@ -47,9 +47,23 @@ export const StudentRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         }
     };
 
+    const updateProfile = async (payload: Object) => {
+        try {
+            const response: ApiResponse = await fetch(`/student/UpdateStudent`, {
+                method: "POST",
+                body: payload,
+            });
+
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
     return {
         getStudentProfile,
         getStudentProfileById,
         uploadCV,
+        updateProfile,
     };
 };

@@ -45,7 +45,7 @@ const items = [
             label: 'Cài đặt',
             icon: 'mingcute:settings-5-line',
             click: () => {
-                if (userRole.value == Role.ADMIN) {
+                if (userRole.value == Role.ROLE_ADMIN) {
                     navigateTo("/admin");
                 }
                 else {

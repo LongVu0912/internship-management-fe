@@ -54,7 +54,7 @@ const handleLoginSubmit = async () => {
             type: 'success',
             timeout: 1000,
             onCallback: () => {
-                if (role == Role.ADMIN) {
+                if (role == Role.ROLE_ADMIN) {
                     navigateTo("/admin");
                 }
                 else {

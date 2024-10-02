@@ -8,8 +8,6 @@ definePageMeta({
     middleware: "student",
 });
 
-useAppConfig().ui.button.icon.base = "text-gray-900 dark:text-gray-100";
-
 // * Imports
 const { $apiToken } = useNuxtApp();
 const userRepository = UserRepository($apiToken);
@@ -25,7 +23,6 @@ const isSubmitting = ref(false);
 const cvFile = ref<File | null>(null);
 const isConfirmDialogOpen = ref(false);
 const isUpdating = ref(false);
-const date = ref(new Date());
 
 const student = ref<Student>();
 
@@ -35,21 +32,22 @@ const state = reactive({
     confirmPassword: undefined
 });
 
-const studentInformation = reactive({
+const studentUpdateInformation = reactive({
     dob: ref(new Date()),
     phoneNumber: '',
     bio: '',
     isMale: false,
     isSeekingIntern: false,
+    email: '',
 });
 
 // Computed property to map boolean to string
 const genderOptions = ['Nữ', 'Nam'];
 
 const gender = computed({
-    get: () => (studentInformation.isMale ? 'Nam' : 'Nữ'),
+    get: () => (studentUpdateInformation.isMale ? 'Nam' : 'Nữ'),
     set: (value: string) => {
-        studentInformation.isMale = (value === 'Nam');
+        studentUpdateInformation.isMale = (value === 'Nam');
     }
 });
 
@@ -67,13 +65,14 @@ const fetchData = async () => {
     if (apiResponse.code === 200) {
         student.value = apiResponse.result;
 
-        studentInformation.bio = student.value?.profile.bio || '';
-        studentInformation.dob = student.value?.dob ? new Date(student.value.dob) : new Date();
-        studentInformation.isMale = student.value?.profile.isMale || false;
-        studentInformation.isSeekingIntern = student.value?.isSeekingIntern || false;
-        studentInformation.phoneNumber = student.value?.profile.phoneNumber || '';
+        studentUpdateInformation.bio = student.value?.profile.bio || '';
+        studentUpdateInformation.dob = student.value?.dob ? new Date(student.value.dob) : new Date();
+        studentUpdateInformation.isMale = student.value?.profile.isMale || false;
+        studentUpdateInformation.isSeekingIntern = student.value?.isSeekingIntern || false;
+        studentUpdateInformation.phoneNumber = student.value?.profile.phoneNumber || '';
+        studentUpdateInformation.email = student.value?.profile.email || '',
 
-        isPageLoading.value = false;
+            isPageLoading.value = false;
     } else {
         nuxtToast({
             description: apiResponse.message,
@@ -177,11 +176,32 @@ const handleUpdateButton = () => {
     }
 }
 
-const onDialogConfirm = () => {
-    nuxtToast({
-        description: "Chưa làm xong",
-    })
-    isUpdating.value = false;
+const onDialogConfirm = async () => {
+    const studentUpdateObject = {
+        dob: studentUpdateInformation.dob.toISOString().split('T')[0], // Format date as "YYYY-MM-DD"
+        profile: {
+            isMale: studentUpdateInformation.isMale,
+            bio: studentUpdateInformation.bio,
+            phoneNumber: studentUpdateInformation.phoneNumber,
+            email: studentUpdateInformation.email
+        },
+    };
+
+    const apiResponse = await studentRepository.updateProfile(studentUpdateObject);
+
+    if (apiResponse.code === 200) {
+        nuxtToast({
+            description: "Cập nhật thông tin thành công",
+            type: "success",
+        });
+        fetchData();
+        isUpdating.value = false;
+    } else {
+        nuxtToast({
+            description: apiResponse.message,
+            type: 'error',
+        });
+    }
 }
 
 const onDialogCancel = () => {
@@ -195,135 +215,58 @@ const onDialogCancel = () => {
         <Loading />
     </div>
     <div v-else>
-        <div class="flex flex-col gap-2">
-            <div class="text-lg font-medium">
-                Tài khoản
-            </div>
-            <div class="flex flex-row items-center">
-                <div>
-                    <UAvatar
-                             size="xl"
-                             :alt="student?.profile.fullname" />
-                </div>
-                <div class="ml-4 flex flex-col justify-center gap-1">
-                    <div class="flex flex-col gap-2">
-                        <div>
-                            <UBadge
-                                    size="lg"
-                                    color="gray"
-                                    variant="solid"
-                                    :label="student?.profile.username" />
-                        </div>
-                        <div class="flex gap-2">
-                            <UBadge v-if="studentInformation.isSeekingIntern"
-                                    size="lg"
-                                    color="green"
-                                    variant="outline"
-                                    label="Đang tìm việc" />
-                            <UBadge v-else
-                                    size="lg"
-                                    color="red"
-                                    variant="outline"
-                                    label="Không tìm việc" />
-                            <UButton v-if="isUpdating"
-                                     variant="solid"
-                                     color="gray"
-                                     icon="mingcute:refresh-3-line"
-                                     class="border-primary-500 border"
-                                     @click="studentInformation.isSeekingIntern = !studentInformation.isSeekingIntern">
-                            </UButton>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <UDivider label="" size="xs" class="my-4" />
-
         <div class="flex flex-col justify-between gap-2 md:flex-row md:gap-12">
             <div class="flex w-full flex-col gap-2">
                 <div class="text-lg font-semibold">
-                    Thông tin cá nhân
+                    Tài khoản
                 </div>
-                <div class="flex flex-col gap-2">
-                    <div class="flex items-center gap-2">
-                        <UInput
-                                size="sm"
-                                color="gray"
-                                icon="mingcute:user-4-line"
-                                class="w-full"
-                                :placeholder="student?.profile.fullname"
-                                disabled />
+                <div class="flex flex-row items-center gap-4">
+                    <div>
+                        <UAvatar
+                                 size="xl"
+                                 :alt="student?.profile.fullname" />
                     </div>
-                    <div class="flex items-center gap-2">
-                        <UPopover class="w-full" :popper="{ placement: 'bottom-start' }">
-                            <UButton :ui="{ base: 'disabled:opacity-100' }"
-                                     :class="['w-full rounded-md text-gray-600 dark:text-gray-300', { 'border-primary-500 border': isUpdating }]"
-                                     :label="format(studentInformation.dob, 'd MMM, yyy', { locale: vi })"
-                                     color="gray"
-                                     :disabled="!isUpdating">
-                                <template #leading>
-                                    <UIcon name="mingcute:birthday-2-line"
-                                           class="h-5 w-5 text-gray-900 dark:text-gray-100" />
-                                </template>
-                            </UButton>
-
-                            <template #panel="{ close }">
-                                <DatePicker class="w-full" v-model="studentInformation.dob" @close="close" />
-                            </template>
-                        </UPopover>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <UInput size="sm" color="gray" icon="mingcute:mail-line" class="w-full"
-                                :placeholder="student?.profile.email"
-                                disabled />
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <UInput size="sm" icon="mingcute:phone-line"
-                                :class="['w-full rounded-md', { 'border-primary-500 border': isUpdating }]"
-                                v-model="studentInformation.phoneNumber" color="gray" :disabled="!isUpdating" />
+                    <div class="flex flex-col justify-center gap-1">
+                        <div class="flex flex-col gap-2">
+                            <div>
+                                <UBadge
+                                        size="lg"
+                                        color="gray"
+                                        variant="solid"
+                                        :label="student?.profile.username" />
+                            </div>
+                            <div class="flex gap-2">
+                                <UBadge v-if="studentUpdateInformation.isSeekingIntern"
+                                        size="lg"
+                                        color="green"
+                                        variant="outline"
+                                        label="Đang tìm việc" />
+                                <UBadge v-else
+                                        size="lg"
+                                        color="red"
+                                        variant="outline"
+                                        label="Không tìm việc" />
+                                <UButton v-if="isUpdating"
+                                         variant="solid"
+                                         color="gray"
+                                         icon="mingcute:refresh-3-line"
+                                         class="border-primary-500 border"
+                                         @click="studentUpdateInformation.isSeekingIntern = !studentUpdateInformation.isSeekingIntern">
+                                </UButton>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
+            <UDivider size="xs" class="my-2 flex md:hidden" />
+
             <div class="flex w-full flex-col gap-2">
-                <div class="text-lg font-medium">
-                    Bio
-                </div>
-                <div class="flex flex-col gap-2">
-                    <div class="flex items-center gap-2">
-                        <USelect icon="mingcute:user-info-line" size="sm" class="w-full" :options="genderOptions"
-                                 color="gray"
-                                 :class="['w-full rounded-md', { 'border-primary-500 border': isUpdating }]"
-                                 v-model="gender"
-                                 :disabled="!isUpdating" />
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <UInput size="sm" color="gray" icon="mingcute:school-line" class="w-full"
-                                :placeholder="student?.year.toString()" disabled />
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <UInput size="sm" color="gray" icon="mingcute:building-3-line" class="w-full"
-                                :placeholder="student?.major.faculty.name" disabled />
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <UInput size="sm" color="gray" icon="mingcute:book-3-line" class="w-full"
-                                :placeholder="student?.major.name"
-                                disabled />
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-        <UDivider label="" size="xs" class="my-4" />
-
-        <div class="flex flex-col justify-between gap-2 md:flex-row md:gap-12">
-            <div class="flex w-full flex-col gap-2">
-                <div class="text-lg font-medium">
+                <div class="text-lg font-semibold">
                     CV
                 </div>
-                <div class="flex flex-row gap-2">
-                    <UButton v-if="student?.profile.uploadContent != undefined" variant="outline" color="gray"
+                <div class="flex flex-row items-center gap-4">
+                    <UButton v-if="student?.profile.uploadContent != undefined" variant="link" color="gray"
                              target="_blank"
                              :to="backendUrl + `/file/${student?.profile.uploadContent.uploadContentId}`">
                         {{ student?.profile.uploadContent?.fileName }}
@@ -332,20 +275,102 @@ const onDialogCancel = () => {
                     </UButton>
                 </div>
             </div>
+        </div>
+
+        <UDivider size="xs" class="mb-4 mt-6" />
+
+        <div class="flex flex-col justify-between gap-2 md:flex-row md:gap-12">
+            <div class="flex w-full flex-col gap-2">
+                <div class="text-lg font-semibold">
+                    Thông tin cá nhân
+                </div>
+                <div class="flex flex-col gap-2">
+                    <div class="flex items-center gap-2">
+                        <UInput icon="mingcute:user-4-line"
+                                class="w-full"
+                                :model-value="student?.profile.fullname"
+                                disabled />
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <UInput v-if="!isUpdating" icon="mingcute:birthday-2-line"
+                                class="w-full"
+                                :model-value="format(studentUpdateInformation.dob, 'd MMM, yyy', { locale: vi })"
+                                disabled />
+                        <UPopover v-else class="w-full" :popper="{ placement: 'bottom-start' }">
+                            <UButton :ui="{ base: 'disabled:opacity-100' }"
+                                     class="border-primary-500 w-full rounded-md border"
+                                     :label="format(studentUpdateInformation.dob, 'd MMM, yyy', { locale: vi })"
+                                     color="gray"
+                                     size="md"
+                                     :disabled="!isUpdating">
+                                <template #leading>
+                                    <UIcon name="mingcute:birthday-2-line"
+                                           class="h-5 w-5 text-gray-900 dark:text-gray-100" />
+                                </template>
+                            </UButton>
+
+                            <template #panel="{ close }">
+                                <DatePicker class="w-full" v-model="studentUpdateInformation.dob" @close="close" />
+                            </template>
+                        </UPopover>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <UInput icon="mingcute:mail-line" type="email"
+                                :class="['w-full rounded-md', { 'border-primary-500 border': isUpdating }]"
+                                v-model="studentUpdateInformation.email" :disabled="!isUpdating" />
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <UInput icon="mingcute:phone-line"
+                                :class="['w-full rounded-md', { 'border-primary-500 border': isUpdating }]"
+                                v-model="studentUpdateInformation.phoneNumber" :disabled="!isUpdating" />
+                    </div>
+                </div>
+            </div>
+
+            <UDivider size="xs" class="my-2 flex md:hidden" />
 
             <div class="flex w-full flex-col gap-2">
                 <div class="text-lg font-medium">
-                    Mô tả
+                    Bio
                 </div>
-                <UTextarea :disabled="!isUpdating" size="lg" :color="!isUpdating ? 'gray' : 'primary'" :rows="5"
-                           v-model="studentInformation.bio" class="w-full">
-                </UTextarea>
+                <div class="flex flex-col gap-2">
+                    <div class="flex items-center gap-2">
+                        <UInput v-if="!isUpdating" icon="mingcute:user-info-line" class="w-full" :model-value="gender"
+                                disabled />
+                        <USelect v-else icon="mingcute:user-info-line" size="md" :options="genderOptions"
+                                 class="border-primary-500 w-full rounded-md border" v-model="gender" />
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <UInput icon="mingcute:school-line" class="w-full" :model-value="student?.year.toString()"
+                                disabled />
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <UInput icon="mingcute:building-3-line" class="w-full"
+                                :model-value="student?.major.faculty.name"
+                                disabled />
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <UInput icon="mingcute:book-3-line" class="w-full" :model-value="student?.major.name"
+                                disabled />
+                    </div>
+
+                </div>
             </div>
         </div>
 
-        <UDivider label="" size="xs" class="my-4" />
+        <UDivider size="xs" class="mb-4 mt-6" />
 
-        <div class="flex flex-row justify-between gap-2">
+        <div class="flex w-full flex-col gap-2">
+            <div class="text-lg font-medium">
+                Mô tả
+            </div>
+            <UTextarea :ui="{ base: 'disabled:cursor-text disabled:select-text' }" :disabled="!isUpdating" size="lg"
+                       :color="!isUpdating ? 'gray' : 'primary'" :rows="5" v-model="studentUpdateInformation.bio"
+                       class="w-full">
+            </UTextarea>
+        </div>
+
+        <div class="mt-4 flex flex-row justify-between gap-2">
             <div></div>
             <div class="flex gap-2">
                 <UButton color="primary" variant="outline" @click="isForgotPasswordModalOpen = true">Đổi mật khẩu

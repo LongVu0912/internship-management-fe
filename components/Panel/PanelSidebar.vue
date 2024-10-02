@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type SidebarItem from '~/types/SidebarItem';
+import type SidebarItem from '~/types/ui/SidebarItem';
 
 const sidebarState = useSidebarState();
 
