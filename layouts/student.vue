@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type AvatarItem from '~/types/ui/AvatarItem';
 import type SidebarItem from '~/types/ui/SidebarItem';
 
 const { $api } = useNuxtApp();
@@ -19,22 +18,13 @@ const sidebarItems: SidebarItem[] = [
         to: "/student/profile",
     }
 ]
-
-const avatarItem: AvatarItem = {
-    username: "Tester",
-    avatar: "/avatar.png",
-    logout: () => {
-        authRepository.logout();
-    }
-}
-
 </script>
 
 <template>
     <div class="bg-app-primary min-h-screen">
         <PanelSidebar :items="sidebarItems" />
         <div class="lg:ml-[--sidebar-width]">
-            <PanelHeader :avatarItem="avatarItem" />
+            <PanelHeader />
             <div class="px-6 pb-4 pt-20" @click="sidebarState = false">
                 <slot></slot>
             </div>

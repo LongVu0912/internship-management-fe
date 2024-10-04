@@ -49,10 +49,13 @@ export const StudentRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
 
     const updateProfile = async (payload: Object) => {
         try {
-            const response: ApiResponse = await fetch(`/student/UpdateStudent`, {
-                method: "POST",
-                body: payload,
-            });
+            const response: ApiResponse = await fetch(
+                `/student/UpdateStudent`,
+                {
+                    method: "POST",
+                    body: JSON.stringify(payload),
+                }
+            );
 
             return response;
         } catch (error: any) {

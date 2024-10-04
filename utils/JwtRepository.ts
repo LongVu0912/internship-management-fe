@@ -28,7 +28,7 @@ export const JwtRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
 
     // * Check if the user is logged
     const isLogged = async () => {
-        if (tokenCookie.value && (await isTokenValid(tokenCookie.value))) {
+        if (tokenCookie.value) {
             return true;
         }
         return false;
@@ -46,8 +46,16 @@ export const JwtRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
 
     // * Get role from the token
     const getRole = async () => {
-        if ((await isLogged()) && tokenCookie.value) {
-            return decodeToken(tokenCookie.value).scope as Role;
+        if (tokenCookie.value) {
+            const decodedToken = decodeToken(tokenCookie.value);
+            const scope = decodedToken.scope as string;
+
+            // Find the role with the "ROLE_" prefix
+            const role = scope
+                .split(" ")
+                .find((permission) => permission.startsWith("ROLE_"));
+
+            return role ? (role as Role) : Role.ROLE_GUEST;
         }
         return Role.ROLE_GUEST;
     };
@@ -69,6 +77,6 @@ export const JwtRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         saveTokenToCookie,
         isLogged,
         getRole,
-        getProfileName
+        getProfileName,
     };
 };

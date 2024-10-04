@@ -28,8 +28,6 @@ export const AuthRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
     const logout = (): void => {
         token.value = null;
         navigateTo("/login");
-
-        // TODO: login at backend
     };
 
     return {

@@ -15,7 +15,7 @@ const jwtRepository = JwtRepository($api);
 const isPasswordModalOpen = ref(false);
 const isLoading = ref(false);
 
-// * For login and forgot password
+// ? For login and forgot password
 const loginState = reactive({
     username: undefined,
     password: undefined,
@@ -26,7 +26,6 @@ const loginState = reactive({
 onBeforeMount(() => {
     useAppConfig().ui.primary = "blue";
 })
-
 
 // * Functions
 const handleLoginSubmit = async () => {
@@ -83,7 +82,7 @@ const handleForgotPasswordSubmit = () => {
 <template>
     <div class="flex min-h-screen items-center justify-center bg-background-login bg-cover bg-center">
         <div
-             class="flex w-3/4 flex-col items-center justify-center rounded-md bg-gray-100 p-6 shadow-xl sm:p-8 md:w-1/2 lg:w-1/2 xl:w-1/3 dark:bg-gray-800">
+             class="flex w-3/4 flex-col items-center justify-center rounded-md bg-gray-100 p-6 shadow-xl sm:p-8 md:w-1/2 lg:w-1/2 xl:w-1/3">
             <NuxtImg src="/hcmute.png" quality="80" width="144" height="144" alt="hcmute" />
             <div class="mt-2 text-xl font-extrabold">HCMUTE INTERNSHIP</div>
             <div class="flex w-full flex-col items-center justify-center">
@@ -93,18 +92,16 @@ const handleForgotPasswordSubmit = () => {
                             type="text"
                             icon="mingcute:user-4-line"
                             size="lg"
-                            color="blue"
                             autocomplete="on" />
                     <div class="mb-2 mt-4 text-sm font-medium">Mật khẩu</div>
                     <UInput v-model="loginState.password"
                             type="password"
                             icon="mingcute:key-2-line"
                             size="lg"
-                            color="blue"
                             autocomplete="on" />
                     <div class="mt-4 text-sm font-medium">
                         Quên mật khẩu?
-                        <button class="text-blue-500" @click="isPasswordModalOpen = true" type="button">
+                        <button class="text-primary-600" @click="isPasswordModalOpen = true" type="button">
                             Nhấn vào đây
                         </button>
                     </div>
@@ -123,25 +120,26 @@ const handleForgotPasswordSubmit = () => {
                :ui="{ body: { padding: 'px-4 pb-4 lg:px-8 lg:pb-8' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800', strategy: 'override' }">
             <template #header>
                 <div class="flex items-center justify-between">
-                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                    <div class="text-base font-semibold">
                         Quên mật khẩu
-                    </h3>
+                    </div>
                     <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
                              @click="isPasswordModalOpen = false" />
                 </div>
             </template>
             <div>
-                <form class="flex w-full flex-col justify-start" @submit.prevent="handleForgotPasswordSubmit">
+                <UForm :state="loginState" class="flex w-full flex-col justify-start"
+                       @submit.prevent="handleForgotPasswordSubmit">
                     <div class="mb-2 mt-4 text-sm font-medium">Tài khoản</div>
-                    <UInput v-model="loginState.username" type="text" icon="mingcute:user-4-line" size="lg" color="blue"
+                    <UInput v-model="loginState.username" type="text" icon="mingcute:user-4-line" size="lg"
                             autocomplete="on" />
                     <div class="mb-2 mt-4 text-sm font-medium">Email</div>
-                    <UInput v-model="loginState.email" type="email" icon="mingcute:mail-line" size="lg" color="blue"
+                    <UInput v-model="loginState.email" type="email" icon="mingcute:mail-line" size="lg"
                             autocomplete="on" />
-                    <UButton class="mt-6 w-full rounded-md" size="lg" type="submit" block>
+                    <UButton class="mt-6 w-full rounded-md" size="lg" color="blue" type="submit" block>
                         Quên mật khẩu
                     </UButton>
-                </form>
+                </UForm>
             </div>
         </UCard>
     </UModal>

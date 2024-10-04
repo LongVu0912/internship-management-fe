@@ -10,7 +10,6 @@ definePageMeta({
 // * Imports
 const { $apiToken } = useNuxtApp();
 const adminRepository = AdminRepository($apiToken);
-const appUtils = AppUtils();
 const nuxtToast = useNuxtToast();
 
 // * Refs
@@ -18,7 +17,8 @@ const isPageLoading = ref(true);
 const isInputModalOpen = ref(false);
 const searchTerm = ref('');
 const currentPage = ref(1);
-const pageSize = ref<number>(6);
+const pageSize = ref(5);
+const selectedMajor = ref([]);
 
 const pageConfig = ref(new PageConfig());
 const studentList = ref<Student[]>([]);
@@ -118,22 +118,34 @@ const columns = [
         key: 'actions'
     }
 ]
+
+const majors = [
+    "Ngành Robot và trí tuệ nhân tạo", "Ngành Thiết kế đồ họa", "Ngành Kỹ thuật Công nghiệp",
+];
 </script>
 
 <template>
     <Loading v-if="isPageLoading" />
     <div v-else class="flex flex-col gap-2">
-        <div class="flex flex-row justify-between">
-            <UForm :state="pageConfig" @submit.prevent="fetchData">
-                <UInput v-model="searchTerm" placeholder="Tìm tên sinh viên..."
-                        :ui="{ icon: { trailing: { pointer: 'pointer-events-auto' } } }">
-                    <template #trailing>
-                        <UButton icon="heroicons:magnifying-glass-16-solid" color="primary"
-                                 class="-me-2.5 rounded-none rounded-r-md" type="submit" />
-                    </template>
-                </UInput>
-            </UForm>
-            <UButton @click="isInputModalOpen = true">Nhập</UButton>
+        <div class="flex flex-col justify-between gap-2 md:flex-row">
+            <div class="flex flex-col gap-2 md:flex-row">
+                <UForm :state="pageConfig" @submit.prevent="fetchData">
+                    <UInput v-model="searchTerm"
+                            placeholder="Tìm tên sinh viên..."
+                            class="w-64"
+                            size="sm"
+                            :ui="{ icon: { trailing: { pointer: 'pointer-events-auto' } } }">
+                        <template #trailing>
+                            <UButton icon="heroicons:magnifying-glass-16-solid" color="primary"
+                                     class="-me-2.5 rounded-none rounded-r-md" type="submit" />
+                        </template>
+                    </UInput>
+                </UForm>
+                <USelectMenu class="w-64" v-model="selectedMajor" :options="majors" multiple placeholder="Chọn ngành" />
+            </div>
+            <div>
+                <UButton color="primary" @click="isInputModalOpen = true">Nhập</UButton>
+            </div>
         </div>
         <UTable class="rounded-lg border border-gray-100 dark:border-gray-700" :columns="columns" :rows="studentList">
             <template #name-data="{ row }">
@@ -187,9 +199,9 @@ const columns = [
             </div>
             <div class="flex flex-row items-center gap-2">
                 <div>
-                    <USelect v-model="pageSize" :options="[5, 6, 7, 8, 9, 10]" />
+                    <USelect v-model.number="pageSize" :options="[5, 6, 7, 8, 9, 10]" />
                 </div>
-                <UPagination :max="7" v-model.number="currentPage" :currentPage-count="pageSize"
+                <UPagination :max="7" v-model="currentPage" :page-count="pageSize"
                              :total="pageConfig?.totalRecords || 0" />
             </div>
         </div>
@@ -209,7 +221,7 @@ const columns = [
             </template>
             <div>
                 <UInput type="file" size="sm" icon="i-heroicons-folder" />
-                <UButton class="mt-6 w-full rounded-md" size="lg" block @click="handleUndoneButton">
+                <UButton color="primary" class="mt-6 w-full rounded-md" size="lg" block @click="handleUndoneButton">
                     Nhập dữ liệu
                 </UButton>
             </div>

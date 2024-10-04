@@ -168,8 +168,8 @@ const columns = [
                 </div>
             </template>
             <div>
-                <div class="flex flex-col gap-2">
-                    <UBadge variant="outline" size="lg" v-for="major in majorList">
+                <div class="mt-4 flex flex-col gap-2">
+                    <UBadge variant="outline" color="gray" size="lg" v-for="major in majorList">
                         {{ major.name }}
                     </UBadge>
                 </div>

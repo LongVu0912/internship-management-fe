@@ -1,42 +1,10 @@
 <script setup lang="ts">
-import type AvatarItem from '~/types/ui/AvatarItem';
 const sidebarState = useSidebarState();
-
-const props = defineProps({
-    avatarItem: Object as PropType<AvatarItem>
-})
-
-const items = [
-    [
-        {
-            slot: 'account',
-            label: 'Account',
-            disabled: true
-        }
-    ],
-    [
-        {
-            slot: 'setting',
-            label: 'Setting',
-            icon: 'mingcute:settings-5-line',
-        }
-    ],
-    [
-        {
-            slot: 'logout',
-            label: 'Logout',
-            icon: 'mingcute:exit-fill',
-            click: () => {
-                props.avatarItem?.logout();
-            }
-        }
-    ]
-]
 </script>
 
 <template>
     <div
-         class="bg-app-primary fixed z-40 flex h-16 w-full flex-row items-center justify-between border-b border-gray-200 shadow-sm lg:pr-[--sidebar-width] dark:border-gray-800">
+         class="bg-app-primary fixed z-40 flex h-16 w-full flex-row items-center justify-between border-b border-gray-200 lg:pr-[--sidebar-width] dark:border-gray-800">
         <div class="flex flex-row">
             <UButton class="ml-2 lg:hidden"
                      icon="mingcute:menu-line"
