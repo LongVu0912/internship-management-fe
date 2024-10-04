@@ -1,33 +1,26 @@
 <script setup lang="ts">
 import type SidebarItem from '~/types/ui/SidebarItem';
 
+const { $api } = useNuxtApp();
+const authRepository = AuthRepository($api);
+
 const sidebarState = useSidebarState();
 
 const sidebarItems: SidebarItem[] = [
     {
-        icon: "mingcute:group-3-line",
-        label: "Sinh viên",
-        to: "/admin",
+        icon: "mingcute:profile-line",
+        label: "Hồ sơ",
+        to: "/business",
     },
     {
-        icon: "mingcute:building-3-line",
-        label: "Khoa",
-        to: "/admin/faculty",
-    },
-    {
-        icon: "mingcute:mortarboard-line",
-        label: "Giảng viên",
-        to: "/admin/instructor",
-    },
-    {
-        icon: "mingcute:building-5-line",
-        label: "Công ty",
-        to: "/admin/business",
+        icon: "mingcute:group-line",
+        label: "Tuyển dụng",
+        to: "/business/recruitment",
     },
     {
         icon: "mingcute:settings-3-line",
         label: "Cài đặt",
-        to: "/admin/settings",
+        to: "/business/settings",
     }
 ]
 </script>

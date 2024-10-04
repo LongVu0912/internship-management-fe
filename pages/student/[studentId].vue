@@ -154,7 +154,7 @@ onBeforeMount(async () => {
                                 disabled />
                     </div>
                     <div class="flex items-center gap-2">
-                        <UInput icon="mingcute:book-3-line"
+                        <UInput icon="mingcute:book-6-line"
                                 class="w-full"
                                 :model-value="student?.major.name"
                                 disabled />

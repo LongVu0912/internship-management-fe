@@ -41,12 +41,21 @@ const items = [
     ],
     [
         {
+            slot: 'home',
+            label: 'Trang chủ',
+            icon: 'mingcute:home-3-line',
+            click: () => navigateTo("/")
+        },
+        {
             slot: 'setting',
             label: 'Cài đặt',
             icon: 'mingcute:settings-5-line',
             click: () => {
                 if (userRole.value == Role.ROLE_ADMIN) {
                     navigateTo("/admin");
+                }
+                else if (userRole.value == Role.ROLE_BUSINESS) {
+                    navigateTo("/business");
                 }
                 else {
                     navigateTo("/student");
@@ -66,48 +75,49 @@ const items = [
 </script>
 
 <template>
-    <ClientOnly>
-        <UDropdown v-if="isLogged"
-                   :items="items"
-                   :ui="{ item: { disabled: 'cursor-text select-text' } }">
-            <UAvatar alt="Tester" />
+    <UDropdown v-if="isLogged"
+               :items="items"
+               :ui="{ item: { disabled: 'cursor-text select-text' } }">
+        <UAvatar :alt="username" />
 
-            <template #account="{ item }">
-                <div class="text-left">
-                    <div class="font-normal">
-                        Đăng nhập bởi
-                    </div>
-                    <div class="font-semibold">
-                        {{ username }}
-                    </div>
-                </div>
-            </template>
+        <template #account="{ item }">
+            <div class="font-semibold">
+                {{ username }}
+            </div>
+        </template>
 
-            <template #item="{ item }">
-                <span class="truncate">{{ item.label }}</span>
+        <template #item="{ item }">
+            <span class="truncate">{{ item.label }}</span>
 
-                <UIcon :name="item.icon"
-                       class="ms-auto h-4 w-4 flex-shrink-0" />
-            </template>
+            <UIcon :name="item.icon"
+                   class="ms-auto h-4 w-4 flex-shrink-0" />
+        </template>
 
-            <template #setting="{ item }">
-                <div class="text-left">
-                    Cài đặt
-                </div>
-                <UIcon :name="item.icon"
-                       class="ms-auto h-4 w-4 flex-shrink-0" />
-            </template>
+        <template #home="{ item }">
+            <div class="text-left font-medium">
+                {{ item.label }}
+            </div>
+            <UIcon :name="item.icon"
+                   class="ms-auto h-4 w-4 flex-shrink-0" />
+        </template>
 
-            <template #logout="{ item }">
-                <div class="text-left">
-                    Đăng xuất
-                </div>
+        <template #setting="{ item }">
+            <div class="text-left font-medium">
+                {{ item.label }}
+            </div>
+            <UIcon :name="item.icon"
+                   class="ms-auto h-4 w-4 flex-shrink-0" />
+        </template>
 
-                <UIcon :name="item.icon"
-                       class="ms-auto h-4 w-4 flex-shrink-0" />
-            </template>
-        </UDropdown>
+        <template #logout="{ item }">
+            <div class="text-left font-medium">
+                {{ item.label }}
+            </div>
 
-        <UButton v-else label="Đăng nhập" variant="outline" color="primary" @click="handleLoginButton" />
-    </ClientOnly>
+            <UIcon :name="item.icon"
+                   class="ms-auto h-4 w-4 flex-shrink-0" />
+        </template>
+    </UDropdown>
+
+    <UButton v-else label="Đăng nhập" variant="outline" color="primary" @click="handleLoginButton" />
 </template>

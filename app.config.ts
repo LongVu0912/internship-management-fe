@@ -24,6 +24,7 @@ export default defineAppConfig({
             },
             default: {
                 size: "md",
+                color: "gray",
             },
         },
         textarea: {

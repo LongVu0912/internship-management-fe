@@ -26,7 +26,7 @@ const isUpdating = ref(false);
 
 const student = ref<Student>();
 
-const state = reactive({
+const forgetPasswordState = reactive({
     oldPassword: undefined,
     newPassword: undefined,
     confirmPassword: undefined
@@ -70,9 +70,9 @@ const fetchData = async () => {
         studentUpdateInformation.isMale = student.value?.profile.isMale || false;
         studentUpdateInformation.isSeekingIntern = student.value?.isSeekingIntern || false;
         studentUpdateInformation.phoneNumber = student.value?.profile.phoneNumber || '';
-        studentUpdateInformation.email = student.value?.profile.email || '',
+        studentUpdateInformation.email = student.value?.profile.email || '';
 
-            isPageLoading.value = false;
+        isPageLoading.value = false;
     } else {
         nuxtToast({
             description: apiResponse.message,
@@ -82,7 +82,7 @@ const fetchData = async () => {
 }
 
 const submitChangePassword = async () => {
-    if (!state.oldPassword || !state.newPassword || !state.confirmPassword) {
+    if (!forgetPasswordState.oldPassword || !forgetPasswordState.newPassword || !forgetPasswordState.confirmPassword) {
         nuxtToast({
             description: "Hãy nhập đầy đủ thông tin",
             type: "info",
@@ -90,7 +90,7 @@ const submitChangePassword = async () => {
         return;
     }
 
-    if (state.newPassword !== state.confirmPassword) {
+    if (forgetPasswordState.newPassword !== forgetPasswordState.confirmPassword) {
         nuxtToast({
             description: "Mật khẩu xác nhận không khớp",
             type: "error",
@@ -98,7 +98,7 @@ const submitChangePassword = async () => {
         return;
     }
 
-    if (state.oldPassword == state.newPassword) {
+    if (forgetPasswordState.oldPassword == forgetPasswordState.newPassword) {
         nuxtToast({
             description: "Mật khẩu mới không được trùng với mật khẩu cũ",
             type: "error",
@@ -109,8 +109,8 @@ const submitChangePassword = async () => {
     isSubmitting.value = true;
 
     const apiResponse = await userRepository.changePassword({
-        oldPassword: state.oldPassword,
-        newPassword: state.newPassword,
+        oldPassword: forgetPasswordState.oldPassword,
+        newPassword: forgetPasswordState.newPassword,
     });
 
     if (apiResponse.code === 200) {
@@ -205,6 +205,10 @@ const onDialogConfirm = async () => {
 }
 
 const onDialogCancel = () => {
+    nuxtToast({
+        description: 'Đã huỷ cập nhật thông tin'
+    })
+    fetchData();
     isUpdating.value = false;
 }
 
@@ -300,7 +304,7 @@ const onDialogCancel = () => {
                             <UButton :ui="{ base: 'disabled:opacity-100' }"
                                      class="border-primary-500 w-full rounded-md border"
                                      :label="format(studentUpdateInformation.dob, 'd MMM, yyy', { locale: vi })"
-                                     color="gray"
+                                     color="white"
                                      size="md"
                                      :disabled="!isUpdating">
                                 <template #leading>
@@ -350,7 +354,7 @@ const onDialogCancel = () => {
                                 disabled />
                     </div>
                     <div class="flex items-center gap-2">
-                        <UInput icon="mingcute:book-3-line" class="w-full" :model-value="student?.major.name"
+                        <UInput icon="mingcute:book-6-line" class="w-full" :model-value="student?.major.name"
                                 disabled />
                     </div>
 
@@ -373,7 +377,9 @@ const onDialogCancel = () => {
         <div class="mt-4 flex flex-row justify-between gap-2">
             <div></div>
             <div class="flex gap-2">
-                <UButton color="primary" variant="outline" @click="isForgotPasswordModalOpen = true">Đổi mật khẩu
+                <UButton color="primary" v-if="!isUpdating" variant="outline" @click="isForgotPasswordModalOpen = true">
+                    Đổi mật
+                    khẩu
                 </UButton>
                 <UButton color="primary" @click="handleUpdateButton">
                     {{ isUpdating == true ? "Xác nhận" : "Cập nhật" }}
@@ -388,29 +394,33 @@ const onDialogCancel = () => {
                :ui="{ body: { padding: 'px-4 pb-4 lg:px-8 lg:pb-8' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800', strategy: 'override' }">
             <template #header>
                 <div class="flex items-center justify-between">
-                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-                        Quên mật khẩu
-                    </h3>
+                    <div class="text-base font-semibold">
+                        Đổi mật khẩu
+                    </div>
                     <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
                              @click="isForgotPasswordModalOpen = false" />
                 </div>
             </template>
             <div>
-                <form class="flex w-full flex-col justify-start" :state="state" @submit.prevent="submitChangePassword">
+                <UForm :state="forgetPasswordState" class="flex w-full flex-col justify-start"
+                       @submit.prevent="submitChangePassword">
                     <div class="mb-2 mt-4 text-sm font-medium">Mật khẩu cũ</div>
-                    <UInput v-model="state.oldPassword" type="password" icon="mingcute:user-4-line" size="lg"
-                            color="primary" autocomplete="on" />
+                    <UInput v-model="forgetPasswordState.oldPassword" type="password" icon="mingcute:user-4-line"
+                            size="lg"
+                            color="gray" autocomplete="on" />
                     <div class="mb-2 mt-4 text-sm font-medium">Mật khẩu mới</div>
-                    <UInput v-model="state.newPassword" type="password" icon="mingcute:mail-line" size="lg"
-                            color="primary"
-                            autocomplete="on" />
+                    <UInput v-model="forgetPasswordState.newPassword" type="password" icon="mingcute:mail-line"
+                            size="lg"
+                            color="gray" autocomplete="on" />
                     <div class="mb-2 mt-4 text-sm font-medium">Xác nhận mật khẩu</div>
-                    <UInput v-model="state.confirmPassword" type="password" icon="mingcute:mail-line" size="lg"
-                            color="primary" autocomplete="on" />
-                    <UButton :loading="isSubmitting" class="mt-6 w-full rounded-md" size="lg" type="submit" block>
+                    <UInput v-model="forgetPasswordState.confirmPassword" type="password" icon="mingcute:mail-line"
+                            size="lg" color="gray" autocomplete="on" />
+                    <UButton :loading="isSubmitting" class="mt-6 w-full rounded-md" size="lg" color="primary"
+                             type="submit"
+                             block>
                         Đổi mật khẩu
                     </UButton>
-                </form>
+                </UForm>
             </div>
         </UCard>
     </UModal>
@@ -421,16 +431,17 @@ const onDialogCancel = () => {
                :ui="{ body: { padding: 'px-4 pb-4 lg:px-8 lg:pb-8' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800', strategy: 'override' }">
             <template #header>
                 <div class="flex items-center justify-between">
-                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                    <div class="text-base font-semibold">
                         Cập nhật CV
-                    </h3>
+                    </div>
                     <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
                              @click="isCVModalOpen = false" />
                 </div>
             </template>
             <div class="mt-4">
                 <UInput type="file" size="sm" icon="i-heroicons-folder" accept=".pdf" @change="handleInputCVFile" />
-                <UButton class="mt-6 w-full rounded-md" size="lg" block @click="handleUploadCV" :loading="isSubmitting">
+                <UButton class="mt-6 w-full rounded-md" size="lg" block @click="handleUploadCV" color="primary"
+                         :loading="isSubmitting">
                     Xác nhận
                 </UButton>
             </div>
