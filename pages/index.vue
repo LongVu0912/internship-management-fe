@@ -17,7 +17,7 @@ let currentIndex = 0;
 onBeforeMount(async () => {
     isPageLoading.value = false;
 
-    setInterval(changeText, 2000);
+    setInterval(changeText, 2500);
 })
 
 // * Functions
@@ -45,10 +45,10 @@ const handleUndoneButton = () => {
                         <span class="text-primary">
                             <transition
                                         mode="out-in"
-                                        enter-active-class="transition ease-out duration-300 transform"
+                                        enter-active-class="transition ease-out duration-500 transform"
                                         enter-from-class="opacity-0 translate-y-4"
                                         enter-to-class="opacity-100 translate-y-0"
-                                        leave-active-class="transition ease-in duration-300 transform"
+                                        leave-active-class="transition ease-in duration-500 transform"
                                         leave-from-class="opacity-100 translate-y-0"
                                         leave-to-class="opacity-0 -translate-y-4">
                                 <span :key="currentText">{{ currentText }}</span>

@@ -116,8 +116,7 @@ const handleForgotPasswordSubmit = () => {
     </div>
 
     <UModal v-model="isPasswordModalOpen" prevent-close>
-        <UCard
-               :ui="{ body: { padding: 'px-4 pb-4 lg:px-8 lg:pb-8' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800', strategy: 'override' }">
+        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
             <template #header>
                 <div class="flex items-center justify-between">
                     <div class="text-base font-semibold">
@@ -127,16 +126,17 @@ const handleForgotPasswordSubmit = () => {
                              @click="isPasswordModalOpen = false" />
                 </div>
             </template>
+
             <div>
                 <UForm :state="loginState" class="flex w-full flex-col justify-start"
                        @submit.prevent="handleForgotPasswordSubmit">
-                    <div class="mb-2 mt-4 text-sm font-medium">Tài khoản</div>
+                    <div class="mb-2 text-sm font-medium">Tài khoản</div>
                     <UInput v-model="loginState.username" type="text" icon="mingcute:user-4-line" size="lg"
                             autocomplete="on" />
                     <div class="mb-2 mt-4 text-sm font-medium">Email</div>
                     <UInput v-model="loginState.email" type="email" icon="mingcute:mail-line" size="lg"
                             autocomplete="on" />
-                    <UButton class="mt-6 w-full rounded-md" size="lg" color="blue" type="submit" block>
+                    <UButton class="mb-4 mt-6 w-full rounded-md" size="lg" color="blue" type="submit" block>
                         Quên mật khẩu
                     </UButton>
                 </UForm>

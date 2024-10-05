@@ -24,7 +24,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
             if (response.status === 401) {
                 await nuxtApp.runWithContext(() => {
                     authRepository.logout();
-                    navigateTo("/login");
                 });
             }
         },

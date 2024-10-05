@@ -20,7 +20,7 @@ const sidebarState = useSidebarState();
         <div>
 
         </div>
-        <div class="mr-2 flex flex-row items-center gap-1">
+        <div class="mr-4 flex flex-row items-center gap-1">
             <ColorPicker />
             <ColorMode />
             <div class="flex items-center">

@@ -1,5 +1,6 @@
 import type { NitroFetchRequest, $Fetch } from "nitropack";
 import type ApiResponse from "~/types/ApiResponse";
+import type Student from "~/types/student/Student";
 
 export const StudentRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
     // * Get the student profile using jwt token in header
@@ -47,7 +48,7 @@ export const StudentRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         }
     };
 
-    const updateProfile = async (payload: Object) => {
+    const updateProfile = async (payload: Student) => {
         try {
             const response: ApiResponse = await fetch(
                 `/student/UpdateStudent`,
