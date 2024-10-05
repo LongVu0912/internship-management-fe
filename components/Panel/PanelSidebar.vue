@@ -38,7 +38,7 @@ const props = defineProps({
                      :to="item.to"
                      activeClass="link-active">
             </UButton>
-            <UDivider label="" size="xs" class="mb-2 mt-2" />
+            <UDivider label="" size="xs" class="my-4" />
         </div>
     </div>
 </template>

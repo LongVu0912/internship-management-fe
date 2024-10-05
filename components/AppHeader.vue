@@ -71,7 +71,7 @@
         </div>
 
         <!-- * End -->
-        <div class="mr-2 flex flex-row items-center">
+        <div class="flex flex-row items-center">
             <ColorPicker />
             <ColorMode />
 

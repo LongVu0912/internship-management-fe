@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type Student from '~/types/student/Student';
+import type Profile from '~/types/profile/Profile';
+import type { Major } from '~/types/major/Major';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 
@@ -24,7 +26,15 @@ const cvFile = ref<File | null>(null);
 const isConfirmDialogOpen = ref(false);
 const isUpdating = ref(false);
 
-const student = ref<Student>();
+const student = ref<Student>({
+    studentId: '',
+    year: 0,
+    isSeekingIntern: true,
+    dob: '',
+    classId: '',
+    profile: {} as Profile,
+    major: {} as Major,
+});
 
 const forgetPasswordState = reactive({
     oldPassword: undefined,
@@ -32,24 +42,19 @@ const forgetPasswordState = reactive({
     confirmPassword: undefined
 });
 
-const studentUpdateInformation = reactive({
-    dob: ref(new Date()),
-    phoneNumber: '',
-    bio: '',
-    isMale: false,
-    isSeekingIntern: false,
-    email: '',
-});
-
-// Computed property to map boolean to string
-const genderOptions = ['Nữ', 'Nam'];
-
 const gender = computed({
-    get: () => (studentUpdateInformation.isMale ? 'Nam' : 'Nữ'),
+    get: () => (student.value.profile.isMale ? 'Nam' : 'Nữ'),
     set: (value: string) => {
-        studentUpdateInformation.isMale = (value === 'Nam');
+        student.value.profile.isMale = (value === 'Nam');
     }
 });
+
+const birthday = computed({
+    get: () => (new Date(student.value.dob)),
+    set: (value: Date) => {
+        student.value.dob = format(value, 'yyyy-MM-dd');
+    }
+})
 
 // * Lifecycle
 onBeforeMount(async () => {
@@ -64,13 +69,6 @@ const fetchData = async () => {
 
     if (apiResponse.code === 200) {
         student.value = apiResponse.result;
-
-        studentUpdateInformation.bio = student.value?.profile.bio || '';
-        studentUpdateInformation.dob = student.value?.dob ? new Date(student.value.dob) : new Date();
-        studentUpdateInformation.isMale = student.value?.profile.isMale || false;
-        studentUpdateInformation.isSeekingIntern = student.value?.isSeekingIntern || false;
-        studentUpdateInformation.phoneNumber = student.value?.profile.phoneNumber || '';
-        studentUpdateInformation.email = student.value?.profile.email || '';
 
         isPageLoading.value = false;
     } else {
@@ -177,17 +175,7 @@ const handleUpdateButton = () => {
 }
 
 const onDialogConfirm = async () => {
-    const studentUpdateObject = {
-        dob: studentUpdateInformation.dob.toISOString().split('T')[0], // Format date as "YYYY-MM-DD"
-        profile: {
-            isMale: studentUpdateInformation.isMale,
-            bio: studentUpdateInformation.bio,
-            phoneNumber: studentUpdateInformation.phoneNumber,
-            email: studentUpdateInformation.email
-        },
-    };
-
-    const apiResponse = await studentRepository.updateProfile(studentUpdateObject);
+    const apiResponse = await studentRepository.updateProfile(student.value);
 
     if (apiResponse.code === 200) {
         nuxtToast({
@@ -240,7 +228,7 @@ const onDialogCancel = () => {
                                         :label="student?.profile.username" />
                             </div>
                             <div class="flex gap-2">
-                                <UBadge v-if="studentUpdateInformation.isSeekingIntern"
+                                <UBadge v-if="student.isSeekingIntern"
                                         size="lg"
                                         color="green"
                                         variant="outline"
@@ -255,7 +243,7 @@ const onDialogCancel = () => {
                                          color="gray"
                                          icon="mingcute:refresh-3-line"
                                          class="border-primary-500 border"
-                                         @click="studentUpdateInformation.isSeekingIntern = !studentUpdateInformation.isSeekingIntern">
+                                         @click="student.isSeekingIntern = !student.isSeekingIntern">
                                 </UButton>
                             </div>
                         </div>
@@ -298,12 +286,12 @@ const onDialogCancel = () => {
                     <div class="flex items-center gap-2">
                         <UInput v-if="!isUpdating" icon="mingcute:birthday-2-line"
                                 class="w-full"
-                                :model-value="format(studentUpdateInformation.dob, 'd MMM, yyy', { locale: vi })"
+                                :model-value="format(new Date(student.dob), 'd MMM, yyy', { locale: vi })"
                                 disabled />
                         <UPopover v-else class="w-full" :popper="{ placement: 'bottom-start' }">
                             <UButton :ui="{ base: 'disabled:opacity-100' }"
                                      class="border-primary-500 w-full rounded-md border"
-                                     :label="format(studentUpdateInformation.dob, 'd MMM, yyy', { locale: vi })"
+                                     :label="format(new Date(student.dob), 'd MMM, yyy', { locale: vi })"
                                      color="white"
                                      size="md"
                                      :disabled="!isUpdating">
@@ -314,19 +302,20 @@ const onDialogCancel = () => {
                             </UButton>
 
                             <template #panel="{ close }">
-                                <DatePicker class="w-full" v-model="studentUpdateInformation.dob" @close="close" />
+                                <DatePicker class="w-full" v-model="birthday" @close="close" />
                             </template>
                         </UPopover>
                     </div>
                     <div class="flex items-center gap-2">
                         <UInput icon="mingcute:mail-line" type="email"
                                 :class="['w-full rounded-md', { 'border-primary-500 border': isUpdating }]"
-                                v-model="studentUpdateInformation.email" :disabled="!isUpdating" />
+                                v-model="student.profile.email"
+                                :disabled="!isUpdating" />
                     </div>
                     <div class="flex items-center gap-2">
                         <UInput icon="mingcute:phone-line"
                                 :class="['w-full rounded-md', { 'border-primary-500 border': isUpdating }]"
-                                v-model="studentUpdateInformation.phoneNumber" :disabled="!isUpdating" />
+                                v-model="student.profile.phoneNumber" :disabled="!isUpdating" />
                     </div>
                 </div>
             </div>
@@ -341,7 +330,7 @@ const onDialogCancel = () => {
                     <div class="flex items-center gap-2">
                         <UInput v-if="!isUpdating" icon="mingcute:user-info-line" class="w-full" :model-value="gender"
                                 disabled />
-                        <USelect v-else icon="mingcute:user-info-line" size="md" :options="genderOptions"
+                        <USelect v-else icon="mingcute:user-info-line" size="md" :options="['Nữ', 'Nam']"
                                  class="border-primary-500 w-full rounded-md border" v-model="gender" />
                     </div>
                     <div class="flex items-center gap-2">
@@ -369,8 +358,7 @@ const onDialogCancel = () => {
                 Mô tả
             </div>
             <UTextarea :ui="{ base: 'disabled:cursor-text disabled:select-text' }" :disabled="!isUpdating" size="lg"
-                       :color="!isUpdating ? 'gray' : 'primary'" :rows="5" v-model="studentUpdateInformation.bio"
-                       class="w-full">
+                       :color="!isUpdating ? 'gray' : 'primary'" :rows="5" v-model="student.profile.bio" class="w-full">
             </UTextarea>
         </div>
 
@@ -390,8 +378,7 @@ const onDialogCancel = () => {
 
     <!-- * Modal for forgot password -->
     <UModal v-model="isForgotPasswordModalOpen" prevent-close>
-        <UCard
-               :ui="{ body: { padding: 'px-4 pb-4 lg:px-8 lg:pb-8' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800', strategy: 'override' }">
+        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
             <template #header>
                 <div class="flex items-center justify-between">
                     <div class="text-base font-semibold">
@@ -402,9 +389,8 @@ const onDialogCancel = () => {
                 </div>
             </template>
             <div>
-                <UForm :state="forgetPasswordState" class="flex w-full flex-col justify-start"
-                       @submit.prevent="submitChangePassword">
-                    <div class="mb-2 mt-4 text-sm font-medium">Mật khẩu cũ</div>
+                <div class="flex w-full flex-col justify-start">
+                    <div class="mb-2 text-sm font-medium">Mật khẩu cũ</div>
                     <UInput v-model="forgetPasswordState.oldPassword" type="password" icon="mingcute:user-4-line"
                             size="lg"
                             color="gray" autocomplete="on" />
@@ -415,20 +401,23 @@ const onDialogCancel = () => {
                     <div class="mb-2 mt-4 text-sm font-medium">Xác nhận mật khẩu</div>
                     <UInput v-model="forgetPasswordState.confirmPassword" type="password" icon="mingcute:mail-line"
                             size="lg" color="gray" autocomplete="on" />
-                    <UButton :loading="isSubmitting" class="mt-6 w-full rounded-md" size="lg" color="primary"
-                             type="submit"
-                             block>
-                        Đổi mật khẩu
-                    </UButton>
-                </UForm>
+                </div>
             </div>
+
+            <template #footer>
+                <UButton :loading="isSubmitting" class="w-full rounded-md" size="lg" color="primary"
+                         type="submit"
+                         @click="submitChangePassword"
+                         block>
+                    Đổi mật khẩu
+                </UButton>
+            </template>
         </UCard>
     </UModal>
 
     <!-- * Modal for uploading CV -->
     <UModal v-model="isCVModalOpen" prevent-close>
-        <UCard
-               :ui="{ body: { padding: 'px-4 pb-4 lg:px-8 lg:pb-8' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800', strategy: 'override' }">
+        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
             <template #header>
                 <div class="flex items-center justify-between">
                     <div class="text-base font-semibold">
@@ -438,13 +427,16 @@ const onDialogCancel = () => {
                              @click="isCVModalOpen = false" />
                 </div>
             </template>
-            <div class="mt-4">
+            <div>
                 <UInput type="file" size="sm" icon="i-heroicons-folder" accept=".pdf" @change="handleInputCVFile" />
-                <UButton class="mt-6 w-full rounded-md" size="lg" block @click="handleUploadCV" color="primary"
+            </div>
+
+            <template #footer>
+                <UButton class="w-full rounded-md" size="lg" block @click="handleUploadCV" color="primary"
                          :loading="isSubmitting">
                     Xác nhận
                 </UButton>
-            </div>
+            </template>
         </UCard>
     </UModal>
 

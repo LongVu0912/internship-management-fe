@@ -1,5 +1,6 @@
 import type { NitroFetchRequest, $Fetch } from "nitropack";
 import type ApiResponse from "~/types/ApiResponse";
+import type Business from "~/types/business/Business";
 import { PageConfig } from "~/types/student/PageConfig";
 
 export const AdminRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
@@ -51,9 +52,25 @@ export const AdminRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         }
     };
 
+    const createBusiness = async (payload: Business): Promise<ApiResponse> => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/business/CreateBusiness`,
+                {
+                    method: "POST",
+                    body: JSON.stringify(payload),
+                }
+            );
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
     return {
         getAllStudentPaging,
         getAllFaculties,
         getMajorsByFacultyId,
+        createBusiness,
     };
 };

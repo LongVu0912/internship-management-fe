@@ -127,7 +127,7 @@ const majors = [
 <template>
     <Loading v-if="isPageLoading" />
     <div v-else class="flex flex-col gap-2">
-        <div class="flex flex-col justify-between gap-2 md:flex-row">
+        <div class="mb-2 flex flex-col justify-between gap-2 md:flex-row">
             <div class="flex flex-col gap-2 md:flex-row">
                 <UForm :state="pageConfig" @submit.prevent="fetchData">
                     <UInput v-model="searchTerm"
@@ -147,6 +147,7 @@ const majors = [
                 <UButton color="primary" @click="isInputModalOpen = true">Nhập</UButton>
             </div>
         </div>
+
         <UTable class="rounded-lg border border-gray-100 dark:border-gray-700" :columns="columns" :rows="studentList">
             <template #name-data="{ row }">
                 <div class="font-medium">
@@ -208,8 +209,7 @@ const majors = [
     </div>
 
     <UModal v-model="isInputModalOpen" prevent-close>
-        <UCard
-               :ui="{ body: { padding: 'px-4 pb-4 lg:px-8 lg:pb-8' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800', strategy: 'override' }">
+        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
@@ -219,12 +219,15 @@ const majors = [
                              @click="isInputModalOpen = false" />
                 </div>
             </template>
-            <div>
+            <div class="flex flex-col justify-center">
                 <UInput type="file" size="sm" icon="i-heroicons-folder" />
-                <UButton color="primary" class="mt-6 w-full rounded-md" size="lg" block @click="handleUndoneButton">
+            </div>
+
+            <template #footer>
+                <UButton color="primary" class="w-full rounded-md" size="lg" block @click="handleUndoneButton">
                     Nhập dữ liệu
                 </UButton>
-            </div>
+            </template>
         </UCard>
     </UModal>
 </template>

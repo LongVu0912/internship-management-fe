@@ -7,7 +7,7 @@ export default interface Student {
     year: number;
     isSeekingIntern: boolean;
     dob: string;
-    classId: null;
+    classId: string;
     profile: Profile;
     major: Major;
 }

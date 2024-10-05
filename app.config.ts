@@ -30,5 +30,10 @@ export default defineAppConfig({
         textarea: {
             base: "font-medium",
         },
+        card: {
+            body: {
+                padding: "p-4 sm:py-2 sm:px-6",
+            },
+        },
     },
 });

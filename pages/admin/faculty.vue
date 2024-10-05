@@ -156,8 +156,7 @@ const columns = [
     </div>
 
     <UModal v-model="isMajorModalOpen" prevent-close>
-        <UCard
-               :ui="{ body: { padding: 'px-4 pb-4 lg:px-8 lg:pb-8' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800', strategy: 'override' }">
+        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
@@ -168,8 +167,8 @@ const columns = [
                 </div>
             </template>
             <div>
-                <div class="mt-4 flex flex-col gap-2">
-                    <UBadge variant="outline" color="gray" size="lg" v-for="major in majorList">
+                <div class="flex flex-col gap-2">
+                    <UBadge color="gray" size="lg" v-for="major in majorList">
                         {{ major.name }}
                     </UBadge>
                 </div>
