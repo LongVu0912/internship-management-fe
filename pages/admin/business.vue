@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import business from '~/middleware/business';
 import type Business from '~/types/business/Business';
 import type Profile from '~/types/profile/Profile';
 
@@ -14,17 +15,8 @@ const nuxtToast = useNuxtToast();
 // * Refs
 const isPageLoading = ref(true);
 const isCreatingBusiness = ref(false);
-const newBusiness = ref<Business>({
-    name: '',
-    overview: '',
-    location: '',
-    type: '',
-    industry: '',
-    workingDay: '',
-    workingHour: '',
-    instructorId: '',
-    managedBy: {} as Profile,
-});
+const newBusiness = ref<Business>({} as Business);
+newBusiness.value.managedBy = {} as Profile;
 
 const gender = computed({
     get: () => (newBusiness.value.managedBy.isMale ? 'Nam' : 'Nữ'),
@@ -130,7 +122,7 @@ const onCreateNewBusiness = async () => {
                         </div>
                     </div>
 
-                    <UDivider label="" size="xs" class="my-4" />
+                    <UDivider size="xs" class="my-4" />
 
                     <div class="text-base font-semibold">TÀI KHOẢN QUẢN LÝ</div>
 

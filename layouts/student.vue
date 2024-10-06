@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import type SidebarItem from '~/types/ui/SidebarItem';
 
-const { $api } = useNuxtApp();
-const authRepository = AuthRepository($api);
-
 const sidebarState = useSidebarState();
 
 const sidebarItems: SidebarItem[] = [

@@ -1,8 +1,8 @@
 <template>
     <div
-         class="hover:border-primary-500 dark:hover:border-primary-500 bg-content flex h-auto w-full flex-row gap-3 rounded-md border p-3 md:h-40 md:w-[800px] dark:border-gray-800">
+         class="hover:border-primary-500 dark:hover:border-primary-500 bg-content flex h-auto w-full flex-row gap-3 rounded-md border p-3 md:h-40 dark:border-gray-800">
         <div class="flex flex-shrink-0 items-center">
-            <NuxtImg src="/hcmute.png" width="96" height="96" quality="80" alt="hcmute"/>
+            <NuxtImg src="/hcmute.png" width="80" height="80" quality="80" alt="hcmute" />
         </div>
         <div class="flex w-full flex-col justify-between gap-1">
             <div class="flex flex-col justify-between gap-1">

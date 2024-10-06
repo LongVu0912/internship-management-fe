@@ -26,15 +26,7 @@ const cvFile = ref<File | null>(null);
 const isConfirmDialogOpen = ref(false);
 const isUpdating = ref(false);
 
-const student = ref<Student>({
-    studentId: '',
-    year: 0,
-    isSeekingIntern: true,
-    dob: '',
-    classId: '',
-    profile: {} as Profile,
-    major: {} as Major,
-});
+const student = ref<Student>({} as Student);
 
 const forgetPasswordState = reactive({
     oldPassword: undefined,
@@ -307,10 +299,8 @@ const onDialogCancel = () => {
                         </UPopover>
                     </div>
                     <div class="flex items-center gap-2">
-                        <UInput icon="mingcute:mail-line" type="email"
-                                :class="['w-full rounded-md', { 'border-primary-500 border': isUpdating }]"
-                                v-model="student.profile.email"
-                                :disabled="!isUpdating" />
+                        <UInput icon="mingcute:mail-line" class="w-full" :model-value="student.profile.email"
+                                disabled />
                     </div>
                     <div class="flex items-center gap-2">
                         <UInput icon="mingcute:phone-line"
