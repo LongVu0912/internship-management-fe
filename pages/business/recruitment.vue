@@ -13,7 +13,7 @@ const isPageLoading = ref(true);
 
 // * Lifecycle
 onBeforeMount(async () => {
-    
+
 });
 </script>
 

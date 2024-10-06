@@ -29,7 +29,7 @@ const props = defineProps({
         </div>
 
         <div class="flex flex-col gap-2 p-2">
-            <UDivider label="" size="xs" />
+            <UDivider size="xs" />
             <UButton v-for="item in props.items"
                      :icon="item.icon"
                      color="gray"
@@ -38,7 +38,7 @@ const props = defineProps({
                      :to="item.to"
                      activeClass="link-active">
             </UButton>
-            <UDivider label="" size="xs" class="my-4" />
+            <UDivider size="xs" class="my-4" />
         </div>
     </div>
 </template>
