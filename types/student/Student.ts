@@ -1,4 +1,3 @@
-import type Faculty from "../faculty/Faculty";
 import type { Major } from "../major/Major";
 import type Profile from "../profile/Profile";
 

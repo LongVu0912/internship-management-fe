@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import business from '~/middleware/business';
 import type Business from '~/types/business/Business';
 import type Profile from '~/types/profile/Profile';
 
@@ -133,14 +132,15 @@ const onCreateNewBusiness = async () => {
                         </div>
                         <div class="flex w-full flex-col gap-1.5">
                             <div class="font-medium">Tài khoản</div>
-                            <UInput color="white" v-model="newBusiness.managedBy.username" />
+                            <UInput color="white" v-model="newBusiness.managedBy.username" autocomplete="off" />
                         </div>
                     </div>
 
                     <div class="flex flex-row justify-between gap-2">
                         <div class="flex w-full flex-col gap-1.5">
                             <div class="font-medium">Mật khẩu</div>
-                            <UInput color="white" type="password" v-model="newBusiness.managedBy.password" />
+                            <UInput color="white" type="password" v-model="newBusiness.managedBy.password"
+                                    autocomplete="off" />
                         </div>
                         <div class="flex w-full flex-col gap-1.5">
                             <div class="font-medium">Email</div>

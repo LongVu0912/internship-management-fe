@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import type Student from '~/types/student/Student';
-import type Profile from '~/types/profile/Profile';
-import type { Major } from '~/types/major/Major';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 
@@ -158,7 +156,7 @@ const handleUploadCV = async () => {
 }
 
 const handleUpdateButton = () => {
-    if (isUpdating.value == false) {
+    if (isUpdating.value === false) {
         isUpdating.value = true;
     }
     else {
@@ -303,7 +301,7 @@ const onDialogCancel = () => {
                                 disabled />
                     </div>
                     <div class="flex items-center gap-2">
-                        <UInput icon="mingcute:phone-line"
+                        <UInput icon="mingcute:phone-line" :color="isUpdating ? 'white' : 'gray'"
                                 :class="['w-full rounded-md', { 'border-primary-500 border': isUpdating }]"
                                 v-model="student.profile.phoneNumber" :disabled="!isUpdating" />
                     </div>

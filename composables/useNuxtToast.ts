@@ -16,8 +16,8 @@ export const useNuxtToast = () => {
         type = "info",
         onCallback,
     }: ToastOptions): void => {
-        var toastIcon = "heroicons:information-circle";
-        var toastColor = "primary";
+        let toastIcon = "heroicons:information-circle";
+        let toastColor = "primary";
 
         switch (type) {
             case "success":
@@ -27,10 +27,6 @@ export const useNuxtToast = () => {
             case "error":
                 toastIcon = "mingcute:close-circle-line";
                 toastColor = "red";
-                break;
-            case "info":
-                toastIcon = "mingcute:information-line";
-                toastColor = "primary";
                 break;
         }
 

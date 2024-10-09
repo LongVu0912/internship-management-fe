@@ -17,8 +17,8 @@ class PageConfig {
     pageSize: number;
     orders: any[];
     fullname: string;
-    majorIds: any[];
     sort: Sort;
+    filters: any[];
 
     constructor() {
         this.totalPage = 0;
@@ -27,8 +27,8 @@ class PageConfig {
         this.pageSize = 6;
         this.orders = [];
         this.fullname = "";
-        this.majorIds = [];
         this.sort = new Sort();
+        this.filters = [];
     }
 
     update(config: Partial<PageConfig>) {

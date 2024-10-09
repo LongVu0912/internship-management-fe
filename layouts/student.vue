@@ -10,9 +10,14 @@ const sidebarItems: SidebarItem[] = [
         to: "/student",
     },
     {
+        icon: "mingcute:bookmarks-line",
+        label: "Thực tập",
+        to: "/student/recruitment",
+    },
+    {
         icon: "mingcute:user-setting-line",
         label: "Cài đặt",
-        to: "/student/profile",
+        to: "/student/settings",
     }
 ]
 </script>
