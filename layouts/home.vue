@@ -1,7 +1,7 @@
 <template>
     <div class="bg-app-primary flex min-h-screen flex-col">
         <AppHeader />
-        <div class="mx-3 flex-grow pt-20 md:mx-24">
+        <div class="mt-20 flex-grow">
             <slot></slot>
         </div>
         <AppFooter class="mt-4" />

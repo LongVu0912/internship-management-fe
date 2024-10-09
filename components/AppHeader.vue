@@ -29,7 +29,7 @@ const toggleMenu = () => {
             <div class="fixed left-0 right-0 top-16 z-40 overflow-hidden shadow-md transition-all duration-300 ease-in-out md:hidden"
                  :class="{ 'max-h-64 opacity-100': isOpen, 'max-h-0 opacity-0': !isOpen }">
                 <div class="bg-app-primary flex flex-col shadow-lg">
-                    <UButton to="/" variant="ghost" size="lg" icon="mingcute:building-5-line" label="Tất cả công ty">
+                    <UButton to="/recruitment" variant="ghost" size="lg" icon="mingcute:building-5-line" label="Tất cả công ty">
                     </UButton>
                     <UDivider size="xs" />
                     <UButton to="/" variant="ghost" size="lg" icon="mingcute:notebook-line" label="Mẫu CV">
@@ -48,7 +48,7 @@ const toggleMenu = () => {
                     <ul class="flex flex-col gap-y-1 p-2">
                         <li
                             class="rounded-lg p-2 duration-300 hover:bg-black/5 dark:hover:bg-white/5">
-                            <a href="#" class="flex items-center gap-x-4">
+                            <a href="/recruitment" class="flex items-center gap-x-4">
                                 <UIcon class="h-6 w-6 self-start" name="mingcute:building-5-line" />
                                 <div class="flex w-32 flex-col gap-y-1">
                                     <span class="text-sm font-bold">
