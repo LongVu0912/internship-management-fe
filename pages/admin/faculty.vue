@@ -166,7 +166,7 @@ const columns = [
                              @click="isMajorModalOpen = false" />
                 </div>
             </template>
-            <div>
+            <div class="py-2">
                 <div class="flex flex-col gap-2">
                     <UBadge color="gray" size="lg" v-for="major in majorList">
                         {{ major.name }}

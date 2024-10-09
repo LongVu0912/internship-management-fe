@@ -1,26 +1,55 @@
 <script setup lang="ts">
+import { PageConfig } from '~/types/PageConfig';
+import type Recruitment from '~/types/recruitment/Recruitment';
+
 definePageMeta({
     layout: 'home',
 })
 // * Imports
+const { $apiToken } = useNuxtApp();
+const recruitmentRepository = RecruitmentRepository($apiToken);
 const nuxtToast = useNuxtToast();
 
 // * Refs
-const page = ref(1)
-const items = ref(Array(55))
+const currentPage = ref(1);
+const pageSize = ref(5);
 const isPageLoading = ref(true);
-const texts = ['Định hướng', 'Nghề nghiệp', 'Công việc', 'Tương lai']
-const currentText = ref(texts[0])
+const pageConfig = ref(new PageConfig());
+const recruitmentPaging = ref<Recruitment[]>();
+const texts = ['Định hướng', 'Nghề nghiệp', 'Công việc', 'Tương lai'];
+const currentText = ref(texts[0]);
 let currentIndex = 0;
 
 // * Lifecycle
 onBeforeMount(async () => {
-    isPageLoading.value = false;
-
     setInterval(changeText, 2500);
+    await fetchData();
+    isPageLoading.value = false;
+})
+
+// * Watch
+watch([currentPage, pageSize], () => {
+    pageConfig.value.currentPage = currentPage.value;
+    pageConfig.value.pageSize = pageSize.value;
+    fetchData();
 })
 
 // * Functions
+const fetchData = async () => {
+    const apiResponse = await recruitmentRepository.getRecruitmentPaging(pageConfig.value);
+
+    if (apiResponse.code === 200) {
+        recruitmentPaging.value = apiResponse.result.data;
+
+        pageConfig.value = apiResponse.result.pageConfig;
+    } else {
+        nuxtToast({
+            description: apiResponse.message,
+            type: 'error',
+        });
+    }
+}
+
 const changeText = () => {
     currentIndex = (currentIndex + 1) % texts.length
     currentText.value = texts[currentIndex]
@@ -40,7 +69,7 @@ const handleUndoneButton = () => {
         <div class="h-full w-full rounded-md bg-gray-500/5 bg-cover bg-center p-4">
             <div class="flex flex-col justify-between gap-4 md:flex-row">
                 <div class="flex w-full flex-col gap-2">
-                    <div class="font-medium">Công nghệ AI, cá nhân hoá việc làm</div>
+                    <div class="text-xl font-medium">Công nghệ AI, cá nhân hoá việc làm</div>
                     <div class="text-2xl font-bold">
                         <span class="text-primary">
                             <transition
@@ -59,7 +88,7 @@ const handleUndoneButton = () => {
                     <UInput placeholder="Tìm theo ngành..."
                             size="lg"
                             icon="i-heroicons-magnifying-glass-20-solid"
-                            :ui="{ icon: { trailing: { pointer: 'pointer-events-auto' } } }">
+                            :ui="{ icon: { trailing: { pointer: 'pointer-events-auto', padding: { lg: 'px-1' } } } }">
                         <template #trailing>
                             <UButton color="primary"
                                      @click="handleUndoneButton"
@@ -100,11 +129,18 @@ const handleUndoneButton = () => {
                 </div>
             </div>
             <div class="flex flex-row items-center justify-between gap-1 rounded-md border p-2 dark:border-gray-700">
-                <div><b>5.000.000</b> vị trí phù hợp</div>
-                <UPagination v-model="page" :max="5" :page-count="5" :total="items.length" />
+                <div><b>{{ pageConfig.totalRecords }}</b> vị trí phù hợp</div>
+                <div class="flex flex-row gap-2">
+                    <USelect v-model.number="pageSize" :options="[5, 6, 7, 8, 9, 10]" />
+                    <UPagination v-model="currentPage" :max="7" :page-count="pageSize"
+                                 :total="pageConfig.totalRecords" />
+                </div>
             </div>
+
+
             <div class="flex flex-col gap-4">
-                <CompanyCard class="self-center" v-for="i in 5" />
+                <RecruitmentCard :recruitment="recruitment" class="self-center"
+                                 v-for="recruitment in recruitmentPaging" />
             </div>
         </div>
     </div>
