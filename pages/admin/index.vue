@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PageConfig } from '~/types/PageConfig';
+import { PageConfig } from '~/types/page/PageConfig';
 import type Student from '~/types/student/Student';
 
 definePageMeta({

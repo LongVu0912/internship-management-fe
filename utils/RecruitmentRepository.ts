@@ -1,6 +1,6 @@
 import type { NitroFetchRequest, $Fetch } from "nitropack";
 import type ApiResponse from "~/types/ApiResponse";
-import { PageConfig } from "~/types/PageConfig";
+import { PageConfig } from "~/types/page/PageConfig";
 
 export const RecruitmentRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
     const getRecruitmentPaging = async (payload: PageConfig) => {

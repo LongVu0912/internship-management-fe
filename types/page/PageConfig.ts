@@ -1,3 +1,5 @@
+import type { Filter } from "./Filter";
+
 class Sort {
     unsorted: boolean;
     sorted: boolean;
@@ -18,7 +20,7 @@ class PageConfig {
     orders: any[];
     fullname: string;
     sort: Sort;
-    filters: any[];
+    filters: Filter[];
 
     constructor() {
         this.totalPage = 0;

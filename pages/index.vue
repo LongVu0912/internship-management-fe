@@ -1,55 +1,48 @@
 <script setup lang="ts">
-import { PageConfig } from '~/types/PageConfig';
-import type Recruitment from '~/types/recruitment/Recruitment';
-
 definePageMeta({
     layout: 'home',
 })
+
 // * Imports
-const { $apiToken } = useNuxtApp();
-const recruitmentRepository = RecruitmentRepository($apiToken);
 const nuxtToast = useNuxtToast();
 
+interface Skill {
+    name: string,
+    description: string,
+}
+
 // * Refs
-const currentPage = ref(1);
-const pageSize = ref(5);
-const isPageLoading = ref(true);
-const pageConfig = ref(new PageConfig());
-const recruitmentPaging = ref<Recruitment[]>();
 const texts = ['Định hướng', 'Nghề nghiệp', 'Công việc', 'Tương lai'];
+const skills: Skill[] = [
+    {
+        name: "Công nghệ thông tin",
+        description: "Phát triển khả năng lập trình và quản lý hệ thống thông tin.",
+    },
+    {
+        name: "Cơ khí",
+        description: "Nâng cao kỹ năng thiết kế và chế tạo máy móc.",
+    },
+    {
+        name: "Xây dựng",
+        description: "Cải thiện khả năng quản lý và thi công các công trình xây dựng.",
+    },
+    {
+        name: "Kinh tế",
+        description: "Học cách phân tích và quản lý các hoạt động kinh tế.",
+    }
+];
+
 const currentText = ref(texts[0]);
+const selectedSkill = ref<Skill>(skills[0]);
 let currentIndex = 0;
 
 // * Lifecycle
 onBeforeMount(async () => {
     setInterval(changeText, 2500);
-    await fetchData();
-    isPageLoading.value = false;
 })
 
-// * Watch
-watch([currentPage, pageSize], () => {
-    pageConfig.value.currentPage = currentPage.value;
-    pageConfig.value.pageSize = pageSize.value;
-    fetchData();
-})
 
 // * Functions
-const fetchData = async () => {
-    const apiResponse = await recruitmentRepository.getRecruitmentPaging(pageConfig.value);
-
-    if (apiResponse.code === 200) {
-        recruitmentPaging.value = apiResponse.result.data;
-
-        pageConfig.value = apiResponse.result.pageConfig;
-    } else {
-        nuxtToast({
-            description: apiResponse.message,
-            type: 'error',
-        });
-    }
-}
-
 const changeText = () => {
     currentIndex = (currentIndex + 1) % texts.length
     currentText.value = texts[currentIndex]
@@ -61,93 +54,105 @@ const handleUndoneButton = () => {
     })
 }
 
+const selectSkill = (skill: Skill) => {
+    selectedSkill.value = skill;
+};
 </script>
 
 <template>
-    <Loading v-if="isPageLoading" />
-    <div v-else class="flex flex-col items-center">
-        <div class="h-full w-full rounded-md bg-gray-500/5 bg-cover bg-center p-4">
-            <div class="flex flex-col justify-between gap-4 md:flex-row">
-                <div class="flex w-full flex-col gap-2">
-                    <div class="text-xl font-medium">Công nghệ AI, cá nhân hoá việc làm</div>
-                    <div class="text-2xl font-bold">
-                        <span class="text-primary">
-                            <transition
-                                        mode="out-in"
-                                        enter-active-class="transition ease-out duration-500 transform"
-                                        enter-from-class="opacity-0 translate-y-4"
-                                        enter-to-class="opacity-100 translate-y-0"
-                                        leave-active-class="transition ease-in duration-500 transform"
-                                        leave-from-class="opacity-100 translate-y-0"
-                                        leave-to-class="opacity-0 -translate-y-4">
-                                <span :key="currentText">{{ currentText }}</span>
-                            </transition>
-                        </span>
-                        <span> dành cho bạn</span>
+    <main>
+        <section class="w-full px-4 py-12 md:py-28">
+            <div class="container mx-auto max-w-4xl">
+                <div class="flex flex-col items-center justify-center gap-6 text-center">
+                    <h1 class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                        <transition mode="out-in" enter-active-class="transition ease-out duration-500 transform"
+                                    enter-from-class="opacity-0 translate-y-4"
+                                    enter-to-class="opacity-100 translate-y-0"
+                                    leave-active-class="transition ease-in duration-500 transform"
+                                    leave-from-class="opacity-100 translate-y-0"
+                                    leave-to-class="opacity-0 -translate-y-4">
+                            <span :key="currentText" class="text-primary">{{ currentText }}</span>
+                        </transition>
+                        <span class="mt-2 block"> dành cho bạn</span>
+                    </h1>
+                    <p class="max-w-2xl text-lg text-gray-500 md:text-xl dark:text-gray-400">
+                        Công nghệ AI, cá nhân hoá việc làm.
+                    </p>
+                    <div class="w-full max-w-md">
+                        <UInput placeholder="Tìm theo ngành..." size="lg" icon="i-heroicons-magnifying-glass-20-solid"
+                                :ui="{ icon: { trailing: { pointer: 'pointer-events-auto', padding: { lg: 'px-1' } } } }">
+                            <template #trailing>
+                                <UButton color="primary"
+                                         @click="handleUndoneButton"
+                                         class="rounded-md" label="Tìm kiếm" />
+                            </template>
+                        </UInput>
                     </div>
-                    <UInput placeholder="Tìm theo ngành..."
-                            size="lg"
-                            icon="i-heroicons-magnifying-glass-20-solid"
-                            :ui="{ icon: { trailing: { pointer: 'pointer-events-auto', padding: { lg: 'px-1' } } } }">
-                        <template #trailing>
-                            <UButton color="primary"
-                                     @click="handleUndoneButton"
-                                     class="rounded-md" label="Tìm kiếm" />
-                        </template>
-                    </UInput>
-                </div>
-                <div class="flex w-full justify-center">
-                    <NuxtImg class="rounded-md" width="600" quality="80" src="/background.jpg"></NuxtImg>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <UDivider size="xs" class="my-4" />
-
-        <div class="flex w-full flex-col gap-4 px-0 lg:px-16">
-            <div class="flex w-full flex-col gap-2">
-                <div>
-                    <UInput icon="mingcute:search-2-fill" placeholder="Tìm theo tên công ty, tên công việc..."
-                            class="w-full"
-                            size="sm" :ui="{ icon: { trailing: { pointer: 'pointer-events-auto' } } }">
-                        <template #trailing>
-                            <UButton icon="mingcute:delete-2-line" color="primary"
-                                     class="-me-2.5 rounded-none rounded-r-md" />
-                        </template>
-                    </UInput>
-                </div>
-                <div class="flex flex-row gap-2">
-                    <USelect class="w-1/3" icon="mingcute:building-3-line" color="gray" size="sm"
-                             :options="['Tất cả nhà tuyển dụng', 'FPT Software', 'Viettel Cooperation', 'VNPT', 'VNG']"
-                             model-value="Tất cả nhà tuyển dụng" />
-                    <USelect class="w-1/3" icon="mingcute:book-3-line" color="gray" size="sm"
-                             :options="['Tất cả ngành', 'Công nghệ thông tin', 'Cơ khí', 'Ngôn ngữ Anh', 'Kinh tế']"
-                             model-value="Tất cả ngành" />
-                    <USelect class="w-1/3" icon="mingcute:location-3-line" color="gray" size="sm"
-                             :options="['Tất cả địa điểm', 'Thành phố Thủ Đức', 'Quận 1', 'Quận 3', 'Quận 6']"
-                             model-value="Tất cả địa điểm" />
-                </div>
-            </div>
-            <div class="flex flex-row items-center justify-between gap-1 rounded-md border p-2 dark:border-gray-700">
-                <div><b>{{ pageConfig.totalRecords }}</b> vị trí phù hợp</div>
-                <div class="flex flex-row gap-2">
-                    <USelect v-model.number="pageSize" :options="[5, 6, 7, 8, 9, 10]" />
-                    <UPagination v-model="currentPage" :max="7" :page-count="pageSize"
-                                 :total="pageConfig.totalRecords" />
+        <section class="w-full bg-gray-100 px-4 py-12 md:py-28 dark:bg-gray-800">
+            <div class="container mx-auto max-w-4xl">
+                <div class="flex flex-col items-center justify-center gap-4 text-center md:gap-16">
+                    <div class="text-2xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                        Lựa chọn kỹ năng của bạn
+                    </div>
+                    <div class="flex flex-col justify-between gap-4 md:flex-row md:gap-12">
+                        <div class="flex flex-col gap-2">
+                            <UButton v-for="(skill, index) in skills" :key="index" :label="skill.name"
+                                     :color="selectedSkill?.name === skill.name ? 'primary' : 'gray'" size="lg"
+                                     @click="selectSkill(skill)" />
+                        </div>
+                        <div class="h-44 md:w-96">
+                            <div class="flex h-full flex-col items-start justify-between gap-2 rounded-lg bg-white p-6">
+                                <div class="flex flex-col items-start">
+                                    <div class="text-2xl font-bold">{{ selectedSkill?.name }}</div>
+                                    <div class="text-left text-gray-500 dark:text-gray-400">
+                                        {{ selectedSkill?.description }}
+                                    </div>
+                                </div>
+                                <UButton color="primary" :label="'Tìm việc ' + selectedSkill?.name" size="lg"
+                                         @click="handleUndoneButton" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </section>
 
-
-            <div class="flex flex-col gap-4">
-                <RecruitmentCard :recruitment="recruitment" class="self-center"
-                                 v-for="recruitment in recruitmentPaging" />
+        <section class="w-full px-4 py-12 md:py-28">
+            <div class="container mx-auto max-w-4xl">
+                <h2 class="mb-8 text-center text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                    Tại sao chọn Thực tập HCMUTE?
+                </h2>
+                <div class="grid gap-10 sm:grid-cols-2 md:grid-cols-3">
+                    <div class="flex flex-col items-center space-y-2 rounded-lg border-gray-200 p-4">
+                        <UIcon name="mingcute:search-3-line" class="h-14 w-14"></UIcon>
+                        <h3 class="text-xl font-bold">Ghép nối thông minh</h3>
+                        <p class="text-center text-gray-500 dark:text-gray-400">
+                            Hệ thống AI của chúng tôi ghép nối bạn với các kỳ thực tập phù hợp với kỹ năng và sở thích
+                            của bạn.
+                        </p>
+                    </div>
+                    <div class="flex flex-col items-center space-y-2 rounded-lg border-gray-200 p-4">
+                        <UIcon name="mingcute:globe-2-line" class="h-14 w-14"></UIcon>
+                        <h3 class="text-xl font-bold">Cơ hội toàn cầu</h3>
+                        <p class="text-center text-gray-500 dark:text-gray-400">
+                            Truy cập các kỳ thực tập từ các công ty trên khắp thế giới, mở rộng tầm nhìn của bạn.
+                        </p>
+                    </div>
+                    <div class="flex flex-col items-center space-y-2 rounded-lg border-gray-200 p-4">
+                        <UIcon name="mingcute:rocket-line" class="h-14 w-14"></UIcon>
+                        <h3 class="text-xl font-bold">Phát triển sự nghiệp</h3>
+                        <p class="text-center text-gray-500 dark:text-gray-400">
+                            Nhận được kinh nghiệm quý báu và khởi đầu sự nghiệp của bạn với các kỳ thực tập được chọn
+                            lọc của
+                            chúng tôi.
+                        </p>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 </template>
-<!-- 
-<style scoped>
-div {
-    @apply border border-red-500
-}
-</style> -->
