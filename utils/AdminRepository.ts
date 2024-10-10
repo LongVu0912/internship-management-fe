@@ -5,12 +5,12 @@ import { PageConfig } from "~/types/page/PageConfig";
 
 export const AdminRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
     // * Get the student profile using jwt token in header
-    const getAllStudentPaging = async (
+    const getStudentPaging = async (
         payload: PageConfig
     ): Promise<ApiResponse> => {
         try {
             const response: ApiResponse = await fetch(
-                `/student/GetAllStudentPaging`,
+                `/student/GetStudentPaging`,
                 {
                     method: "POST",
                     body: JSON.stringify(payload),
@@ -68,7 +68,7 @@ export const AdminRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
     };
 
     return {
-        getAllStudentPaging,
+        getStudentPaging,
         getAllFaculties,
         getMajorsByFacultyId,
         createBusiness,

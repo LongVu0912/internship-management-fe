@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Filter } from '~/types/page/Filter';
 import { PageConfig } from '~/types/page/PageConfig';
 import type Student from '~/types/student/Student';
 
@@ -15,11 +16,11 @@ const nuxtToast = useNuxtToast();
 // * Refs
 const isPageLoading = ref(true);
 const isInputModalOpen = ref(false);
-const searchTerm = ref('');
 const currentPage = ref(1);
 const pageSize = ref(5);
 const selectedMajor = ref([]);
 
+const fullNameFilter = ref(new Filter("profile.fullname"));
 const pageConfig = ref(new PageConfig());
 const studentList = ref<Student[]>([]);
 
@@ -31,12 +32,13 @@ onBeforeMount(async () => {
 
 // * Functions
 const fetchData = async () => {
+    pageConfig.value.filters = [];
+    pageConfig.value.filters.push(fullNameFilter.value);
     pageConfig.value.update({
         currentPage: currentPage.value,
         pageSize: pageSize.value,
-        fullname: searchTerm.value,
     });
-    const apiResponse = await adminRepository.getAllStudentPaging(pageConfig.value);
+    const apiResponse = await adminRepository.getStudentPaging(pageConfig.value);
     studentList.value = apiResponse.result.data;
     pageConfig.value.update(apiResponse.result.pageConfig);
 }
@@ -48,7 +50,7 @@ const handleUndoneButton = () => {
 }
 
 // * Watches
-watch([currentPage, pageSize], () => {
+watch([currentPage, pageSize, fullNameFilter], () => {
     fetchData();
 });
 
@@ -129,8 +131,8 @@ const majors = [
     <div v-else class="flex flex-col gap-2">
         <div class="mb-2 flex flex-col justify-between gap-2 md:flex-row">
             <div class="flex flex-col gap-2 md:flex-row">
-                <UForm :state="pageConfig" @submit.prevent="fetchData">
-                    <UInput v-model="searchTerm"
+                <form @submit.prevent="fetchData">
+                    <UInput v-model="fullNameFilter.value"
                             placeholder="Tìm tên sinh viên..."
                             class="w-64"
                             size="sm"
@@ -140,7 +142,7 @@ const majors = [
                                      class="-me-2.5 rounded-none rounded-r-md" type="submit" />
                         </template>
                     </UInput>
-                </UForm>
+                </form>
                 <USelectMenu class="w-64" v-model="selectedMajor" :options="majors" multiple placeholder="Chọn ngành" />
             </div>
             <div>

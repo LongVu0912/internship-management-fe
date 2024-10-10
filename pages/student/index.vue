@@ -350,8 +350,7 @@ const onDialogCancel = () => {
             </UTextarea>
         </div>
 
-        <div class="mt-4 flex flex-row justify-between gap-2">
-            <div></div>
+        <div class="mt-4 flex flex-row justify-end gap-2">
             <div class="flex gap-2">
                 <UButton color="primary" v-if="!isUpdating" variant="outline" @click="isForgotPasswordModalOpen = true">
                     Đổi mật

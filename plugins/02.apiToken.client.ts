@@ -3,10 +3,11 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     const { $api } = useNuxtApp();
     const jwtRepository = JwtRepository($api);
     const authRepository = AuthRepository($api);
+    const nuxtToast = useNuxtToast();
 
     const apiToken = $fetch.create({
         baseURL:
-            window.localStorage.getItem("backendUrl") ||
+            window.localStorage.getItem("backendUrl") ??
             useRuntimeConfig().public.backendUrl,
         async onRequest({ request, options, error }) {
             if (token.value && (await jwtRepository.isLogged())) {
@@ -23,6 +24,9 @@ export default defineNuxtPlugin(async (nuxtApp) => {
         async onResponseError({ response }) {
             if (response.status === 401) {
                 await nuxtApp.runWithContext(() => {
+                    nuxtToast({
+                        description: "Phiên đăng nhập hết hạn",
+                    });
                     authRepository.logout();
                 });
             }

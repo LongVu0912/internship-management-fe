@@ -9,17 +9,27 @@ const props = defineProps({
 <template>
 
     <Head>
-        <title>HCMUTE INTERNSHIP</title>
+        <Title>HCMUTE INTERNSHIP</Title>
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
     </Head>
-    <div class="bg-app-primary">
-        <div class="flex min-h-screen items-center justify-center bg-cover bg-center">
-            <div
-                 class="flex w-auto flex-col items-center justify-center rounded-md px-6 py-6 shadow-md dark:bg-gray-800">
-                <div class="text-primary text-3xl font-bold">{{ error?.statusCode }}</div>
-                <div class="text-xl font-semibold">{{ error?.statusMessage }}</div>
-                <UButton class="mt-4" @click="navigateTo('/')" size="xl">Trang chủ</UButton>
+
+    <div class="bg-app-primary flex min-h-screen items-center justify-center p-4">
+        <div class="w-full max-w-md">
+            <div class="rounded-md bg-gray-400/5">
+                <div class="p-8 text-center">
+                    <h1 class="mb-2 text-6xl font-bold">{{ error?.statusCode }}</h1>
+                    <p class="mb-6 text-xl">{{ error?.statusMessage }}</p>
+                    <UButton
+                             @click="navigateTo('/')"
+                             label="Trang chủ"
+                             color="primary"
+                             size="xl">
+                    </UButton>
+                </div>
             </div>
+            <p class="mt-8 text-center">
+                &copy; {{ new Date().getFullYear() }} HCMUTE INTERNSHIP. All rights reserved.
+            </p>
         </div>
     </div>
 </template>
