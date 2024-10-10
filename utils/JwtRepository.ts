@@ -5,26 +5,10 @@ import type ApiResponse from "~/types/ApiResponse";
 import Role from "~/types/enums/Role";
 
 export const JwtRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
-    const tokenCookie = useCookie("token");
-
-    // * Check if the token is valid with backend
-    const isTokenValid = async (token: string): Promise<boolean> => {
-        try {
-            // * Check if the token is valid with backend
-            const response: ApiResponse = await fetch(
-                `/authentication/IntroSpect`,
-                {
-                    method: "POST",
-                    body: JSON.stringify({ token }),
-                }
-            );
-
-            // ? true or false
-            return response.result;
-        } catch (error) {
-            return false;
-        }
-    };
+    const tokenCookie = useCookie("token", {
+        secure: true,
+        maxAge: 60 * 60 * 24,
+    });
 
     // * Check if the user is logged
     const isLogged = async () => {

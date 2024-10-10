@@ -21,25 +21,25 @@ const isPageLoading = ref(true);
 // * Lifecycle
 onBeforeMount(async () => {
     const studentId = route.params.studentId as string;
-    const response = await studentRepository.getStudentProfileById({
+    const apiResponse = await studentRepository.getStudentProfileById({
         studentId: studentId,
     });
 
-    if (response.code != 200) {
+    if (apiResponse.code != 200) {
         showError({
             statusCode: 404,
             statusMessage: "Page not found",
         })
     }
 
-    student.value = response.result;
+    student.value = apiResponse.result;
     isPageLoading.value = false;
 })
 </script>
 
 <template>
     <Loading v-if="isPageLoading" />
-    <div v-else class="px-4 lg:px-12">
+    <div v-else class="px-4 lg:px-24">
         <div class="flex flex-col justify-between gap-2 md:flex-row md:gap-12">
             <div class="flex w-full flex-col gap-2">
                 <div class="text-xl font-semibold">

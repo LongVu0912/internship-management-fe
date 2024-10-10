@@ -92,7 +92,7 @@ const selectSkill = (skill: Skill) => {
             </div>
         </section>
 
-        <section class="w-full bg-gray-100 px-4 py-12 md:py-28 dark:bg-gray-800">
+        <section class="w-full bg-gray-500/5 px-4 py-12 md:py-28">
             <div class="container mx-auto max-w-4xl">
                 <div class="flex flex-col items-center justify-center gap-4 text-center md:gap-16">
                     <div class="text-2xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
@@ -105,7 +105,8 @@ const selectSkill = (skill: Skill) => {
                                      @click="selectSkill(skill)" />
                         </div>
                         <div class="h-44 md:w-96">
-                            <div class="flex h-full flex-col items-start justify-between gap-2 rounded-lg bg-white p-6 dark:bg-gray-700">
+                            <div
+                                 class="flex h-full flex-col items-start justify-between gap-2 rounded-lg bg-gray-400/5 p-6">
                                 <div class="flex flex-col items-start">
                                     <div class="text-2xl font-bold">{{ selectedSkill?.name }}</div>
                                     <div class="text-left text-gray-500 dark:text-gray-400">

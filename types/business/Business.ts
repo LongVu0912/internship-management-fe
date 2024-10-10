@@ -1,6 +1,7 @@
 import type Profile from "../profile/Profile";
 
 export default interface Business {
+    businessId: string,
     name: string;
     overview: string;
     location: string;
@@ -10,4 +11,5 @@ export default interface Business {
     workingHour: string;
     instructorId: string;
     managedBy: Profile;
+    profile: Profile;
 }

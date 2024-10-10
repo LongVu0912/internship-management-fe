@@ -30,7 +30,7 @@ const props = defineProps({
                     <div class="flex flex-row items-center gap-1 text-base font-normal">
                         <UIcon name="mingcute:building-3-line" class="h-5 w-5 flex-shrink-0" />
                         <div class="leading-5">
-                            {{ props.recruitment.business.name }}
+                            {{ props.recruitment.businessName }}
                         </div>
                     </div>
                     <div class="text-md flex flex-row items-center gap-1 font-normal">
@@ -51,10 +51,6 @@ const props = defineProps({
             <div>
                 <div class="flex flex-row justify-between">
                     <div class="flex flex-col items-center gap-2 md:flex-row">
-                        <!-- <UBadge class="justify-center" color="primary" variant="outline" size="md"
-                                :label="props.recruitment.position" />
-                        <UBadge class="justify-center" color="primary" variant="outline" size="md"
-                                :label="props.recruitment.keySkills" /> -->
                     </div>
                     <div>
                         <UButton color="primary" variant="solid" size="md"

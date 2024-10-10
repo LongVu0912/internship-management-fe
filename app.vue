@@ -1,10 +1,7 @@
-<script setup lang="ts">
-</script>
-
 <template>
 
     <Head>
-        <title>HCMUTE INTERNSHIP</title>
+        <Title>HCMUTE INTERNSHIP</Title>
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
     </Head>
     <NuxtLoadingIndicator color="primary" />

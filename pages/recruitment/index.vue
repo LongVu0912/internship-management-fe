@@ -48,6 +48,9 @@ const fetchData = async () => {
             type: 'error',
         });
     }
+
+    console.log(recruitmentPaging.value);
+
 }
 
 const handleSearch = () => {
@@ -59,8 +62,8 @@ const handleSearch = () => {
 </script>
 
 <template>
-    <div class="flex flex-col items-center">
-        <div class="flex w-full flex-col gap-4 px-4 lg:px-32">
+    <div class="flex flex-col items-center px-4 md:px-28">
+        <div class="flex w-full flex-col gap-4">
             <div class="flex w-full flex-col gap-2">
                 <div>
                     <form @submit.prevent="handleSearch">

@@ -8,7 +8,7 @@ const toggleMenu = () => {
 
 <template>
     <div
-         class="bg-app-primary fixed left-0 right-0 top-0 z-50 flex h-16 flex-row items-center justify-between border-b border-gray-200 px-2 md:px-24 dark:border-gray-800">
+         class="bg-app-primary fixed left-0 right-0 top-0 z-50 flex h-16 flex-row items-center justify-between border-b border-gray-200 px-2 md:px-28 dark:border-gray-800">
         <!-- * Start -->
         <div class="flex flex-1 flex-row gap-2">
             <UButton class="md:hidden"
@@ -29,10 +29,12 @@ const toggleMenu = () => {
             <div class="fixed left-0 right-0 top-16 z-40 overflow-hidden shadow-md transition-all duration-300 ease-in-out md:hidden"
                  :class="{ 'max-h-64 opacity-100': isOpen, 'max-h-0 opacity-0': !isOpen }">
                 <div class="bg-app-primary flex flex-col shadow-lg">
-                    <UButton to="/recruitment" variant="ghost" size="lg" icon="mingcute:building-5-line" label="Tất cả công ty">
+                    <UButton @click="isOpen = false" to="/recruitment" variant="ghost" size="lg"
+                             icon="mingcute:building-5-line" label="Tìm tuyển dụng">
                     </UButton>
                     <UDivider size="xs" />
-                    <UButton to="/" variant="ghost" size="lg" icon="mingcute:notebook-line" label="Mẫu CV">
+                    <UButton @click="isOpen = false" to="/" variant="ghost" size="lg" icon="mingcute:notebook-line"
+                             label="Mẫu CV">
                     </UButton>
                 </div>
             </div>
@@ -41,7 +43,7 @@ const toggleMenu = () => {
         <!-- * Center -->
         <div class="hidden flex-row md:flex">
             <UPopover mode="hover">
-                <UButton color="black" variant="ghost" label="Công ty"
+                <UButton color="black" variant="ghost" label="Tuyển dụng"
                          class="hover:text-primary-500 dark:hover-text-400"
                          trailing-icon="heroicons:chevron-down-16-solid" />
                 <template #panel>
@@ -52,7 +54,7 @@ const toggleMenu = () => {
                                 <UIcon class="h-6 w-6 self-start" name="mingcute:building-5-line" />
                                 <div class="flex w-32 flex-col gap-y-1">
                                     <span class="text-sm font-bold">
-                                        Tất cả công ty
+                                        Tìm tuyển dụng
                                     </span>
                                     <span class="text-xs">
                                         Thông tin các công ty đang tuyển dụng

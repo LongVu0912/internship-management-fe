@@ -11,4 +11,5 @@ export default interface Recruitment {
     keySkills:     string;
     position:      string;
     business:      Business;
+    businessName:      string;
 }
