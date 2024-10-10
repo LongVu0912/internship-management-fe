@@ -63,16 +63,18 @@ const handleSearch = () => {
         <div class="flex w-full flex-col gap-4 px-4 lg:px-32">
             <div class="flex w-full flex-col gap-2">
                 <div>
-                    <UInput icon="mingcute:search-2-fill" placeholder="Tìm theo tên công ty, tên công việc..."
-                            v-model="titleFilter.value"
-                            class="w-full"
-                            size="sm" :ui="{ icon: { trailing: { pointer: 'pointer-events-auto' } } }">
-                        <template #trailing>
-                            <UButton icon="mingcute:search-2-fill" color="primary"
-                                     @click="handleSearch"
-                                     class="-me-2.5 rounded-none rounded-r-md" />
-                        </template>
-                    </UInput>
+                    <form @submit.prevent="handleSearch">
+                        <UInput icon="mingcute:search-2-fill" placeholder="Tìm theo tên công ty, tên công việc..."
+                                v-model="titleFilter.value"
+                                class="w-full"
+                                size="sm" :ui="{ icon: { trailing: { pointer: 'pointer-events-auto' } } }">
+                            <template #trailing>
+                                <UButton icon="mingcute:search-2-fill" color="primary"
+                                         type="submit"
+                                         class="-me-2.5 rounded-none rounded-r-md" />
+                            </template>
+                        </UInput>
+                    </form>
                 </div>
                 <div class="flex flex-row gap-2">
                     <USelect class="w-1/3" icon="mingcute:building-3-line" color="gray" size="sm"

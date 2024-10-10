@@ -105,7 +105,7 @@ const selectSkill = (skill: Skill) => {
                                      @click="selectSkill(skill)" />
                         </div>
                         <div class="h-44 md:w-96">
-                            <div class="flex h-full flex-col items-start justify-between gap-2 rounded-lg bg-white p-6">
+                            <div class="flex h-full flex-col items-start justify-between gap-2 rounded-lg bg-white p-6 dark:bg-gray-700">
                                 <div class="flex flex-col items-start">
                                     <div class="text-2xl font-bold">{{ selectedSkill?.name }}</div>
                                     <div class="text-left text-gray-500 dark:text-gray-400">
