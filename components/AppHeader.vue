@@ -20,9 +20,9 @@ const toggleMenu = () => {
             <div class="hidden items-center gap-2 md:flex">
                 <NuxtImg src="/hcmute.png" width="40" height="40" quality="80"
                          alt="hcmute" />
-                <div class="font-bold">
+                <NuxtLink class="font-bold" to="/">
                     HCMUTE
-                </div>
+                </NuxtLink>
             </div>
 
             <!-- * Menu bar in mobile -->
