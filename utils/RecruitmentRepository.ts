@@ -1,6 +1,8 @@
 import type { NitroFetchRequest, $Fetch } from "nitropack";
 import type ApiResponse from "~/types/ApiResponse";
 import { PageConfig } from "~/types/page/PageConfig";
+import type Recruitment from "~/types/recruitment/Recruitment";
+import type RecruitmentRequest from "~/types/recruitment/RecruitmentRequest";
 
 export const RecruitmentRepository = <T>(
     fetch: $Fetch<T, NitroFetchRequest>
@@ -34,8 +36,41 @@ export const RecruitmentRepository = <T>(
         }
     };
 
+    const createRecruitment = async (payload: Recruitment) => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/recruitment/CreateRecruitment`,
+                {
+                    method: "POST",
+                    body: JSON.stringify(payload),
+                }
+            );
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
+    const requestRecruitment = async (payload: RecruitmentRequest) => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/recruitment/RequestRecruitment`,
+                {
+                    method: "POST",
+                    body: JSON.stringify(payload),
+                }
+            );
+
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
     return {
         getRecruitmentPaging,
+        createRecruitment,
         getRecruitmentById,
+        requestRecruitment,
     };
 };

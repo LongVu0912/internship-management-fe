@@ -84,40 +84,40 @@ const onCreateNewBusiness = async () => {
 
                     <div>
                         <div class="font-medium">Tên công ty</div>
-                        <UInput color="white" v-model="newBusiness.name" />
+                        <UInput v-model="newBusiness.name" />
                     </div>
 
                     <div>
                         <div class="font-medium">Tổng quan</div>
-                        <UTextarea size="lg" color="white" :rows="3" class="w-full" v-model="newBusiness.overview">
+                        <UTextarea size="lg" color="gray" :rows="3" class="w-full" v-model="newBusiness.overview">
                         </UTextarea>
                     </div>
 
-                    <div class="flex flex-row justify-between gap-2">
-                        <div class="flex w-full flex-col gap-1.5">
+                    <div class="flex flex-col gap-4 md:flex-row">
+                        <div class="w-full">
                             <div class="font-medium">Địa chỉ</div>
-                            <UInput color="white" v-model="newBusiness.location" />
+                            <UInput v-model="newBusiness.location" />
                         </div>
-                        <div class="flex w-full flex-col gap-1.5">
+                        <div class="w-full">
                             <div class="font-medium">Loại</div>
-                            <UInput color="white" v-model="newBusiness.type" />
+                            <UInput v-model="newBusiness.type" />
                         </div>
                     </div>
 
                     <div>
                         <div class="font-medium">Chuyên ngành</div>
-                        <UTextarea size="lg" color="white" :rows="3" class="w-full" v-model="newBusiness.industry">
+                        <UTextarea size="lg" color="gray" :rows="3" class="w-full" v-model="newBusiness.industry">
                         </UTextarea>
                     </div>
 
-                    <div class="flex flex-row justify-between gap-2">
-                        <div class="flex w-full flex-col gap-1.5">
+                    <div class="flex flex-col gap-4 md:flex-row">
+                        <div class="w-full">
                             <div class="font-medium">Ngày làm việc</div>
-                            <UInput color="white" v-model="newBusiness.workingDay" />
+                            <UInput v-model="newBusiness.workingDay" />
                         </div>
-                        <div class="flex w-full flex-col gap-1.5">
+                        <div class="w-full flex-col">
                             <div class="font-medium">Giờ làm việc</div>
-                            <UInput color="white" v-model="newBusiness.workingHour" />
+                            <UInput v-model="newBusiness.workingHour" />
                         </div>
                     </div>
 
@@ -125,43 +125,42 @@ const onCreateNewBusiness = async () => {
 
                     <div class="text-base font-semibold">TÀI KHOẢN QUẢN LÝ</div>
 
-                    <div class="flex flex-row justify-between gap-2">
-                        <div class="flex w-full flex-col gap-1.5">
+                    <div class="flex flex-col gap-4 md:flex-row">
+                        <div class="w-full">
                             <div class="font-medium">Họ tên</div>
-                            <UInput color="white" v-model="newBusiness.managedBy.fullname" />
+                            <UInput v-model="newBusiness.managedBy.fullname" />
                         </div>
-                        <div class="flex w-full flex-col gap-1.5">
+                        <div class="w-full">
                             <div class="font-medium">Tài khoản</div>
-                            <UInput color="white" v-model="newBusiness.managedBy.username" autocomplete="off" />
+                            <UInput v-model="newBusiness.managedBy.username" autocomplete="off" />
                         </div>
                     </div>
 
-                    <div class="flex flex-row justify-between gap-2">
-                        <div class="flex w-full flex-col gap-1.5">
+                    <div class="flex flex-col gap-4 md:flex-row">
+                        <div class="w-full">
                             <div class="font-medium">Mật khẩu</div>
-                            <UInput color="white" type="password" v-model="newBusiness.managedBy.password"
-                                    autocomplete="off" />
+                            <UInput type="password" v-model="newBusiness.managedBy.password" autocomplete="off" />
                         </div>
-                        <div class="flex w-full flex-col gap-1.5">
+                        <div class="w-full">
                             <div class="font-medium">Email</div>
-                            <UInput color="white" type="email" v-model="newBusiness.managedBy.email" />
+                            <UInput type="email" v-model="newBusiness.managedBy.email" />
                         </div>
                     </div>
 
-                    <div class="flex flex-row justify-between gap-2">
-                        <div class="flex w-full flex-col gap-1.5">
+                    <div class="flex flex-col gap-4 md:flex-row">
+                        <div class="w-full">
                             <div class="font-medium">Số điện thoại</div>
-                            <UInput color="white" v-model="newBusiness.managedBy.phoneNumber" />
+                            <UInput v-model="newBusiness.managedBy.phoneNumber" />
                         </div>
-                        <div class="flex w-full flex-col gap-1.5">
+                        <div class="w-full">
                             <div class="font-medium">Giới tính</div>
-                            <USelect size="md" :options="['Nữ', 'Nam']" v-model:model-value="gender" />
+                            <USelect color="gray" size="md" :options="['Nữ', 'Nam']" v-model:model-value="gender" />
                         </div>
                     </div>
 
                     <div>
                         <div class="font-medium">Bio</div>
-                        <UTextarea size="lg" color="white" :rows="3" class="w-full" v-model="newBusiness.managedBy.bio">
+                        <UTextarea size="lg" color="gray" :rows="3" class="w-full" v-model="newBusiness.managedBy.bio">
                         </UTextarea>
                     </div>
                 </div>

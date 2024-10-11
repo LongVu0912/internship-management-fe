@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type Recruitment from '~/types/recruitment/Recruitment';
+
 definePageMeta({
     layout: "business",
     middleware: "business",
@@ -6,16 +8,36 @@ definePageMeta({
 
 // * Imports
 const { $apiToken } = useNuxtApp();
+const recruitmentRepository = RecruitmentRepository($apiToken);
 const nuxtToast = useNuxtToast();
 
 // * Refs
 const isPageLoading = ref(true);
 const isCreatingRecruitment = ref(false);
+const recruitment = ref<Recruitment>({} as Recruitment);
 
 // * Lifecycle
 onBeforeMount(async () => {
     isPageLoading.value = false;
 });
+
+// * Functions
+const handleCreateRecruitment = async () => {
+    const apiResponse = await recruitmentRepository.createRecruitment(recruitment.value);
+
+    if (apiResponse.code === 200) {
+        nuxtToast({
+            description: 'Tạo tin tuyển dụng thành công',
+            type: 'success',
+        });
+        isCreatingRecruitment.value = false
+    } else {
+        nuxtToast({
+            description: apiResponse.message,
+            type: 'error',
+        });
+    }
+}
 </script>
 
 <template>
@@ -55,13 +77,46 @@ onBeforeMount(async () => {
 
                     <div>
                         <div class="font-medium">Tựa đề</div>
-                        <UInput color="white" />
+                        <UInput v-model="recruitment.title" />
                     </div>
 
                     <div>
                         <div class="font-medium">Mô tả</div>
-                        <UTextarea size="lg" color="white" :rows="3" class="w-full">
+                        <UTextarea size="lg" color="gray" :rows="3" class="w-full" v-model="recruitment.description">
                         </UTextarea>
+                    </div>
+
+                    <div class="flex flex-col gap-4 md:flex-row">
+                        <div class="w-full">
+                            <div class="font-medium">Địa điểm</div>
+                            <UInput v-model="recruitment.location" />
+                        </div>
+                        <div class="w-full">
+                            <div class="font-medium">Loại</div>
+                            <UInput v-model="recruitment.type" />
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-4 md:flex-row">
+                        <div class="w-full">
+                            <div class="font-medium">Ngày làm việc</div>
+                            <UInput v-model="recruitment.workingDay" />
+                        </div>
+                        <div class="w-full">
+                            <div class="font-medium">Giờ làm việc</div>
+                            <UInput v-model="recruitment.workingHour" />
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-4 md:flex-row">
+                        <div class="w-full">
+                            <div class="font-medium">Kỹ năng</div>
+                            <UInput v-model="recruitment.keySkills" />
+                        </div>
+                        <div class="w-full">
+                            <div class="font-medium">Vị trí</div>
+                            <UInput v-model="recruitment.position" />
+                        </div>
                     </div>
                 </div>
 
@@ -70,7 +125,7 @@ onBeforeMount(async () => {
                         <UButton class="mr-2" color="gray" variant="ghost" @click="isCreatingRecruitment = false">
                             Huỷ
                         </UButton>
-                        <UButton color="primary" @click="isCreatingRecruitment = false">
+                        <UButton color="primary" @click="handleCreateRecruitment">
                             Tạo
                         </UButton>
                     </div>

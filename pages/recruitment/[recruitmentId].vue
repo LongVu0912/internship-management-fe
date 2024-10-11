@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type Recruitment from '~/types/recruitment/Recruitment';
+import type RecruitmentRequest from '~/types/recruitment/RecruitmentRequest';
 
 definePageMeta({
     layout: 'home',
@@ -16,6 +17,7 @@ const route = useRoute();
 const isPageLoading = ref(true);
 const isConfirmDialogOpen = ref(false);
 const recruitment = ref<Recruitment>();
+const recruitmentRequest = ref<RecruitmentRequest>({} as RecruitmentRequest);
 
 // * Lifecycle
 onBeforeMount(async () => {
@@ -23,7 +25,6 @@ onBeforeMount(async () => {
         recruitmentId: route.params.recruitmentId as string,
     });
 
-    console.log(apiResponse);
     if (apiResponse.code != 200) {
         showError({
             statusCode: 404,
@@ -36,14 +37,32 @@ onBeforeMount(async () => {
     isPageLoading.value = false;
 })
 
+const openConfirmDialog = (recruitmentId: string) => {
+    recruitmentRequest.value.recruitmentId = recruitmentId;
+    isConfirmDialogOpen.value = true;
+}
+
 const onDialogConfirm = async () => {
-    nuxtToast({
-        description: "Chưa làm xong",
-    })
+    const apiResponse = await recruitmentRepository.requestRecruitment(recruitmentRequest.value);
+
+    if (apiResponse.code === 200) {
+        nuxtToast({
+            description: 'Gửi yêu cầu thành công',
+            type: 'success',
+            timeout: 2000,
+        });
+
+        isConfirmDialogOpen.value = false;
+    } else {
+        nuxtToast({
+            description: apiResponse.message,
+            type: 'error',
+        });
+    }
 }
 
 const onDialogCancel = () => {
-
+    isConfirmDialogOpen.value = false;
 }
 
 </script>
@@ -118,13 +137,48 @@ const onDialogCancel = () => {
                     <div class="flex flex-row gap-2">
                         <UButton label="Xem công ty" size="lg"
                                  @click="navigateTo(`/business/${recruitment?.business.businessId}`)" />
-                        <UButton label="Ứng tuyển ngay" size="lg" color="primary" @click="isConfirmDialogOpen = true" />
+                        <UButton label="Ứng tuyển ngay" size="lg" color="primary"
+                                 @click="openConfirmDialog(recruitment?.recruitmentId || '')" />
                     </div>
                 </div>
             </template>
         </UCard>
     </div>
-    <ConfirmDialog :isOpen="isConfirmDialogOpen" title="Ứng tuyển"
-                   description="Bạn có chắc muốn ứng tuyển công việc này?"
-                   :onConfirm="onDialogConfirm" :onCancel="onDialogCancel" @hideDialog="isConfirmDialogOpen = false" />
+
+    <UModal v-model="isConfirmDialogOpen" prevent-close>
+        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <div class="text-base font-semibold">
+                        Bạn có chắc muốn ứng tuyển công việc này?
+                    </div>
+                    <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                             @click="isConfirmDialogOpen = false" />
+                </div>
+            </template>
+
+            <div>
+                <div class="mb-2 text-base font-medium">Tin nhắn tới doanh nghiệp</div>
+                <UInput v-model="recruitmentRequest.messageToBusiness" type="text" size="lg"
+                        placeholder="Tin nhắn tới doanh nghiệp" />
+                <div class="mb-2 mt-4 text-base font-medium">Giảng viên</div>
+                <USelect size="lg" color="gray" modelValue="Jack J97"
+                         :options="['Donald Trump', 'John Wick', 'Trấn Thành', 'Jack J97', 'Sơn Tùng MTP']" />
+                <div class="mb-2 mt-4 text-base font-medium">Tin nhắn tới giảng viên</div>
+                <UInput v-model="recruitmentRequest.messageToInstructor" type="text" size="lg"
+                        placeholder="Tin nhắn tới giảng viên" />
+            </div>
+
+            <template #footer>
+                <div class="flex justify-end">
+                    <UButton class="mr-2" color="gray" variant="ghost" @click="onDialogCancel">
+                        Huỷ
+                    </UButton>
+                    <UButton color="primary" @click="onDialogConfirm">
+                        Xác nhận
+                    </UButton>
+                </div>
+            </template>
+        </UCard>
+    </UModal>
 </template>
