@@ -8,7 +8,7 @@ const toggleMenu = () => {
 
 <template>
     <div
-         class="bg-app-primary fixed left-0 right-0 top-0 z-50 flex h-16 flex-row items-center justify-between border-b border-gray-200 px-2 md:px-28 dark:border-gray-800">
+         class="bg-app-primary fixed left-0 right-0 top-0 z-50 flex h-16 flex-row items-center justify-between border-b border-gray-200 px-3 md:px-14 lg:px-28 dark:border-gray-800">
         <!-- * Start -->
         <div class="flex flex-1 flex-row gap-2">
             <UButton class="md:hidden"
@@ -33,8 +33,14 @@ const toggleMenu = () => {
                              icon="mingcute:building-5-line" label="Tìm tuyển dụng">
                     </UButton>
                     <UDivider size="xs" />
-                    <UButton @click="isOpen = false" to="/" variant="ghost" size="lg" icon="mingcute:notebook-line"
+                    <UButton @click="isOpen = false" to="http://localhost:5173/templates" target="_blank"
+                             variant="ghost" size="lg" icon="mingcute:notebook-line"
                              label="Mẫu CV">
+                    </UButton>
+                    <UDivider size="xs" />
+                    <UButton @click="isOpen = false" to="http://localhost:5173/templates/edit" target="_blank"
+                             variant="ghost" size="lg" icon="mingcute:notebook-2-line"
+                             label="Tạo CV">
                     </UButton>
                 </div>
             </div>
@@ -50,7 +56,7 @@ const toggleMenu = () => {
                     <ul class="flex flex-col gap-y-1 p-2">
                         <li
                             class="rounded-lg p-2 duration-300 hover:bg-black/5 dark:hover:bg-white/5">
-                            <a href="/recruitment" class="flex items-center gap-x-4">
+                            <NuxtLink to="/recruitment" class="flex items-center gap-x-4">
                                 <UIcon class="h-6 w-6 self-start" name="mingcute:building-5-line" />
                                 <div class="flex w-32 flex-col gap-y-1">
                                     <span class="text-sm font-bold">
@@ -60,7 +66,7 @@ const toggleMenu = () => {
                                         Thông tin các công ty đang tuyển dụng
                                     </span>
                                 </div>
-                            </a>
+                            </NuxtLink>
                         </li>
                     </ul>
                 </template>
@@ -74,7 +80,8 @@ const toggleMenu = () => {
                     <ul class="flex flex-col gap-y-1 p-2">
                         <li
                             class="rounded-lg p-2 duration-300 hover:bg-black/5 dark:hover:bg-white/5">
-                            <a href="#" class="flex items-center gap-x-4">
+                            <NuxtLink to="http://localhost:5173/templates" target="_blank"
+                                      class="flex items-center gap-x-4">
                                 <UIcon class="h-6 w-6 self-start" name="mingcute:notebook-line" />
                                 <div class="flex w-32 flex-col gap-y-1">
                                     <span class="text-sm font-bold">
@@ -84,7 +91,22 @@ const toggleMenu = () => {
                                         Các mẫu CV để ứng tuyển
                                     </span>
                                 </div>
-                            </a>
+                            </NuxtLink>
+                        </li>
+                        <li
+                            class="rounded-lg p-2 duration-300 hover:bg-black/5 dark:hover:bg-white/5">
+                            <NuxtLink to="http://localhost:5173/templates/edit" target="_blank"
+                                      class="flex items-center gap-x-4">
+                                <UIcon class="h-6 w-6 self-start" name="mingcute:notebook-2-line" />
+                                <div class="flex w-32 flex-col gap-y-1">
+                                    <span class="text-sm font-bold">
+                                        Tạo CV
+                                    </span>
+                                    <span class="text-xs">
+                                        Tạo CV trực tiếp
+                                    </span>
+                                </div>
+                            </NuxtLink>
                         </li>
                     </ul>
                 </template>
@@ -92,13 +114,8 @@ const toggleMenu = () => {
         </div>
 
         <!-- * End -->
-        <div class="flex flex-1 flex-row justify-end">
-            <ColorPicker />
-            <ColorMode />
-
-            <div class="mx-1 flex items-center">
-                <AvatarHeader />
-            </div>
+        <div class="flex flex-1 flex-row items-center justify-end">
+            <AvatarHeader />
         </div>
     </div>
 </template>

@@ -20,7 +20,7 @@ const props = defineProps({
                     <h1 class="mb-2 text-6xl font-bold">{{ error?.statusCode }}</h1>
                     <p class="mb-6 text-xl">{{ error?.statusMessage }}</p>
                     <UButton
-                             @click="navigateTo('/')"
+                             to="/"
                              label="Trang chủ"
                              color="primary"
                              size="xl">

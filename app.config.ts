@@ -28,12 +28,17 @@ export default defineAppConfig({
             },
         },
         textarea: {
-            base: "font-medium",
+            base: "font-base",
         },
         card: {
             body: {
                 padding: "p-4 sm:py-2 sm:px-6",
             },
         },
+        chip: {
+            translate: {
+                'top-right': "-translate-y-1/4 translate-x-1/4 transform",
+            }
+        }
     },
 });

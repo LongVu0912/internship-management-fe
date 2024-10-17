@@ -20,12 +20,9 @@ const sidebarState = useSidebarState();
         <div>
 
         </div>
-        <div class="mr-4 flex flex-row items-center gap-1">
-            <ColorPicker />
-            <ColorMode />
-            <div class="flex items-center">
-                <AvatarHeader />
-            </div>
+
+        <div class="mr-4 flex flex-1 flex-row items-center justify-end">
+            <AvatarHeader />
         </div>
     </div>
 </template>

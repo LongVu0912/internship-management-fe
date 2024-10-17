@@ -1,3 +1,16 @@
+<!-- <script setup lang="ts">
+
+const { $api } = useNuxtApp();
+const authRepository = AuthRepository($api);
+const userState = useUserState();
+
+await callOnce(async () => {
+    userState.value = await authRepository.getUserState();
+    console.log("app.vue", userState.value);  
+});
+
+</script> -->
+
 <template>
 
     <Head>

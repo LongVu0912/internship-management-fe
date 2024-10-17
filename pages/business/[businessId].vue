@@ -17,7 +17,7 @@ const business = ref<Business>();
 
 // * Lifecycle
 onBeforeMount(async () => {
-    const apiResponse = await businessRepository.getBusinessById({
+    const apiResponse = await businessRepository.getBusinessData({
         businessId: route.params.businessId as string,
     });
 
@@ -41,7 +41,7 @@ onBeforeMount(async () => {
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
     </Head>
     <Loading v-if="isPageLoading" />
-    <div v-else class="px-4 md:px-28">
+    <template v-else>
         <UCard>
             <template #header>
                 <div class="flex flex-row items-center gap-4">
@@ -62,23 +62,38 @@ onBeforeMount(async () => {
                         <div class="flex flex-col gap-4">
                             <div class="flex flex-row items-center gap-2">
                                 <UIcon name="mingcute:location-3-line" class="h-6 w-6 flex-shrink-0" />
-                                <div>{{ business?.location }}</div>
+                                <div class="flex flex-col">
+                                    <div class="font-bold">Địa điểm</div>
+                                    <div>{{ business?.location }}</div>
+                                </div>
                             </div>
                             <div class="flex flex-row items-center gap-2">
                                 <UIcon name="mingcute:profile-line" class="h-6 w-6 flex-shrink-0" />
-                                <div>{{ business?.type }}</div>
+                                <div class="flex flex-col">
+                                    <div class="font-bold">Loại</div>
+                                    <div>{{ business?.type }}</div>
+                                </div>
                             </div>
                             <div class="flex flex-row items-center gap-2">
                                 <UIcon name="mingcute:book-3-line" class="h-6 w-6 flex-shrink-0" />
-                                <div>{{ business?.industry }}</div>
+                                <div class="flex flex-col">
+                                    <div class="font-bold">Ngành</div>
+                                    <div>{{ business?.industry }}</div>
+                                </div>
                             </div>
                             <div class="flex flex-row items-center gap-2">
                                 <UIcon name="mingcute:calendar-2-line" class="h-6 w-6 flex-shrink-0" />
-                                <div>{{ business?.workingDay }}</div>
+                                <div class="flex flex-col">
+                                    <div class="font-bold">Ngày làm việc</div>
+                                    <div>{{ business?.workingDay }}</div>
+                                </div>
                             </div>
                             <div class="flex flex-row items-center gap-2">
                                 <UIcon name="mingcute:time-line" class="h-6 w-6 flex-shrink-0" />
-                                <div>{{ business?.workingHour }}</div>
+                                <div class="flex flex-col">
+                                    <div class="font-bold">Giờ làm việc</div>
+                                    <div>{{ business?.workingHour }}</div>
+                                </div>
                             </div>
                         </div>
                         <UDivider size="xs" />
@@ -97,18 +112,18 @@ onBeforeMount(async () => {
                         <div>
                             <div class="flex flex-row items-center gap-2">
                                 <UIcon name="mingcute:user-2-line" class="h-6 w-6 flex-shrink-0" />
-                                <div>{{ business?.profile.fullname }}</div>
-                                <UBadge variant="outline">{{ business?.profile.isMale ? "Nam" : "Nữ" }}</UBadge>
+                                <div>{{ business?.managedBy.fullname }}</div>
+                                <UBadge variant="outline">{{ business?.managedBy.isMale ? "Nam" : "Nữ" }}</UBadge>
                             </div>
                         </div>
                         <UDivider size="xs" />
                         <div class="flex flex-row items-center gap-2">
                             <UIcon name="mingcute:phone-line" class="h-6 w-6 flex-shrink-0" />
-                            <div>{{ business?.profile.phoneNumber }}</div>
+                            <div>{{ business?.managedBy.phoneNumber }}</div>
                         </div>
                         <div class="flex flex-row items-center gap-2">
                             <UIcon name="mingcute:mail-line" class="h-6 w-6 flex-shrink-0" />
-                            <div>{{ business?.profile.email }}</div>
+                            <div>{{ business?.managedBy.email }}</div>
                         </div>
                         <UDivider size="xs" />
                         <div class="flex flex-row items-center gap-2">
@@ -128,5 +143,5 @@ onBeforeMount(async () => {
                 </div>
             </template>
         </UCard>
-    </div>
+    </template>
 </template>
