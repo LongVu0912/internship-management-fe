@@ -14,7 +14,7 @@ const adminRepository = AdminRepository($apiToken);
 const nuxtToast = useNuxtToast();
 
 // * Refs
-const isPageLoading = ref(true);
+const isDataLoading = ref(true);
 const isInputModalOpen = ref(false);
 const currentPage = ref(1);
 const pageSize = ref(5);
@@ -27,20 +27,32 @@ const studentList = ref<Student[]>([]);
 // * Lifecycle
 onBeforeMount(async () => {
     await fetchData();
-    isPageLoading.value = false;
 });
 
 // * Functions
 const fetchData = async () => {
+    isDataLoading.value = true;
     pageConfig.value.filters = [];
     pageConfig.value.filters.push(fullNameFilter.value);
     pageConfig.value.update({
         currentPage: currentPage.value,
         pageSize: pageSize.value,
     });
+
     const apiResponse = await adminRepository.getStudentPaging(pageConfig.value);
-    studentList.value = apiResponse.result.data;
-    pageConfig.value.update(apiResponse.result.pageConfig);
+
+    if (apiResponse.code === 200) {
+        studentList.value = apiResponse.result.data;
+
+        pageConfig.value.update(apiResponse.result.pageConfig);
+
+        isDataLoading.value = false;
+    } else {
+        nuxtToast({
+            description: apiResponse.message,
+            type: 'error',
+        });
+    }
 }
 
 const handleUndoneButton = () => {
@@ -50,7 +62,10 @@ const handleUndoneButton = () => {
 }
 
 // * Watches
-watch([currentPage, pageSize, fullNameFilter], () => {
+watch([currentPage, pageSize], ([newCurrentPage, newPageSize], [oldCurrentPage, oldPageSize]) => {
+    if (oldPageSize !== newPageSize) {
+        currentPage.value = 1
+    }
     fetchData();
 });
 
@@ -127,8 +142,7 @@ const majors = [
 </script>
 
 <template>
-    <Loading v-if="isPageLoading" />
-    <div v-else class="flex flex-col gap-2">
+    <div class="flex flex-col gap-2">
         <div class="mb-2 flex flex-col justify-between gap-2 md:flex-row">
             <div class="flex flex-col gap-2 md:flex-row">
                 <form @submit.prevent="fetchData">
@@ -150,7 +164,9 @@ const majors = [
             </div>
         </div>
 
-        <UTable class="rounded-lg border border-gray-100 dark:border-gray-700" :columns="columns" :rows="studentList">
+        <UTable :loading="isDataLoading" class="rounded-lg border border-gray-100 dark:border-gray-700"
+                :columns="columns"
+                :rows="studentList">
             <template #name-data="{ row }">
                 <div class="font-medium">
                     {{ row.profile.fullname }}

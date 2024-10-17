@@ -74,7 +74,7 @@ const onDialogCancel = () => {
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
     </Head>
     <Loading v-if="isPageLoading" />
-    <div v-else class="px-4 md:px-28">
+    <template v-else>
         <UCard>
             <template #header>
                 <div class="text-xl font-bold">
@@ -87,15 +87,24 @@ const onDialogCancel = () => {
                         <div class="flex flex-col gap-3">
                             <div class="flex flex-row items-center gap-2">
                                 <UIcon name="mingcute:building-3-line" class="h-6 w-6 flex-shrink-0" />
-                                <div>{{ recruitment?.business.name }}</div>
+                                <div class="flex flex-col">
+                                    <div class="font-bold">Công ty</div>
+                                    <div>{{ recruitment?.business.name }}</div>
+                                </div>
                             </div>
                             <div class="flex flex-row items-center gap-2">
                                 <UIcon name="mingcute:location-3-line" class="h-6 w-6 flex-shrink-0" />
-                                <div>{{ recruitment?.location }}</div>
+                                <div class="flex flex-col">
+                                    <div class="font-bold">Địa điểm</div>
+                                    <div>{{ recruitment?.location }}</div>
+                                </div>
                             </div>
                             <div class="flex flex-row items-center gap-2">
                                 <UIcon name="mingcute:user-2-line" class="h-6 w-6 flex-shrink-0" />
-                                <div>{{ recruitment?.position }}</div>
+                                <div class="flex flex-col">
+                                    <div class="font-bold">Vị trí</div>
+                                    <div>{{ recruitment?.position }}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -103,15 +112,24 @@ const onDialogCancel = () => {
                         <div class="flex flex-col gap-3">
                             <div class="flex flex-row items-center gap-2">
                                 <UIcon name="mingcute:briefcase-2-line" class="h-6 w-6 flex-shrink-0" />
-                                <div>{{ recruitment?.type }}</div>
+                                <div class="flex flex-col">
+                                    <div class="font-bold">Loại hình</div>
+                                    <div>{{ recruitment?.type }}</div>
+                                </div>
                             </div>
                             <div class="flex flex-row items-center gap-2">
                                 <UIcon name="mingcute:calendar-2-line" class="h-6 w-6 flex-shrink-0" />
-                                <div>{{ recruitment?.workingDay }}</div>
+                                <div class="flex flex-col">
+                                    <div class="font-bold">Ngày làm việc</div>
+                                    <div>{{ recruitment?.workingDay }}</div>
+                                </div>
                             </div>
                             <div class="flex flex-row items-center gap-2">
                                 <UIcon name="mingcute:time-line" class="h-6 w-6 flex-shrink-0" />
-                                <div>{{ recruitment?.workingHour }}</div>
+                                <div class="flex flex-col">
+                                    <div class="font-bold">Giờ làm việc</div>
+                                    <div>{{ recruitment?.workingHour }}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -136,14 +154,14 @@ const onDialogCancel = () => {
                 <div class="flex flex-row justify-end">
                     <div class="flex flex-row gap-2">
                         <UButton label="Xem công ty" size="lg"
-                                 @click="navigateTo(`/business/${recruitment?.business.businessId}`)" />
+                                 :to="`/business/${recruitment?.business.businessId}`" />
                         <UButton label="Ứng tuyển ngay" size="lg" color="primary"
                                  @click="openConfirmDialog(recruitment?.recruitmentId || '')" />
                     </div>
                 </div>
             </template>
         </UCard>
-    </div>
+    </template>
 
     <UModal v-model="isConfirmDialogOpen" prevent-close>
         <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
@@ -159,14 +177,14 @@ const onDialogCancel = () => {
 
             <div>
                 <div class="mb-2 text-base font-medium">Tin nhắn tới doanh nghiệp</div>
-                <UInput v-model="recruitmentRequest.messageToBusiness" type="text" size="lg"
-                        placeholder="Tin nhắn tới doanh nghiệp" />
-                <div class="mb-2 mt-4 text-base font-medium">Giảng viên</div>
+                <UTextarea :rows="3" v-model="recruitmentRequest.messageToBusiness" type="text" size="lg" color="gray"
+                           placeholder="Viết giới thiệu ngắn gọn về bản thân (điểm mạnh, điểm yếu) và nêu rõ mong muốn, lý do bạn muốn ứng tuyển cho vị trí này." />
+                <div class="mb-2 mt-4 text-base font-medium">Giảng viên hướng dẫn</div>
                 <USelect size="lg" color="gray" modelValue="Jack J97"
                          :options="['Donald Trump', 'John Wick', 'Trấn Thành', 'Jack J97', 'Sơn Tùng MTP']" />
                 <div class="mb-2 mt-4 text-base font-medium">Tin nhắn tới giảng viên</div>
-                <UInput v-model="recruitmentRequest.messageToInstructor" type="text" size="lg"
-                        placeholder="Tin nhắn tới giảng viên" />
+                <UTextarea :rows="3" color="gray" v-model="recruitmentRequest.messageToInstructor" type="text" size="lg"
+                           placeholder="Tin nhắn tới giảng viên yêu cầu hướng dẫn thực tập" />
             </div>
 
             <template #footer>

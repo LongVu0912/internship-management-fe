@@ -3,8 +3,8 @@ import { ErrorApiResponse } from "~/types/const/ErrorApiResponse";
 
 // * Handle the return when api callings are failed
 export const HandleError = (error: any) => {
-    if (error.response) {
+    if (error.response && error.response.status != 401) {
         return error.response._data as ApiResponse;
     }
-    return ErrorApiResponse;
+    return ErrorApiResponse(error);
 };

@@ -2,12 +2,13 @@ import Role from "~/types/enums/Role";
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
     if (import.meta.server) return;
-    const { $api } = useNuxtApp();
 
-    const jwtRepository = JwtRepository($api);
-    const role = await jwtRepository.getRole();
+    // const { $api } = useNuxtApp();
+    // const authRepository = AuthRepository($api);
 
-    if (role != Role.ROLE_BUSINESS) {
+    // useUserState().value = await authRepository.getUserState();
+
+    if (useUserState().value.role != Role.ROLE_BUSINESS) {
         return navigateTo("/login");
     }
 });

@@ -9,11 +9,11 @@ definePageMeta({
 const { $api } = useNuxtApp();
 const nuxtToast = useNuxtToast();
 const authRepository = AuthRepository($api);
-const jwtRepository = JwtRepository($api);
 
 // * Refs
 const isPasswordModalOpen = ref(false);
 const isLoading = ref(false);
+const userState = useUserState();
 
 // ? For login and forgot password
 const loginState = reactive({
@@ -45,15 +45,14 @@ const handleLoginSubmit = async () => {
     });
 
     if (apiResponse.code === 200) {
-        await jwtRepository.saveTokenToCookie(apiResponse.result.token);
-        const role = await jwtRepository.getRole();
-
+        await authRepository.saveTokenToCookie(apiResponse.result.token);
+        userState.value = await authRepository.getUserState();
         nuxtToast({
             description: 'Đăng nhập thành công',
             type: 'success',
             timeout: 1000,
             onCallback: () => {
-                if (role == Role.ROLE_ADMIN) {
+                if (userState.value.role == Role.ROLE_ADMIN) {
                     navigateTo("/admin");
                 }
                 else {
