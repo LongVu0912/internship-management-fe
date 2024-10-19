@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { PageConfig } from '~/types/page/PageConfig';
 import type Recruitment from '~/types/recruitment/Recruitment';
 
 definePageMeta({
@@ -13,15 +14,47 @@ const nuxtToast = useNuxtToast();
 
 // * Refs
 const isPageLoading = ref(true);
+const isDataLoading = ref(true);
 const isCreatingRecruitment = ref(false);
 const recruitment = ref<Recruitment>({} as Recruitment);
+const recruitments = ref<Recruitment[]>({} as Recruitment[]);
+
+const currentPage = ref(1);
+const pageSize = ref(5);
+const pageConfig = ref(new PageConfig());
 
 // * Lifecycle
 onBeforeMount(async () => {
     isPageLoading.value = false;
+    await fetchData();
 });
 
 // * Functions
+const fetchData = async () => {
+    isDataLoading.value = true;
+    pageConfig.value.filters = [];
+
+    pageConfig.value.update({
+        currentPage: currentPage.value,
+        pageSize: pageSize.value,
+    });
+
+    const apiResponse = await recruitmentRepository.getAllBusinessRecruitmentPaging(pageConfig.value);
+
+    if (apiResponse.code === 200) {
+        recruitments.value = apiResponse.result.data;
+
+        pageConfig.value.update(apiResponse.result.pageConfig);
+
+        isDataLoading.value = false;
+    } else {
+        nuxtToast({
+            description: apiResponse.message,
+            type: 'error',
+        });
+    }
+}
+
 const handleCreateRecruitment = async () => {
     const apiResponse = await recruitmentRepository.createRecruitment(recruitment.value);
 
@@ -38,6 +71,83 @@ const handleCreateRecruitment = async () => {
         });
     }
 }
+
+const handleUndoneButton = () => {
+    nuxtToast({
+        description: "Chưa làm xong",
+    })
+}
+
+// * Watches
+watch([currentPage, pageSize], ([newCurrentPage, newPageSize], [oldCurrentPage, oldPageSize]) => {
+    if (oldPageSize !== newPageSize) {
+        currentPage.value = 1
+    }
+    fetchData();
+});
+
+// * Data
+const items = (row: any) => [
+    [
+        {
+            label: 'Hồ sơ',
+            icon: 'mingcute:profile-line',
+            click: () => {
+                navigateTo(`/student/${row.studentId}`, {
+                    open: {
+                        target: '_blank',
+                    }
+                })
+            }
+        },
+        {
+            label: 'Sửa',
+            icon: 'i-heroicons-pencil-square-20-solid',
+            click: handleUndoneButton,
+        },
+    ],
+    [
+        {
+            label: 'Lưu trữ',
+            icon: 'i-heroicons-archive-box-20-solid',
+            click: handleUndoneButton,
+        },
+        {
+            label: 'Di chuyển',
+            icon: 'i-heroicons-arrow-right-circle-20-solid',
+            click: handleUndoneButton,
+        }
+    ],
+    [
+        {
+            label: 'Xoá',
+            icon: 'i-heroicons-trash-20-solid',
+            click: handleUndoneButton,
+        }
+    ]
+]
+
+const columns = [
+    {
+        key: 'title',
+        label: 'Tên'
+    },
+    {
+        key: 'type',
+        label: 'Loại'
+    },
+    {
+        key: 'workingDay',
+        label: 'Ngày làm việc'
+    },
+    {
+        key: 'workingHour',
+        label: 'Giờ làm việc'
+    },
+    {
+        key: 'actions'
+    }
+]
 </script>
 
 <template>
@@ -45,20 +155,36 @@ const handleCreateRecruitment = async () => {
         <Loading />
     </div>
     <div v-else>
-        <div v-if="!isCreatingRecruitment" class="flex flex-col justify-between gap-2 md:flex-row">
-            <div class="flex flex-col gap-2 md:flex-row">
-                <UInput placeholder="Tìm theo bài tuyển dụng..."
-                        class="w-64"
-                        size="sm"
-                        :ui="{ icon: { trailing: { pointer: 'pointer-events-auto' } } }">
-                    <template #trailing>
-                        <UButton icon="heroicons:magnifying-glass-16-solid" color="primary"
-                                 class="-me-2.5 rounded-none rounded-r-md" type="submit" />
-                    </template>
-                </UInput>
+        <div v-if="!isCreatingRecruitment" class="flex flex-col gap-2">
+            <div class="flex flex-col justify-between gap-2 md:flex-row">
+                <div class="flex flex-col gap-2 md:flex-row">
+                </div>
+                <div>
+                    <UButton color="primary" @click="isCreatingRecruitment = true">Tạo tuyển dụng</UButton>
+                </div>
             </div>
-            <div>
-                <UButton color="primary" @click="isCreatingRecruitment = true">Tạo tuyển dụng</UButton>
+
+            <UTable :loading="isDataLoading" class="rounded-lg border border-gray-100 dark:border-gray-700"
+                    :columns="columns"
+                    :rows="recruitments">
+
+                <template #actions-data="{ row }">
+                    <UDropdown :items="items(row)">
+                        <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
+                    </UDropdown>
+                </template>
+            </UTable>
+
+            <div class="flex justify-between pt-4">
+                <div>
+                </div>
+                <div class="flex flex-row items-center gap-2">
+                    <div>
+                        <USelect v-model.number="pageSize" :options="[5, 6, 7, 8, 9, 10]" />
+                    </div>
+                    <UPagination :max="7" v-model="currentPage" :page-count="pageSize"
+                                 :total="pageConfig?.totalRecords || 0" />
+                </div>
             </div>
         </div>
 

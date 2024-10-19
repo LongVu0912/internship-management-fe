@@ -46,7 +46,6 @@ const onCreateNewBusiness = async () => {
         });
     }
 }
-
 </script>
 
 <template>

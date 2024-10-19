@@ -64,10 +64,30 @@ export const StudentRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         }
     };
 
+    const importStudents = async (payload: { file: File }) => {
+        const formData = new FormData();
+        formData.append("file", payload.file);
+
+        try {
+            const response: ApiResponse = await fetch(
+                `/student/ImportStudents`,
+                {
+                    method: "POST",
+                    body: formData,
+                }
+            );
+
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
     return {
         getStudentProfile,
         getStudentProfileById,
         uploadCV,
         updateProfile,
+        importStudents,
     };
 };
