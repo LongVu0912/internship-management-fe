@@ -11,14 +11,16 @@ definePageMeta({
 // * Imports
 const { $apiToken } = useNuxtApp();
 const adminRepository = AdminRepository($apiToken);
+const studentRepository = StudentRepository($apiToken);
 const nuxtToast = useNuxtToast();
 
 // * Refs
 const isDataLoading = ref(true);
 const isInputModalOpen = ref(false);
+const isSubmitting = ref(false);
+const excelFile = ref<File | null>(null);
 const currentPage = ref(1);
 const pageSize = ref(5);
-const selectedMajor = ref([]);
 
 const fullNameFilter = ref(new Filter("profile.fullname"));
 const pageConfig = ref(new PageConfig());
@@ -68,6 +70,46 @@ watch([currentPage, pageSize], ([newCurrentPage, newPageSize], [oldCurrentPage, 
     }
     fetchData();
 });
+
+// * Functions
+const handleInputExcelFile = (event: any) => {
+    if (event && event.length > 0) {
+        excelFile.value = event[0];
+    } else {
+        excelFile.value = null;
+    }
+};
+
+const handleImportStudents = async () => {
+    isSubmitting.value = true;
+
+    if (excelFile.value == null) {
+        nuxtToast({
+            description: "Hãy chọn file Excel"
+        })
+        isSubmitting.value = false;
+        return;
+    }
+
+    const apiResponse = await studentRepository.importStudents({
+        file: excelFile.value,
+    });
+
+    if (apiResponse.code === 200) {
+        nuxtToast({
+            description: "Thêm sinh viên thành công",
+            type: "success",
+        });
+        fetchData();
+        isInputModalOpen.value = false;
+    } else {
+        nuxtToast({
+            description: apiResponse.message,
+            type: 'error',
+        });
+    }
+    isSubmitting.value = false;
+}
 
 // * Data
 const items = (row: any) => [
@@ -135,10 +177,6 @@ const columns = [
         key: 'actions'
     }
 ]
-
-const majors = [
-    "Ngành Robot và trí tuệ nhân tạo", "Ngành Thiết kế đồ họa", "Ngành Kỹ thuật Công nghiệp",
-];
 </script>
 
 <template>
@@ -157,10 +195,9 @@ const majors = [
                         </template>
                     </UInput>
                 </form>
-                <USelectMenu class="w-64" v-model="selectedMajor" :options="majors" multiple placeholder="Chọn ngành" />
             </div>
             <div>
-                <UButton color="primary" @click="isInputModalOpen = true">Nhập</UButton>
+                <UButton color="primary" @click="isInputModalOpen = true;">Nhập</UButton>
             </div>
         </div>
 
@@ -237,12 +274,14 @@ const majors = [
                              @click="isInputModalOpen = false" />
                 </div>
             </template>
+
             <div class="flex flex-col justify-center">
-                <UInput type="file" size="sm" icon="i-heroicons-folder" />
+                <UInput type="file" size="sm" icon="i-heroicons-folder" accept=".xlsx" @change="handleInputExcelFile" />
             </div>
 
             <template #footer>
-                <UButton color="primary" class="w-full rounded-md" size="lg" block @click="handleUndoneButton">
+                <UButton :loading="isSubmitting" color="primary" class="w-full rounded-md" size="lg" block
+                         @click="handleImportStudents">
                     Nhập dữ liệu
                 </UButton>
             </template>

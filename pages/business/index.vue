@@ -132,7 +132,7 @@ onBeforeMount(async () => {
 
         <template #footer>
             <div class="flex justify-end">
-                <UButton label="Quay lại" size="lg" color="primary" @click="useRouter().back" />
+                <UButton label="Cập nhật" size="lg" color="primary" @click="" />
             </div>
         </template>
     </UCard>
