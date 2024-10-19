@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import type Instructor from '~/types/instructor/Instructor';
+import type Profile from '~/types/profile/Profile';
 import type Recruitment from '~/types/recruitment/Recruitment';
 import type RecruitmentRequest from '~/types/recruitment/RecruitmentRequest';
+import { InstructorRepository } from '~/utils/InstructorRepository';
 
 definePageMeta({
     layout: 'home',
@@ -9,13 +12,21 @@ definePageMeta({
 
 // * Imports
 const { $apiToken } = useNuxtApp();
+const instructorRepository = InstructorRepository($apiToken);
 const recruitmentRepository = RecruitmentRepository($apiToken);
 const nuxtToast = useNuxtToast();
 const route = useRoute();
 
 // * Refs
 const isPageLoading = ref(true);
+const isInstructorDataLoading = ref(false);
 const isConfirmDialogOpen = ref(false);
+
+const instructors = ref<Instructor[]>();
+
+const selectedInstructorProfile = ref<Profile>({} as Profile);
+const instructorProfiles = ref<Profile[]>([]);
+
 const recruitment = ref<Recruitment>();
 const recruitmentRequest = ref<RecruitmentRequest>({} as RecruitmentRequest);
 
@@ -37,12 +48,36 @@ onBeforeMount(async () => {
     isPageLoading.value = false;
 })
 
-const openConfirmDialog = (recruitmentId: string) => {
+// * Functions
+const openConfirmDialog = async (recruitmentId: string) => {
+    isInstructorDataLoading.value = true;
+
+    const apiResponse = await instructorRepository.getAllInstructor();
+
+    if (apiResponse.code != 200) {
+        showError({
+            statusCode: 404,
+            statusMessage: "Page not found",
+        })
+    }
+
+    instructors.value = apiResponse.result;
+
+    await instructors.value?.forEach((instructor) => {
+        instructorProfiles.value.push(instructor.profile);
+    })
+
     recruitmentRequest.value.recruitmentId = recruitmentId;
+    selectedInstructorProfile.value = instructorProfiles.value[0];
+
+    isInstructorDataLoading.value = false;
     isConfirmDialogOpen.value = true;
 }
 
 const onDialogConfirm = async () => {
+    recruitmentRequest.value.instructorId = selectedInstructorProfile.value?.profileId;
+    console.log(recruitmentRequest.value);
+
     const apiResponse = await recruitmentRepository.requestRecruitment(recruitmentRequest.value);
 
     if (apiResponse.code === 200) {
@@ -64,7 +99,6 @@ const onDialogConfirm = async () => {
 const onDialogCancel = () => {
     isConfirmDialogOpen.value = false;
 }
-
 </script>
 
 <template>
@@ -155,7 +189,7 @@ const onDialogCancel = () => {
                     <div class="flex flex-row gap-2">
                         <UButton label="Xem công ty" size="lg"
                                  :to="`/business/${recruitment?.business.businessId}`" />
-                        <UButton label="Ứng tuyển ngay" size="lg" color="primary"
+                        <UButton label="Ứng tuyển ngay" size="lg" color="primary" :loading="isInstructorDataLoading"
                                  @click="openConfirmDialog(recruitment?.recruitmentId || '')" />
                     </div>
                 </div>
@@ -180,8 +214,9 @@ const onDialogCancel = () => {
                 <UTextarea :rows="3" v-model="recruitmentRequest.messageToBusiness" type="text" size="lg" color="gray"
                            placeholder="Viết giới thiệu ngắn gọn về bản thân (điểm mạnh, điểm yếu) và nêu rõ mong muốn, lý do bạn muốn ứng tuyển cho vị trí này." />
                 <div class="mb-2 mt-4 text-base font-medium">Giảng viên hướng dẫn</div>
-                <USelect size="lg" color="gray" modelValue="Jack J97"
-                         :options="['Donald Trump', 'John Wick', 'Trấn Thành', 'Jack J97', 'Sơn Tùng MTP']" />
+                <USelectMenu size="lg" color="gray" :options="instructorProfiles" option-attribute="fullname"
+                             v-model="selectedInstructorProfile">
+                </USelectMenu>
                 <div class="mb-2 mt-4 text-base font-medium">Tin nhắn tới giảng viên</div>
                 <UTextarea :rows="3" color="gray" v-model="recruitmentRequest.messageToInstructor" type="text" size="lg"
                            placeholder="Tin nhắn tới giảng viên yêu cầu hướng dẫn thực tập" />
