@@ -183,7 +183,7 @@ const columns = [
                         <USelect v-model.number="pageSize" :options="[5, 6, 7, 8, 9, 10]" />
                     </div>
                     <UPagination :max="7" v-model="currentPage" :page-count="pageSize"
-                                 :total="pageConfig?.totalRecords || 0" />
+                                 :total="pageConfig.totalRecords" />
                 </div>
             </div>
         </div>

@@ -65,12 +65,12 @@ onBeforeMount(async () => {
                                         size="lg"
                                         color="green"
                                         variant="outline"
-                                        label="Đang tìm việc" />
+                                        label="Tìm thực tập" />
                                 <UBadge v-else
                                         size="lg"
                                         color="red"
                                         variant="outline"
-                                        label="Không tìm việc" />
+                                        label="Đã thực tập" />
                             </div>
                         </div>
                     </div>
