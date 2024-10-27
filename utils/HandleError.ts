@@ -1,10 +1,22 @@
 import type ApiResponse from "~/types/ApiResponse";
-import { ErrorApiResponse } from "~/types/const/ErrorApiResponse";
 
-// * Handle the return when api callings are failed
-export const HandleError = (error: any) => {
-    if (error.response && error.response.status != 401) {
-        return error.response._data as ApiResponse;
+// * Handle the return when API callings are failed
+export const HandleError = (error: any): ApiResponse => {
+    let code = 500;
+    let message = "Có lỗi, vui lòng thử lại sau";
+
+    if (error.response) {
+        if (error.response.status === 401) {
+            code = 401;
+            message = "Phiên đăng nhập hết hạn, vui lòng đăng nhập lại";
+        } else {
+            return error.response._data as ApiResponse;
+        }
     }
-    return ErrorApiResponse(error);
+
+    return {
+        code,
+        message,
+        result: null,
+    };
 };

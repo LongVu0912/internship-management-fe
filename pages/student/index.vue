@@ -167,19 +167,12 @@ const onDialogCancel = () => {
                                         size="lg"
                                         color="green"
                                         variant="outline"
-                                        label="Đang tìm việc" />
+                                        label="Tìm thực tập" />
                                 <UBadge v-else
                                         size="lg"
                                         color="red"
                                         variant="outline"
-                                        label="Không tìm việc" />
-                                <UButton v-if="isUpdating"
-                                         variant="solid"
-                                         color="gray"
-                                         icon="mingcute:refresh-3-line"
-                                         class="border-primary-500 border"
-                                         @click="student.isSeekingIntern = !student.isSeekingIntern">
-                                </UButton>
+                                        label="Đã thực tập" />
                             </div>
                         </div>
                     </div>

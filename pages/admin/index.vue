@@ -32,14 +32,19 @@ onBeforeMount(async () => {
 });
 
 // * Functions
-const fetchData = async () => {
-    isDataLoading.value = true;
+const updatePageConfig = async () => {
     pageConfig.value.filters = [];
     pageConfig.value.filters.push(fullNameFilter.value);
+
     pageConfig.value.update({
         currentPage: currentPage.value,
         pageSize: pageSize.value,
     });
+}
+
+const fetchData = async () => {
+    isDataLoading.value = true;
+    await updatePageConfig();
 
     const apiResponse = await adminRepository.getStudentPaging(pageConfig.value);
 
@@ -257,8 +262,7 @@ const columns = [
                 <div>
                     <USelect v-model.number="pageSize" :options="[5, 6, 7, 8, 9, 10]" />
                 </div>
-                <UPagination :max="7" v-model="currentPage" :page-count="pageSize"
-                             :total="pageConfig?.totalRecords || 0" />
+                <UPagination :max="7" v-model="currentPage" :page-count="pageSize" :total="pageConfig.totalRecords" />
             </div>
         </div>
     </div>

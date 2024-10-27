@@ -1,5 +1,6 @@
 import type { NitroFetchRequest, $Fetch } from "nitropack";
 import type ApiResponse from "~/types/ApiResponse";
+import type { PageConfig } from "~/types/page/PageConfig";
 import type Student from "~/types/student/Student";
 
 export const StudentRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
@@ -83,11 +84,30 @@ export const StudentRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         }
     };
 
+    const getAllStudentInstructorsRequestPaging = async (
+        payload: PageConfig
+    ) => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/student/GetAllStudentInstructorsRequestPaging`,
+                {
+                    method: "POST",
+                    body: JSON.stringify(payload),
+                }
+            );
+
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
     return {
         getStudentProfile,
         getStudentProfileById,
         uploadCV,
         updateProfile,
         importStudents,
+        getAllStudentInstructorsRequestPaging,
     };
 };

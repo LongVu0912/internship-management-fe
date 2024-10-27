@@ -71,7 +71,7 @@ const items = [
             <UButton icon="mingcute:notification-line" color="gray" variant="ghost" to="/notification" />
         </UChip>
 
-        <ColorPicker />
+        <!-- <ColorPicker /> -->
         <ColorMode />
 
         <UDropdown v-if="userState.isLogged"
