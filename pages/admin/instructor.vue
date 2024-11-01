@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type Instructor from '~/types/instructor/Instructor';
+import { Filter } from '~/types/page_config/Filter';
+import { PageConfig } from '~/types/page_config/PageConfig';
 
 definePageMeta({
     layout: "admin",
@@ -13,29 +15,35 @@ const nuxtToast = useNuxtToast();
 
 // * Refs
 const isDataLoading = ref(true);
-const instructorList = ref<Instructor[]>([]);
+
+const pageConfig = reactive(new PageConfig());
+const fullNameFilter = ref(new Filter("profile.fullname"));
+pageConfig.filters.push(fullNameFilter.value);
+const instructors = ref<Instructor[]>([]);
 
 // * Lifecycle
 onBeforeMount(async () => {
-    await fetchData();
+    await fetchInstructorsData();
 });
 
 // * Functions
-const fetchData = async () => {
-    isDataLoading.value = true;
+const fetchInstructorsData = async () => {
+    isDataLoading.value = false;
+    const apiResponse = await instructorRepository.getInstructorPaging(pageConfig);
 
-    const apiResponse = await instructorRepository.getAllInstructor();
-
-    if (apiResponse.code === 200) {
-        instructorList.value = apiResponse.result;
-
-        isDataLoading.value = false;
-    } else {
+    if (apiResponse.code != 200) {
         nuxtToast({
             description: apiResponse.message,
-            type: 'error',
-        });
+            type: "error",
+        })
+        isDataLoading.value = false;
+        return false;
     }
+
+    pageConfig.update(apiResponse.result.pageConfig);
+    instructors.value = apiResponse.result.data;
+    isDataLoading.value = false;
+    return true;
 }
 
 // * Data
@@ -90,7 +98,7 @@ const columns = [
 <template>
     <UTable :loading="isDataLoading" class="rounded-lg border border-gray-100 dark:border-gray-700"
             :columns="columns"
-            :rows="instructorList">
+            :rows="instructors">
         <template #name-data="{ row }">
             <div class="font-medium">
                 {{ row.profile.fullname }}
@@ -121,4 +129,16 @@ const columns = [
             </UDropdown>
         </template>
     </UTable>
+
+    <div class="flex justify-between pt-4">
+        <div>
+        </div>
+        <div class="flex flex-row items-center gap-2">
+            <div>
+                <USelect v-model.number="pageConfig.pageSize" :options="[5, 6, 7, 8, 9, 10]" />
+            </div>
+            <UPagination :max="7" v-model="pageConfig.currentPage" :page-count="pageConfig.pageSize"
+                         :total="pageConfig.totalRecords" />
+        </div>
+    </div>
 </template>

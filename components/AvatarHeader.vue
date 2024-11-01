@@ -2,7 +2,7 @@
 import Role from '~/types/enums/Role';
 
 // * Imports
-const { $api, $apiToken } = useNuxtApp();
+const { $api } = useNuxtApp();
 const authRepository = AuthRepository($api);
 
 // * Refs
@@ -71,7 +71,7 @@ const items = [
             <UButton icon="mingcute:notification-line" color="gray" variant="ghost" to="/notification" />
         </UChip>
 
-        <!-- <ColorPicker /> -->
+        <ColorPicker />
         <ColorMode />
 
         <UDropdown v-if="userState.isLogged"

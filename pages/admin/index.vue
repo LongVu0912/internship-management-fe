@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Filter } from '~/types/page/Filter';
-import { PageConfig } from '~/types/page/PageConfig';
+import { Filter } from '~/types/page_config/Filter';
+import { PageConfig } from '~/types/page_config/PageConfig';
 import type Student from '~/types/student/Student';
 
 definePageMeta({
@@ -19,11 +19,10 @@ const isDataLoading = ref(true);
 const isInputModalOpen = ref(false);
 const isSubmitting = ref(false);
 const excelFile = ref<File | null>(null);
-const currentPage = ref(1);
-const pageSize = ref(5);
 
 const fullNameFilter = ref(new Filter("profile.fullname"));
-const pageConfig = ref(new PageConfig());
+const pageConfig = reactive(new PageConfig());
+pageConfig.filters.push(fullNameFilter.value);
 const studentList = ref<Student[]>([]);
 
 // * Lifecycle
@@ -32,26 +31,15 @@ onBeforeMount(async () => {
 });
 
 // * Functions
-const updatePageConfig = async () => {
-    pageConfig.value.filters = [];
-    pageConfig.value.filters.push(fullNameFilter.value);
-
-    pageConfig.value.update({
-        currentPage: currentPage.value,
-        pageSize: pageSize.value,
-    });
-}
-
 const fetchData = async () => {
     isDataLoading.value = true;
-    await updatePageConfig();
 
-    const apiResponse = await adminRepository.getStudentPaging(pageConfig.value);
+    const apiResponse = await adminRepository.getStudentPaging(pageConfig);
 
     if (apiResponse.code === 200) {
         studentList.value = apiResponse.result.data;
 
-        pageConfig.value.update(apiResponse.result.pageConfig);
+        pageConfig.update(apiResponse.result.pageConfig);
 
         isDataLoading.value = false;
     } else {
@@ -69,12 +57,12 @@ const handleUndoneButton = () => {
 }
 
 // * Watches
-watch([currentPage, pageSize], ([newCurrentPage, newPageSize], [oldCurrentPage, oldPageSize]) => {
-    if (oldPageSize !== newPageSize) {
-        currentPage.value = 1
+watch(
+    () => pageConfig.currentPage,
+    async (currentPage) => {
+        await fetchData();
     }
-    fetchData();
-});
+)
 
 // * Functions
 const handleInputExcelFile = (event: any) => {
@@ -113,7 +101,16 @@ const handleImportStudents = async () => {
             type: 'error',
         });
     }
+
     isSubmitting.value = false;
+}
+
+const searchData = async () => {
+    if (pageConfig.currentPage !== 1) {
+        pageConfig.currentPage = 1;
+    } else {
+        await fetchData();
+    }
 }
 
 // * Data
@@ -188,8 +185,8 @@ const columns = [
     <div class="flex flex-col gap-2">
         <div class="mb-2 flex flex-col justify-between gap-2 md:flex-row">
             <div class="flex flex-col gap-2 md:flex-row">
-                <form @submit.prevent="fetchData">
-                    <UInput v-model="fullNameFilter.value"
+                <form @submit.prevent="searchData">
+                    <UInput v-model="pageConfig.filters[0].value"
                             placeholder="Tìm tên sinh viên..."
                             class="w-64"
                             size="sm"
@@ -260,9 +257,10 @@ const columns = [
             </div>
             <div class="flex flex-row items-center gap-2">
                 <div>
-                    <USelect v-model.number="pageSize" :options="[5, 6, 7, 8, 9, 10]" />
+                    <USelect v-model.number="pageConfig.pageSize" :options="[5, 6, 7, 8, 9, 10]" />
                 </div>
-                <UPagination :max="7" v-model="currentPage" :page-count="pageSize" :total="pageConfig.totalRecords" />
+                <UPagination :max="7" v-model="pageConfig.currentPage" :page-count="pageConfig.pageSize"
+                             :total="pageConfig.totalRecords" />
             </div>
         </div>
     </div>

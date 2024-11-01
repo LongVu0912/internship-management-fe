@@ -1,15 +1,17 @@
 import type { NitroFetchRequest, $Fetch } from "nitropack";
 import type ApiResponse from "~/types/ApiResponse";
+import type { PageConfig } from "~/types/page_config/PageConfig";
 
 export const InstructorRepository = <T>(
     fetch: $Fetch<T, NitroFetchRequest>
 ) => {
-    const getAllInstructor = async () => {
+    const getInstructorPaging = async (payload: PageConfig) => {
         try {
             const response: ApiResponse = await fetch(
-                `/instructor/GetAllInstructor`,
+                `/instructor/GetInstructorPaging`,
                 {
-                    method: "GET",
+                    method: "POST",
+                    body: JSON.stringify(payload),
                 }
             );
             return response;
@@ -19,6 +21,6 @@ export const InstructorRepository = <T>(
     };
 
     return {
-        getAllInstructor,
+        getInstructorPaging,
     };
 };

@@ -37,17 +37,10 @@ onBeforeMount(async () => {
     setInterval(changeText, 2200);
 })
 
-
 // * Functions
 const changeText = () => {
     currentIndex = (currentIndex + 1) % texts.length
     currentText.value = texts[currentIndex]
-}
-
-const handleUndoneButton = () => {
-    nuxtToast({
-        description: "Chưa làm xong",
-    })
 }
 
 const selectSkill = (skill: Skill) => {
@@ -84,8 +77,7 @@ const selectSkill = (skill: Skill) => {
                                         :ui="{ icon: { trailing: { pointer: 'pointer-events-auto', padding: { lg: 'px-1' } } } }">
                                     <template #trailing>
                                         <UButton color="primary"
-                                                 to="http://localhost:5173"
-                                                 target="_blank"
+                                                 @click="nuxtToast"
                                                  class="rounded-md" label="Tìm kiếm" />
                                     </template>
                                 </UInput>
@@ -116,7 +108,7 @@ const selectSkill = (skill: Skill) => {
                                             </div>
                                         </div>
                                         <UButton color="primary" :label="'Tìm việc ' + selectedSkill?.name" size="lg"
-                                                 @click="handleUndoneButton" />
+                                                 @click="nuxtToast" />
                                     </div>
                                 </div>
                             </div>

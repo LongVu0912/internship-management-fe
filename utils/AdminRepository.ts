@@ -1,7 +1,7 @@
 import type { NitroFetchRequest, $Fetch } from "nitropack";
 import type ApiResponse from "~/types/ApiResponse";
 import type Business from "~/types/business/Business";
-import { PageConfig } from "~/types/page/PageConfig";
+import { PageConfig } from "~/types/page_config/PageConfig";
 
 export const AdminRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
     // * Get the student profile using jwt token in header

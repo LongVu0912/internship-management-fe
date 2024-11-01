@@ -4,5 +4,5 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     const userState = useUserState();
 
     userState.value = await authRepository.getUserState();
-    console.log("initUserState plugin", userState.value);
+    console.log("Initiation User State: ", userState.value);
 });

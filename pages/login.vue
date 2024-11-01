@@ -69,13 +69,6 @@ const handleLoginSubmit = async () => {
 
     isLoading.value = false;
 };
-
-const handleForgotPasswordSubmit = () => {
-    nuxtToast({
-        description: 'Chưa làm xong',
-        type: 'info',
-    });
-};
 </script>
 
 <template>
@@ -127,8 +120,7 @@ const handleForgotPasswordSubmit = () => {
             </template>
 
             <div>
-                <UForm :state="loginState" class="flex w-full flex-col justify-start"
-                       @submit.prevent="handleForgotPasswordSubmit">
+                <UForm :state="loginState" class="flex w-full flex-col justify-start" @submit.prevent="nuxtToast">
                     <div class="mb-2 text-sm font-medium">Tài khoản</div>
                     <UInput v-model="loginState.username" type="text" icon="mingcute:user-4-line" size="lg"
                             autocomplete="on" />

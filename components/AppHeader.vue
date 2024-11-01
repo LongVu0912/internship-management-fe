@@ -1,5 +1,5 @@
 <script setup>
-const isOpen = ref(false)
+const isOpen = ref(false);
 
 const toggleMenu = () => {
     isOpen.value = !isOpen.value
@@ -33,12 +33,12 @@ const toggleMenu = () => {
                              icon="mingcute:building-5-line" label="Tìm tuyển dụng">
                     </UButton>
                     <UDivider size="xs" />
-                    <UButton @click="isOpen = false" to="http://localhost:5173/templates" target="_blank"
+                    <UButton @click="isOpen = false"
                              variant="ghost" size="lg" icon="mingcute:notebook-line"
                              label="Mẫu CV">
                     </UButton>
                     <UDivider size="xs" />
-                    <UButton @click="isOpen = false" to="http://localhost:5173/templates/edit" target="_blank"
+                    <UButton @click="isOpen = false"
                              variant="ghost" size="lg" icon="mingcute:notebook-2-line"
                              label="Tạo CV">
                     </UButton>
@@ -80,8 +80,7 @@ const toggleMenu = () => {
                     <ul class="flex flex-col gap-y-1 p-2">
                         <li
                             class="rounded-lg p-2 duration-300 hover:bg-black/5 dark:hover:bg-white/5">
-                            <NuxtLink to="http://localhost:5173/templates" target="_blank"
-                                      class="flex items-center gap-x-4">
+                            <NuxtLink class="flex items-center gap-x-4">
                                 <UIcon class="h-6 w-6 self-start" name="mingcute:notebook-line" />
                                 <div class="flex w-32 flex-col gap-y-1">
                                     <span class="text-sm font-bold">
@@ -95,7 +94,7 @@ const toggleMenu = () => {
                         </li>
                         <li
                             class="rounded-lg p-2 duration-300 hover:bg-black/5 dark:hover:bg-white/5">
-                            <NuxtLink to="http://localhost:5173/templates/edit" target="_blank"
+                            <NuxtLink @click="nuxtToast"
                                       class="flex items-center gap-x-4">
                                 <UIcon class="h-6 w-6 self-start" name="mingcute:notebook-2-line" />
                                 <div class="flex w-32 flex-col gap-y-1">
