@@ -48,8 +48,11 @@ const items = [
                 else if (userState.value.role == Role.ROLE_BUSINESS) {
                     navigateTo("/business");
                 }
-                else {
+                else if (userState.value.role == Role.ROLE_STUDENT) {
                     navigateTo("/student");
+                }
+                else if (userState.value.role == Role.ROLE_INSTRUCTOR) {
+                    navigateTo("/instructor");
                 }
             },
         }

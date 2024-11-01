@@ -67,13 +67,16 @@ export const RecruitmentRepository = <T>(
         }
     };
 
-    const getAllBusinessRecruitmentPaging = async (payload: PageConfig) => {
+    const getAllBusinessRecruitmentPaging = async (payload: {
+        pageConfig: PageConfig;
+        businessId?: string;
+    }) => {
         try {
             const response: ApiResponse = await fetch(
-                `/recruitment/GetAllBusinessRecruitmentPaging`,
+                `/recruitment/GetAllBusinessRecruitmentPaging?businessId=${payload.businessId}`,
                 {
                     method: "POST",
-                    body: JSON.stringify(payload),
+                    body: JSON.stringify(payload.pageConfig),
                 }
             );
             return response;
@@ -87,6 +90,6 @@ export const RecruitmentRepository = <T>(
         createRecruitment,
         getRecruitmentById,
         requestRecruitment,
-        getAllBusinessRecruitmentPaging
+        getAllBusinessRecruitmentPaging,
     };
 };
