@@ -25,7 +25,7 @@ onBeforeMount(async () => {
     isDataLoading.value = false;
 })
 
-// * Watch
+// * Watches
 watch(
     [() => pageConfig.currentPage, () => pageConfig.pageSize],
     async ([newCurrentPage, newPageSize], [oldCurrentPage, oldPageSize]) => {

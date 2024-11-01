@@ -19,9 +19,7 @@ const isCreatingRecruitment = ref(false);
 const recruitment = ref<Recruitment>({} as Recruitment);
 const recruitmentList = ref<Recruitment[]>({} as Recruitment[]);
 
-const currentPage = ref(1);
-const pageSize = ref(5);
-const pageConfig = ref(new PageConfig());
+const pageConfig = reactive(new PageConfig());
 
 // * Lifecycle
 onBeforeMount(async () => {
@@ -30,19 +28,12 @@ onBeforeMount(async () => {
 });
 
 // * Functions
-const updatePageConfig = async () => {
-    pageConfig.value.update({
-        currentPage: currentPage.value,
-        pageSize: pageSize.value,
-    });
-}
-
 const fetchData = async () => {
     isDataLoading.value = true;
 
-    updatePageConfig();
-
-    const apiResponse = await recruitmentRepository.getAllBusinessRecruitmentPaging(pageConfig.value);
+    const apiResponse = await recruitmentRepository.getAllBusinessRecruitmentPaging({
+        pageConfig: pageConfig,
+    });
 
     if (apiResponse.code !== 200) {
         nuxtToast({
@@ -53,7 +44,7 @@ const fetchData = async () => {
     }
 
     recruitmentList.value = apiResponse.result.data;
-    pageConfig.value.update(apiResponse.result.pageConfig);
+    pageConfig.update(apiResponse.result.pageConfig);
 
     isDataLoading.value = false;
 }
@@ -77,44 +68,30 @@ const handleCreateRecruitment = async () => {
 }
 
 // * Watches
-watch([currentPage, pageSize], ([newCurrentPage, newPageSize], [oldCurrentPage, oldPageSize]) => {
-    if (oldPageSize !== newPageSize) {
-        currentPage.value = 1
+watch(
+    [() => pageConfig.currentPage, () => pageConfig.pageSize],
+    async ([newCurrentPage, newPageSize], [oldCurrentPage, oldPageSize]) => {
+        if (newPageSize !== oldPageSize) {
+            pageConfig.currentPage = 1;
+        }
+        await fetchData();
     }
-    fetchData();
-});
+)
 
 // * Data
 const items = (row: any) => [
     [
         {
-            label: 'Hồ sơ',
+            label: 'Chi tiết tuyển dụng',
             icon: 'mingcute:profile-line',
             click: () => {
-                navigateTo(`/student/${row.studentId}`, {
+                navigateTo(`/recruitment/${row.recruitmentId}`, {
                     open: {
                         target: '_blank',
                     }
                 })
             }
         },
-        {
-            label: 'Sửa',
-            icon: 'i-heroicons-pencil-square-20-solid',
-            click: nuxtToast,
-        },
-    ],
-    [
-        {
-            label: 'Lưu trữ',
-            icon: 'i-heroicons-archive-box-20-solid',
-            click: nuxtToast,
-        },
-        {
-            label: 'Di chuyển',
-            icon: 'i-heroicons-arrow-right-circle-20-solid',
-            click: nuxtToast,
-        }
     ],
     [
         {
@@ -165,7 +142,13 @@ const columns = [
             <UTable :loading="isDataLoading" class="rounded-lg border border-gray-100 dark:border-gray-700"
                     :columns="columns"
                     :rows="recruitmentList">
-
+                <template #title-data="{ row }">
+                    <NuxtLink class="font-semibold" :to="`/recruitment/${row.recruitmentId}`"
+                              target="_blank">
+                        {{ row.title }}
+                    </NuxtLink>
+                </template>
+                
                 <template #actions-data="{ row }">
                     <UDropdown :items="items(row)">
                         <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
@@ -178,9 +161,9 @@ const columns = [
                 </div>
                 <div class="flex flex-row items-center gap-2">
                     <div>
-                        <USelect v-model.number="pageSize" :options="[5, 6, 7, 8, 9, 10]" />
+                        <USelect v-model.number="pageConfig.pageSize" :options="[5, 6, 7, 8, 9, 10]" />
                     </div>
-                    <UPagination :max="7" v-model="currentPage" :page-count="pageSize"
+                    <UPagination :max="7" v-model="pageConfig.currentPage" :page-count="pageConfig.pageSize"
                                  :total="pageConfig.totalRecords" />
                 </div>
             </div>

@@ -15,7 +15,7 @@ const props = defineProps({
 
     <div class="bg-app-primary flex min-h-screen items-center justify-center p-4">
         <div class="w-full max-w-md">
-            <div class="rounded-md bg-gray-400/5">
+            <div class="rounded-md bg-gray-500/5">
                 <div class="p-8 text-center">
                     <h1 class="mb-2 text-6xl font-bold">{{ error?.statusCode }}</h1>
                     <p class="mb-6 text-xl">{{ error?.statusMessage }}</p>

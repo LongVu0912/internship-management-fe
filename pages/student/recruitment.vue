@@ -41,7 +41,7 @@ const fetchStudentRecruitmentsRequest = async () => {
     isDataLoading.value = false;
 }
 
-// * Watch
+// * Watches
 watch(
     () => pageConfig.currentPage,
     async (currentPage) => {
@@ -71,7 +71,7 @@ const columns = [
 const items = (row: any) => [
     [
         {
-            label: 'Chi tiết công việc',
+            label: 'Chi tiết tuyển dụng',
             icon: 'mingcute:profile-line',
             click: () => {
                 navigateTo(`/recruitment/${row.recruitment.recruitmentId}`, {

@@ -131,7 +131,7 @@ const searchInstructorRequestsData = async () => {
     }
 }
 
-// * Watch
+// * Watches
 watch(
     [() => pageConfig.currentPage, () => pageConfig.pageSize],
     async ([newCurrentPage, newPageSize], [oldCurrentPage, oldPageSize]) => {
