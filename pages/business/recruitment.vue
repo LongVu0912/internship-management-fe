@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PageConfig } from '~/types/page/PageConfig';
+import { PageConfig } from '~/types/page_config/PageConfig';
 import type Recruitment from '~/types/recruitment/Recruitment';
 
 definePageMeta({
@@ -17,7 +17,7 @@ const isPageLoading = ref(true);
 const isDataLoading = ref(true);
 const isCreatingRecruitment = ref(false);
 const recruitment = ref<Recruitment>({} as Recruitment);
-const recruitments = ref<Recruitment[]>({} as Recruitment[]);
+const recruitmentList = ref<Recruitment[]>({} as Recruitment[]);
 
 const currentPage = ref(1);
 const pageSize = ref(5);
@@ -30,52 +30,50 @@ onBeforeMount(async () => {
 });
 
 // * Functions
-const fetchData = async () => {
-    isDataLoading.value = true;
-    pageConfig.value.filters = [];
-
+const updatePageConfig = async () => {
     pageConfig.value.update({
         currentPage: currentPage.value,
         pageSize: pageSize.value,
     });
+}
+
+const fetchData = async () => {
+    isDataLoading.value = true;
+
+    updatePageConfig();
 
     const apiResponse = await recruitmentRepository.getAllBusinessRecruitmentPaging(pageConfig.value);
 
-    if (apiResponse.code === 200) {
-        recruitments.value = apiResponse.result.data;
-
-        pageConfig.value.update(apiResponse.result.pageConfig);
-
-        isDataLoading.value = false;
-    } else {
+    if (apiResponse.code !== 200) {
         nuxtToast({
             description: apiResponse.message,
             type: 'error',
         });
+        return;
     }
+
+    recruitmentList.value = apiResponse.result.data;
+    pageConfig.value.update(apiResponse.result.pageConfig);
+
+    isDataLoading.value = false;
 }
 
 const handleCreateRecruitment = async () => {
     const apiResponse = await recruitmentRepository.createRecruitment(recruitment.value);
 
-    if (apiResponse.code === 200) {
-        nuxtToast({
-            description: 'Tạo tin tuyển dụng thành công',
-            type: 'success',
-        });
-        isCreatingRecruitment.value = false
-    } else {
+    if (apiResponse.code !== 200) {
         nuxtToast({
             description: apiResponse.message,
             type: 'error',
         });
+        return;
     }
-}
 
-const handleUndoneButton = () => {
     nuxtToast({
-        description: "Chưa làm xong",
-    })
+        description: 'Tạo tin tuyển dụng thành công',
+        type: 'success',
+    });
+    isCreatingRecruitment.value = false
 }
 
 // * Watches
@@ -103,26 +101,26 @@ const items = (row: any) => [
         {
             label: 'Sửa',
             icon: 'i-heroicons-pencil-square-20-solid',
-            click: handleUndoneButton,
+            click: nuxtToast,
         },
     ],
     [
         {
             label: 'Lưu trữ',
             icon: 'i-heroicons-archive-box-20-solid',
-            click: handleUndoneButton,
+            click: nuxtToast,
         },
         {
             label: 'Di chuyển',
             icon: 'i-heroicons-arrow-right-circle-20-solid',
-            click: handleUndoneButton,
+            click: nuxtToast,
         }
     ],
     [
         {
             label: 'Xoá',
             icon: 'i-heroicons-trash-20-solid',
-            click: handleUndoneButton,
+            click: nuxtToast,
         }
     ]
 ]
@@ -166,7 +164,7 @@ const columns = [
 
             <UTable :loading="isDataLoading" class="rounded-lg border border-gray-100 dark:border-gray-700"
                     :columns="columns"
-                    :rows="recruitments">
+                    :rows="recruitmentList">
 
                 <template #actions-data="{ row }">
                     <UDropdown :items="items(row)">

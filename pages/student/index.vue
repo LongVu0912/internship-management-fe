@@ -49,16 +49,16 @@ const fetchData = async () => {
 
     const apiResponse = await studentRepository.getStudentProfile();
 
-    if (apiResponse.code === 200) {
-        student.value = apiResponse.result;
-
-        isPageLoading.value = false;
-    } else {
+    if (apiResponse.code !== 200) {
         nuxtToast({
             description: apiResponse.message,
             type: 'error',
         });
+        return;
     }
+
+    student.value = apiResponse.result;
+    isPageLoading.value = false;
 }
 
 const handleInputCVFile = (event: any) => {
@@ -112,19 +112,21 @@ const handleUpdateButton = () => {
 const onDialogConfirm = async () => {
     const apiResponse = await studentRepository.updateProfile(student.value);
 
-    if (apiResponse.code === 200) {
-        nuxtToast({
-            description: "Cập nhật thông tin thành công",
-            type: "success",
-        });
-        fetchData();
-        isUpdating.value = false;
-    } else {
+    if (apiResponse.code !== 200) {
         nuxtToast({
             description: apiResponse.message,
             type: 'error',
         });
+        return;
     }
+
+    nuxtToast({
+        description: "Cập nhật thông tin thành công",
+        type: "success",
+    });
+
+    fetchData();
+    isUpdating.value = false;
 }
 
 const onDialogCancel = () => {
@@ -134,13 +136,10 @@ const onDialogCancel = () => {
     fetchData();
     isUpdating.value = false;
 }
-
 </script>
 
 <template>
-    <div v-if="isPageLoading">
-        <Loading />
-    </div>
+    <Loading v-if="isPageLoading" />
     <div v-else>
         <div class="flex flex-col justify-between gap-2 md:flex-row md:gap-12">
             <div class="flex w-full flex-col gap-2">

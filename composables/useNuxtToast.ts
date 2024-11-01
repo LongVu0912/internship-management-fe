@@ -11,7 +11,7 @@ export const useNuxtToast = () => {
 
     const showToast = ({
         title = "Thông báo",
-        description,
+        description = "Chưa làm xong",
         timeout = 2000,
         type = "info",
         onCallback,

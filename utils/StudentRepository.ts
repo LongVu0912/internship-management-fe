@@ -1,6 +1,7 @@
 import type { NitroFetchRequest, $Fetch } from "nitropack";
 import type ApiResponse from "~/types/ApiResponse";
-import type { PageConfig } from "~/types/page/PageConfig";
+import type { PageConfig } from "~/types/page_config/PageConfig";
+import type RecruitmentRequest from "~/types/recruitment/RecruitmentRequest";
 import type Student from "~/types/student/Student";
 
 export const StudentRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
@@ -102,6 +103,39 @@ export const StudentRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         }
     };
 
+    const getAllStudentRecruitmentsRequestPaging = async (
+        payload: PageConfig
+    ) => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/student/GetAllStudentRecruitmentsRequestPaging`,
+                {
+                    method: "POST",
+                    body: JSON.stringify(payload),
+                }
+            );
+
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
+    const requestInstructor = async (payload: RecruitmentRequest) => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/instructor/RequestInstructor`,
+                {
+                    method: "POST",
+                    body: JSON.stringify(payload),
+                }
+            );
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
     return {
         getStudentProfile,
         getStudentProfileById,
@@ -109,5 +143,7 @@ export const StudentRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         updateProfile,
         importStudents,
         getAllStudentInstructorsRequestPaging,
+        getAllStudentRecruitmentsRequestPaging,
+        requestInstructor,
     };
 };

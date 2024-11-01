@@ -33,18 +33,20 @@ onBeforeMount(async () => {
 const onCreateNewBusiness = async () => {
     const apiResponse = await adminRepository.createBusiness(newBusiness.value);
 
-    if (apiResponse.code === 200) {
-        nuxtToast({
-            description: "Tạo tài khoản thành công",
-            type: "success",
-        });
-        isCreatingBusiness.value = false;
-    } else {
+    if (apiResponse.code !== 200) {
         nuxtToast({
             description: apiResponse.message,
             type: 'error',
         });
+        return;
     }
+
+    nuxtToast({
+        description: "Tạo tài khoản thành công",
+        type: "success",
+    });
+
+    isCreatingBusiness.value = false;
 }
 </script>
 

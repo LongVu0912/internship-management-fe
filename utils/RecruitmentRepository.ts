@@ -1,6 +1,6 @@
 import type { NitroFetchRequest, $Fetch } from "nitropack";
 import type ApiResponse from "~/types/ApiResponse";
-import { PageConfig } from "~/types/page/PageConfig";
+import { PageConfig } from "~/types/page_config/PageConfig";
 import type Recruitment from "~/types/recruitment/Recruitment";
 import type RecruitmentRequest from "~/types/recruitment/RecruitmentRequest";
 
