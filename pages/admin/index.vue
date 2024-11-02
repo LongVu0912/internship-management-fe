@@ -50,12 +50,6 @@ const fetchData = async () => {
     }
 }
 
-const handleUndoneButton = () => {
-    nuxtToast({
-        description: "Chưa làm xong",
-    })
-}
-
 // * Watches
 watch(
     () => pageConfig.currentPage,
@@ -130,26 +124,26 @@ const items = (row: any) => [
         {
             label: 'Sửa',
             icon: 'i-heroicons-pencil-square-20-solid',
-            click: handleUndoneButton,
+            click: nuxtToast,
         },
     ],
     [
         {
             label: 'Lưu trữ',
             icon: 'i-heroicons-archive-box-20-solid',
-            click: handleUndoneButton,
+            click: nuxtToast,
         },
         {
             label: 'Di chuyển',
             icon: 'i-heroicons-arrow-right-circle-20-solid',
-            click: handleUndoneButton,
+            click: nuxtToast,
         }
     ],
     [
         {
             label: 'Xoá',
             icon: 'i-heroicons-trash-20-solid',
-            click: handleUndoneButton,
+            click: nuxtToast,
         }
     ]
 ]
