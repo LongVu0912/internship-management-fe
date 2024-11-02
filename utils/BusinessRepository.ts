@@ -1,12 +1,15 @@
 import type { NitroFetchRequest, $Fetch } from "nitropack";
 import type ApiResponse from "~/types/ApiResponse";
 export const BusinessRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
-    const getBusinessData = async (payload: { businessId: string }) => {
+    const getBusinessData = async (payload: { businessId?: string }) => {
         try {
             const response: ApiResponse = await fetch(
-                `/business/GetBusinessData?businessId=${payload.businessId}`,
+                `/business/GetBusinessData`,
                 {
                     method: "GET",
+                    params: {
+                        businessId: payload.businessId ?? "",
+                    },
                 }
             );
             return response;

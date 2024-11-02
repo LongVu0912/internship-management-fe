@@ -11,7 +11,7 @@ const sidebarItems: SidebarItem[] = [
     },
     {
         icon: "mingcute:group-line",
-        label: "Sinh viên",
+        label: "Sinh viên yêu cầu",
         to: "/instructor/student",
     },
     {

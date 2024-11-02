@@ -73,10 +73,13 @@ export const RecruitmentRepository = <T>(
     }) => {
         try {
             const response: ApiResponse = await fetch(
-                `/recruitment/GetAllBusinessRecruitmentPaging?businessId=${payload.businessId}`,
+                `/recruitment/GetAllBusinessRecruitmentPaging`,
                 {
                     method: "POST",
                     body: JSON.stringify(payload.pageConfig),
+                    params: {
+                        businessId: payload.businessId ?? "",
+                    },
                 }
             );
             return response;

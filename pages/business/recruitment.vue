@@ -92,6 +92,17 @@ const items = (row: any) => [
                 })
             }
         },
+        {
+            label: 'Danh sách sinh viên',
+            icon: 'mingcute:group-line',
+            click: () => {
+                navigateTo(`/recruitment/${row.recruitmentId}`, {
+                    open: {
+                        target: '_blank',
+                    }
+                })
+            }
+        },
     ],
     [
         {
