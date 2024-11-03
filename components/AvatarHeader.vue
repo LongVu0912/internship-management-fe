@@ -80,7 +80,7 @@ const items = [
         <UDropdown v-if="userState.isLogged"
                    :items="items"
                    :ui="{ item: { disabled: 'cursor-text select-text' } }">
-            <UAvatar :alt="userState.username" />
+            <UAvatar src="/user.png" />
 
             <template #account="{ item }">
                 <div class="font-semibold">

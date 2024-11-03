@@ -159,7 +159,7 @@ const columns = [
                         {{ row.title }}
                     </NuxtLink>
                 </template>
-                
+
                 <template #actions-data="{ row }">
                     <UDropdown :items="items(row)">
                         <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
@@ -167,13 +167,9 @@ const columns = [
                 </template>
             </UTable>
 
-            <div class="flex justify-between pt-4">
-                <div>
-                </div>
+            <div class="flex justify-end">
                 <div class="flex flex-row items-center gap-2">
-                    <div>
-                        <USelect v-model.number="pageConfig.pageSize" :options="[5, 6, 7, 8, 9, 10]" />
-                    </div>
+                    <USelect v-model.number="pageConfig.pageSize" :options="[5, 6, 7, 8, 9, 10]" />
                     <UPagination :max="7" v-model="pageConfig.currentPage" :page-count="pageConfig.pageSize"
                                  :total="pageConfig.totalRecords" />
                 </div>
@@ -193,45 +189,45 @@ const columns = [
                 <div class="flex flex-col gap-3">
                     <div class="text-base font-semibold">THÔNG TIN TUYỂN DỤNG</div>
 
-                    <div>
+                    <div class="space-y-2">
                         <div class="font-medium">Tựa đề</div>
                         <UInput v-model="recruitment.title" />
                     </div>
 
-                    <div>
+                    <div class="space-y-2">
                         <div class="font-medium">Mô tả</div>
                         <UTextarea size="lg" color="gray" :rows="3" class="w-full" v-model="recruitment.description">
                         </UTextarea>
                     </div>
 
                     <div class="flex flex-col gap-4 md:flex-row">
-                        <div class="w-full">
+                        <div class="w-full space-y-2">
                             <div class="font-medium">Địa điểm</div>
                             <UInput v-model="recruitment.location" />
                         </div>
-                        <div class="w-full">
+                        <div class="w-full space-y-2">
                             <div class="font-medium">Loại</div>
                             <UInput v-model="recruitment.type" />
                         </div>
                     </div>
 
                     <div class="flex flex-col gap-4 md:flex-row">
-                        <div class="w-full">
+                        <div class="w-full space-y-2">
                             <div class="font-medium">Ngày làm việc</div>
                             <UInput v-model="recruitment.workingDay" />
                         </div>
-                        <div class="w-full">
+                        <div class="w-full space-y-2">
                             <div class="font-medium">Giờ làm việc</div>
                             <UInput v-model="recruitment.workingHour" />
                         </div>
                     </div>
 
                     <div class="flex flex-col gap-4 md:flex-row">
-                        <div class="w-full">
+                        <div class="w-full space-y-2">
                             <div class="font-medium">Kỹ năng</div>
                             <UInput v-model="recruitment.keySkills" />
                         </div>
-                        <div class="w-full">
+                        <div class="w-full space-y-2">
                             <div class="font-medium">Vị trí</div>
                             <UInput v-model="recruitment.position" />
                         </div>

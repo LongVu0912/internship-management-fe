@@ -1,10 +1,11 @@
 import type { Filter } from "./Filter";
+import type { Order } from "./Order";
 class PageConfig {
     totalPage: number;
     totalRecords: number;
     currentPage: number;
     pageSize: number;
-    orders: any[];
+    orders: Order[];
     filters: Filter[];
 
     constructor() {

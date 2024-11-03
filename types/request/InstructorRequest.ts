@@ -3,9 +3,11 @@ import type Instructor from "../instructor/Instructor";
 import type Student from "../student/Student";
 
 export default interface InstructorRequest {
-    instructorRequestId?: string,
+    instructorRequestId?: string;
     student?: Student;
     instructor: Instructor;
     instructorStatus: InstructorStatus;
     messageToInstructor: string;
+    recruitmentId?: string;
+    recruitmentTitle?: string;
 }

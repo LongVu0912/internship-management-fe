@@ -1,6 +1,8 @@
 <script setup>
 const isOpen = ref(false);
 
+const nuxtToast = useNuxtToast();
+
 const toggleMenu = () => {
     isOpen.value = !isOpen.value
 }

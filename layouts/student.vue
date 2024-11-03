@@ -11,12 +11,12 @@ const sidebarItems: SidebarItem[] = [
     },
     {
         icon: "mingcute:bookmarks-line",
-        label: "Thực tập",
+        label: "Danh sách thực tập",
         to: "/student/recruitment",
     },
     {
         icon: "mingcute:mortarboard-line",
-        label: "Giảng viên",
+        label: "Giảng viên hướng dẫn",
         to: "/student/instructor",
     },
     {

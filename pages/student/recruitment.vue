@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import BusinessStatus from '~/types/enums/BusinessStatus';
+import { Order } from '~/types/page_config/Order';
 import { PageConfig } from '~/types/page_config/PageConfig';
 import type StudentRecruitmentRequest from '~/types/student/StudentRecruitmentRequest';
 
@@ -15,6 +16,8 @@ const nuxtToast = useNuxtToast();
 
 // * Refs
 const pageConfig = reactive(new PageConfig());
+const order = ref(new Order("businessStatus"));
+pageConfig.orders.push(order.value);
 const studentRecruitmentRequests = ref<StudentRecruitmentRequest[]>([]);
 
 // * Lifecycle
@@ -61,7 +64,8 @@ const columns = [
     },
     {
         key: 'messageToBusiness',
-        label: 'Tin nhắn tới doanh nghiệp'
+        label: 'Tin nhắn tới doanh nghiệp',
+        rowClass: 'break-all'
     },
     {
         key: 'actions'
@@ -108,7 +112,11 @@ const statusBadge = (businessStatus: string) => {
 <template>
     <div class="flex flex-col gap-4">
         <div class="text-center text-2xl font-semibold">Danh sách yêu cầu thực tập</div>
-        
+
+        <div class="flex justify-end">
+            <UButton to="/recruitment" color="primary">Tìm thực tập</UButton>
+        </div>
+
         <UTable class="rounded-lg border border-gray-100 dark:border-gray-700" :columns="columns"
                 :loading="isDataLoading" :rows="studentRecruitmentRequests">
             <template #recruitment.title-data="{ row }">
@@ -130,13 +138,9 @@ const statusBadge = (businessStatus: string) => {
             </template>
         </UTable>
 
-        <div class="flex justify-between">
-            <div>
-            </div>
+        <div class="flex justify-end">
             <div class="flex flex-row items-center gap-2">
-                <div>
-                    <USelect v-model.number="pageConfig.pageSize" :options="[5, 6, 7, 8, 9, 10]" />
-                </div>
+                <USelect v-model.number="pageConfig.pageSize" :options="[5, 6, 7, 8, 9, 10]" />
                 <UPagination :max="7" v-model="pageConfig.currentPage" :page-count="pageConfig.pageSize"
                              :total="pageConfig.totalRecords" />
             </div>

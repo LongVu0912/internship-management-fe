@@ -143,14 +143,11 @@ const columns = [
             </template>
         </UTable>
 
-        <div class="flex justify-between pt-4">
-            <div>
-            </div>
+        <div class="flex justify-end">
             <div class="flex flex-row items-center gap-2">
-                <div>
-                    <USelect v-model.number="pageSize" :options="[5, 6, 7, 8, 9, 10]" />
-                </div>
-                <UPagination :max="7" v-model="currentPage" :page-count="pageSize" :total="facultyList?.length || 0" />
+                <USelect v-model.number="pageSize" :options="[5, 6, 7, 8, 9, 10]" />
+                <UPagination :max="7" v-model="currentPage" :page-count="pageSize"
+                             :total="facultyList?.length || 0" />
             </div>
         </div>
     </div>

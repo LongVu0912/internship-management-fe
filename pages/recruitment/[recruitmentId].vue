@@ -78,7 +78,7 @@ const onDialogCancel = () => {
     <template v-else>
         <UCard>
             <template #header>
-                <div class="text-xl font-bold">
+                <div class="text-center text-xl font-bold">
                     {{ recruitment?.title }}
                 </div>
             </template>
