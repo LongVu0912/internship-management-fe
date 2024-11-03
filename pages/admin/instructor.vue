@@ -130,13 +130,9 @@ const columns = [
         </template>
     </UTable>
 
-    <div class="flex justify-between pt-4">
-        <div>
-        </div>
+    <div class="flex justify-end">
         <div class="flex flex-row items-center gap-2">
-            <div>
-                <USelect v-model.number="pageConfig.pageSize" :options="[5, 6, 7, 8, 9, 10]" />
-            </div>
+            <USelect v-model.number="pageConfig.pageSize" :options="[5, 6, 7, 8, 9, 10]" />
             <UPagination :max="7" v-model="pageConfig.currentPage" :page-count="pageConfig.pageSize"
                          :total="pageConfig.totalRecords" />
         </div>

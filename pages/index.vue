@@ -100,7 +100,7 @@ const selectSkill = (skill: Skill) => {
                                 </div>
                                 <div class="h-44 md:w-96">
                                     <div
-                                         class="flex h-full flex-col items-start justify-between gap-2 rounded-lg bg-gray-400/5 p-6">
+                                         class="flex h-full transform flex-col items-start justify-between gap-2 rounded-lg bg-gray-400/5 p-6 shadow-lg transition-transform hover:scale-105">
                                         <div class="flex flex-col items-start">
                                             <div class="text-2xl font-bold">{{ selectedSkill?.name }}</div>
                                             <div class="text-left text-gray-500 dark:text-gray-400">
@@ -122,23 +122,26 @@ const selectSkill = (skill: Skill) => {
                             Tại sao chọn thực tập HCMUTE?
                         </h2>
                         <div class="grid gap-10 sm:grid-cols-2 md:grid-cols-3">
-                            <div class="flex flex-col items-center space-y-2 rounded-lg border-gray-200 p-4">
-                                <UIcon name="mingcute:search-3-line" class="h-14 w-14"></UIcon>
+                            <div
+                                 class="flex transform flex-col items-center space-y-2 rounded-lg border-gray-200 p-4 shadow-lg transition-transform hover:scale-105">
+                                <UIcon name="mingcute:search-3-line" class="text-primary h-14 w-14"></UIcon>
                                 <h3 class="text-xl font-bold">Ghép nối thông minh</h3>
                                 <p class="text-justify text-gray-500 dark:text-gray-400">
                                     Hệ thống AI của chúng tôi ghép nối bạn với các công việc phù hợp với kỹ năng và sở
                                     thích của bạn.
                                 </p>
                             </div>
-                            <div class="flex flex-col items-center space-y-2 rounded-lg border-gray-200 p-4">
-                                <UIcon name="mingcute:globe-2-line" class="h-14 w-14"></UIcon>
+                            <div
+                                 class="flex transform flex-col items-center space-y-2 rounded-lg border-gray-200 p-4 shadow-lg transition-transform hover:scale-105">
+                                <UIcon name="mingcute:globe-2-line" class="text-primary h-14 w-14"></UIcon>
                                 <h3 class="text-xl font-bold">Cơ hội toàn cầu</h3>
                                 <p class="text-justify text-gray-500 dark:text-gray-400">
                                     Cơ hội thực tập từ các công ty trên khắp thế giới, mở rộng tầm nhìn của bạn.
                                 </p>
                             </div>
-                            <div class="flex flex-col items-center space-y-2 rounded-lg border-gray-200 p-4">
-                                <UIcon name="mingcute:rocket-line" class="h-14 w-14"></UIcon>
+                            <div
+                                 class="flex transform flex-col items-center space-y-2 rounded-lg border-gray-200 p-4 shadow-lg transition-transform hover:scale-105">
+                                <UIcon name="mingcute:rocket-line" class="text-primary h-14 w-14"></UIcon>
                                 <h3 class="text-xl font-bold">Phát triển sự nghiệp</h3>
                                 <p class="text-justify text-gray-500 dark:text-gray-400">
                                     Nhận được kinh nghiệm quý báu và khởi đầu sự nghiệp của bạn với các công việc được

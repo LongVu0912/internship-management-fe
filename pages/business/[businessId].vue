@@ -46,7 +46,7 @@ onBeforeMount(async () => {
             <template #header>
                 <div class="flex flex-row items-center gap-4">
                     <div class="shrink-0">
-                        <NuxtImg src="/hcmute.png" class="h-16 w-16 md:h-24 md:w-24" quality="80" alt="hcmute" />
+                        <NuxtImg src="/business.jpg" class="h-16 w-16 md:h-24 md:w-24" quality="80" alt="business" />
                     </div>
                     <div class="text-xl font-bold">
                         {{ business?.name }}

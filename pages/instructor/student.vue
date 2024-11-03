@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import InstructorStatus from '~/types/enums/InstructorStatus';
+import { Order } from '~/types/page_config/Order';
 import { PageConfig } from '~/types/page_config/PageConfig';
 import type InstructorRequest from '~/types/request/InstructorRequest';
 
@@ -16,6 +17,8 @@ const nuxtToast = useNuxtToast();
 // * Refs
 const isDataLoading = ref(true);
 const pageConfig = reactive(new PageConfig());
+const order = ref(new Order("instructorStatus"));
+pageConfig.orders.push(order.value);
 const instructorRequests = ref<InstructorRequest[]>([]);
 
 // * Lifecycle
@@ -151,7 +154,13 @@ const items = (row: any) => [
 const columns = [
     {
         key: 'name',
-        label: 'Tên'
+        label: 'Tên',
+        rowClass: 'whitespace-nowrap'
+    },
+    {
+        key: 'recruitment',
+        label: 'Thực tập',
+        rowClass: 'min-w-32'
     },
     {
         key: 'instructorStatus',
@@ -159,7 +168,8 @@ const columns = [
     },
     {
         key: 'messageToInstructor',
-        label: 'Tin nhắn'
+        label: 'Tin nhắn',
+        rowClass: 'break-all max-w-96'
     },
     {
         key: 'actions'
@@ -181,17 +191,47 @@ const statusBadge = (instructorStatus: string) => {
 </script>
 
 <template>
-    <div>
+    <div class="flex flex-col gap-2">
         <UTable :loading="isDataLoading" class="rounded-lg border border-gray-100 dark:border-gray-700"
                 :columns="columns"
                 :rows="instructorRequests">
             <template #name-data="{ row }">
+                <UTooltip text="Hồ sơ sinh viên">
+                    <div class="flex flex-col">
+                        <NuxtLink class="font-semibold"
+                                  :to="`/student/${row.student.studentId}`"
+                                  target="_blank">
+                            {{ row.student.profile.fullname }}
+                        </NuxtLink>
+                        <div>
+                            <UBadge class="mt-1" color="primary" variant="outline">
+                                {{ row.student.studentId }}
+                            </UBadge>
+                        </div>
+                    </div>
+                </UTooltip>
+            </template>
+
+            <template #major-data="{ row }">
                 <div class="font-medium">
-                    {{ row.student.profile.fullname }}
+                    {{ row.student.major.name }}
                 </div>
-                <UBadge class="mt-1" color="primary" variant="outline">
-                    {{ row.student.studentId }}
+                <UBadge class="mt-1 justify-center" color="gray" variant="outline">
+                    {{ row.student.major.faculty.name }}
                 </UBadge>
+            </template>
+
+            <template #recruitment-data="{ row }">
+                <UTooltip text="Công việc thực tập">
+                    <NuxtLink v-if="row.recruitmentId != null" class="font-semibold"
+                              :to="`/recruitment/${row.recruitmentId}`"
+                              target="_blank">
+                        {{ row.recruitmentTitle }}
+                    </NuxtLink>
+                    <div v-else class="font-semibold">
+                        Chưa có
+                    </div>
+                </UTooltip>
             </template>
 
             <template #instructorStatus-data="{ row }">
@@ -207,13 +247,9 @@ const statusBadge = (instructorStatus: string) => {
             </template>
         </UTable>
 
-        <div class="flex justify-between pt-4">
-            <div>
-            </div>
+        <div class="flex justify-end">
             <div class="flex flex-row items-center gap-2">
-                <div>
-                    <USelect v-model.number="pageConfig.pageSize" :options="[5, 6, 7, 8, 9, 10]" />
-                </div>
+                <USelect v-model.number="pageConfig.pageSize" :options="[5, 6, 7, 8, 9, 10]" />
                 <UPagination :max="7" v-model="pageConfig.currentPage" :page-count="pageConfig.pageSize"
                              :total="pageConfig.totalRecords" />
             </div>

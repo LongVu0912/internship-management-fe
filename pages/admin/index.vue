@@ -52,8 +52,11 @@ const fetchData = async () => {
 
 // * Watches
 watch(
-    () => pageConfig.currentPage,
-    async (currentPage) => {
+    [() => pageConfig.currentPage, () => pageConfig.pageSize],
+    async ([newCurrentPage, newPageSize], [oldCurrentPage, oldPageSize]) => {
+        if (newPageSize !== oldPageSize) {
+            pageConfig.currentPage = 1;
+        }
         await fetchData();
     }
 )
@@ -193,7 +196,7 @@ const columns = [
                 </form>
             </div>
             <div>
-                <UButton color="primary" @click="isInputModalOpen = true;">Nhập</UButton>
+                <UButton color="primary" @click="isInputModalOpen = true;">Thêm sinh viên</UButton>
             </div>
         </div>
 
@@ -264,7 +267,7 @@ const columns = [
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-                        Nhập dữ liệu từ file excel
+                        Nhập dữ liệu từ file Excel
                     </h3>
                     <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
                              @click="isInputModalOpen = false" />

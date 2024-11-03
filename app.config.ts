@@ -39,6 +39,11 @@ export default defineAppConfig({
             translate: {
                 'top-right': "-translate-y-1/4 translate-x-1/4 transform",
             }
-        }
+        },
+        table: {
+            td: {
+                base: '',
+            },
+        },
     },
 });
