@@ -16,39 +16,40 @@ const { $apiToken } = useNuxtApp();
 const instructorRepository = InstructorRepository($apiToken);
 const studentRepository = StudentRepository($apiToken);
 const nuxtToast = useNuxtToast();
+const appUtils = AppUtils();
 
 // * Refs
-const isPageLoading = ref(true);
-const isInstructorsDataLoading = ref(false);
+const isTableLoading = ref(false);
 const isRequestModelOpen = ref(false);
 
-// * For instructors in modal
+const sort = ref<any>({
+    column: 'instructor',
+    direction: 'desc'
+})
+
+// * For table
+const pageConfig = reactive(new PageConfig());
+pageConfig.orders.push(new Order("instructor.profile.fullname"));
+pageConfig.filters.push(new Filter("instructor.profile.fullname"));
+const instructorRequestList = ref([] as InstructorRequest[]);
+
+// * For modal
+const isOpeningModal = ref(false);
 const isSendingRequest = ref(false);
 const modalPageConfig = reactive(new PageConfig());
-const modalFullNameFilter = ref(new Filter("profile.fullname"));
-modalPageConfig.filters.push(modalFullNameFilter.value);
+modalPageConfig.filters.push(new Filter("profile.fullname"));
 const messageToInstructor = ref('');
 const selectedInstructor = ref<Instructor>({} as Instructor);
 const instructors = ref<Instructor[]>([]);
 
-// * For instructor requests
-const isInstructorRequestsLoading = ref(true);
-const pageConfig = reactive(new PageConfig());
-const fullNameFilter = ref(new Filter("instructor.profile.fullname"));
-pageConfig.filters.push(fullNameFilter.value);
-const order = ref(new Order("instructorStatus"));
-pageConfig.orders.push(order.value);
-const instructorRequestList = ref([] as InstructorRequest[]);
-
 // * Lifecycle
 onBeforeMount(async () => {
-    await fetchInstructorRequestsData();
-    isPageLoading.value = false;
+    await fetchTableData();
 })
 
 // * Functions
-const fetchInstructorRequestsData = async () => {
-    isInstructorRequestsLoading.value = true;
+const fetchTableData = async () => {
+    isTableLoading.value = true;
     const apiResponse = await studentRepository.getAllStudentInstructorsRequestPaging(pageConfig);
 
     if (apiResponse.code === 200) {
@@ -56,9 +57,7 @@ const fetchInstructorRequestsData = async () => {
 
         instructorRequestList.value = apiResponse.result.data;
 
-        isInstructorRequestsLoading.value = false;
-
-        console.log(instructorRequestList.value);
+        isTableLoading.value = false;
     } else {
         nuxtToast({
             description: apiResponse.message,
@@ -75,23 +74,21 @@ const fetchInstructorsData = async () => {
             description: apiResponse.message,
             type: "error",
         })
-        isInstructorsDataLoading.value = false;
         return false;
     }
 
     instructors.value = apiResponse.result.data;
-    isInstructorsDataLoading.value = false;
     return true;
 }
 
 const openRequestModal = async () => {
-    isInstructorsDataLoading.value = true;
+    isOpeningModal.value = true;
 
     if (await fetchInstructorsData()) {
         isRequestModelOpen.value = true;
     }
 
-    isInstructorsDataLoading.value = false;
+    isOpeningModal.value = false;
 }
 
 const sendRequestToInstructor = async () => {
@@ -124,7 +121,7 @@ const sendRequestToInstructor = async () => {
         type: "success",
     })
 
-    await fetchInstructorRequestsData();
+    await fetchTableData();
     isSendingRequest.value = false;
     isRequestModelOpen.value = false;
 }
@@ -137,103 +134,155 @@ const searchInstructor = async (q: string) => {
     return instructors.value;
 }
 
-const searchInstructorRequestsData = async () => {
+const searchTable = async () => {
     if (pageConfig.currentPage !== 1) {
         pageConfig.currentPage = 1;
     } else {
-        await fetchInstructorRequestsData();
+        fetchTableData();
     }
 }
 
 // * Watches
 watch(
     [() => pageConfig.currentPage, () => pageConfig.pageSize],
-    async ([newCurrentPage, newPageSize], [oldCurrentPage, oldPageSize]) => {
-        if (newPageSize !== oldPageSize) {
-            pageConfig.currentPage = 1;
+    ([newCurrentPage, newPageSize], [oldCurrentPage, oldPageSize]) => {
+        if (!isTableLoading.value) {
+            if (newPageSize !== oldPageSize) {
+                pageConfig.currentPage = 1;
+            }
+            fetchTableData();
         }
-        await fetchInstructorRequestsData();
     }
 )
+
+watch(sort, () => {
+    if (!isTableLoading.value) {
+        pageConfig.orders[0].sort = sort.value.column;
+        pageConfig.orders[0].sortOrderType = sort.value.direction.toUpperCase();
+
+        fetchTableData();
+    }
+})
 
 // * Data
 const columns = [
     {
-        key: 'instructor',
-        label: 'Tên'
+        key: 'instructor.profile.fullname',
+        label: 'Tên',
+        sortable: true,
     },
     {
         key: 'instructorStatus',
-        label: 'Trạng thái'
+        label: 'Trạng thái',
+        sortable: true,
     },
     {
         key: 'messageToInstructor',
-        label: 'Tin nhắn'
+        label: 'Tin nhắn',
+        rowClass: 'break-all max-w-lg',
+        sortable: true,
+    },
+    {
+        key: 'actions',
+        label: 'Hành động'
     }
 ]
 
-const statusBadge = (instructorStatus: string) => {
-    if (instructorStatus == InstructorStatus.PENDING)
-        return "gray";
-    if (instructorStatus == InstructorStatus.REJECT)
-        return "red";
-    if (instructorStatus == InstructorStatus.APPROVED)
-        return "teal";
-    if (instructorStatus == InstructorStatus.COMPLETED)
-        return "green";
+const selectedColumns = ref([...columns]);
 
-    return "gray"
-};
+const items = (row: any) => [
+    [
+        {
+            label: 'Chi tiết tuyển dụng',
+            icon: 'mingcute:profile-line',
+            click: () => {
+                navigateTo(`/recruitment/${row.recruitment.recruitmentId}`, {
+                    open: {
+                        target: '_blank',
+                    }
+                })
+            }
+        },
+    ],
+    [
+        {
+            label: 'Xoá',
+            icon: 'mingcute:delete-2-line',
+            click: nuxtToast,
+        }
+    ]
+]
 </script>
 
 <template>
     <div class="flex flex-col gap-2">
-        <div class="text-center text-2xl font-semibold">
-            Danh sách yêu cầu giảng viên hướng dẫn
+        <div class="flex justify-end">
+            <UButton color="primary" @click="openRequestModal" :loading="isOpeningModal" label="Yêu cầu giảng viên" />
         </div>
 
-        <div class="flex flex-col justify-between gap-2 md:flex-row">
-            <div>
-                <!-- <form @submit.prevent="searchInstructorRequestsData">
-                    <UInput v-model="pageConfig.filters[0].value" placeholder="Tìm tên giảng viên..." class="w-64"
-                            size="sm"
+        <UCard class="w-full" :ui="{
+            divide: 'divide-y divide-gray-200 dark:divide-gray-700',
+            header: { padding: 'px-4 py-5' },
+            body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' },
+            footer: { padding: 'p-4' }
+        }">
+
+            <template #header>
+                <h1 class="text-center text-xl font-semibold text-gray-900 dark:text-white">
+                    Danh sách yêu cầu giảng viên hướng dẫn
+                </h1>
+            </template>
+
+            <div class="flex flex-col justify-between gap-2 px-4 py-3 md:flex-row">
+                <form @submit.prevent="searchTable">
+                    <UInput placeholder="Tìm tên giảng viên..." class="min-w-64" size="sm" color="white"
+                            v-model="pageConfig.filters[0].value"
                             :ui="{ icon: { trailing: { pointer: 'pointer-events-auto' } } }">
                         <template #trailing>
                             <UButton icon="heroicons:magnifying-glass-16-solid" color="primary"
                                      class="-me-2.5 rounded-none rounded-r-md" type="submit" />
                         </template>
-</UInput>
-</form> -->
-            </div>
-            <div>
-                <UButton color="primary" @click="openRequestModal" :loading="isInstructorsDataLoading">
-                    Yêu cầu giảng viên
-                </UButton>
-            </div>
-        </div>
-
-        <UTable class="rounded-lg border border-gray-100 dark:border-gray-700" :columns="columns"
-                :loading="isInstructorRequestsLoading" :rows="instructorRequestList">
-            <template #instructor-data="{ row }">
-                <div class="font-bold">
-                    {{ row.instructor.profile.fullname }}
+                    </UInput>
+                </form>
+                <div class="flex flex-col gap-2 md:flex-row">
+                    <USelectMenu class="min-w-56" v-model="selectedColumns" :options="columns" multiple
+                                 icon="mingcute:columns-3-line" placeholder="Columns">
+                        <template #label>
+                            <span>Chọn cột</span>
+                        </template>
+                    </USelectMenu>
+                    <USelectMenu v-model.number="pageConfig.pageSize" :options="['5', '6', '7', '8', '9', '10']"
+                                 icon="mingcute:rows-3-line" :placeholder="pageConfig.pageSize.toString()">
+                    </USelectMenu>
+                    <UPagination :max="7" v-model="pageConfig.currentPage" :page-count="pageConfig.pageSize"
+                                 :total="pageConfig.totalRecords" />
                 </div>
-            </template>
-
-            <template #instructorStatus-data="{ row }">
-                <UBadge class="w-20 justify-center" :color="statusBadge(row.instructorStatus)" variant="outline">
-                    {{ row.instructorStatus }}
-                </UBadge>
-            </template>
-        </UTable>
-
-        <div class="flex justify-end">
-            <div class="flex flex-row items-center gap-2">
-                <USelect v-model.number="pageConfig.pageSize" :options="[5, 6, 7, 8, 9, 10]" />
-                <UPagination :max="7" v-model="pageConfig.currentPage" :page-count="pageConfig.pageSize"
-                             :total="pageConfig.totalRecords" />
             </div>
-        </div>
+
+            <UTable class="rounded-lg" :columns="selectedColumns" :loading="isTableLoading"
+                    :rows="instructorRequestList"
+                    sort-mode="manual" v-model:sort="sort">
+
+                <template #instructor.profile.fullname-data="{ row }">
+                    <div class="font-semibold">
+                        {{ row.instructor.profile.fullname }}
+                    </div>
+                </template>
+
+                <template #instructorStatus-data="{ row }">
+                    <UBadge class="w-20 justify-center" :color="appUtils.statusBadge(row.instructorStatus)"
+                            variant="outline">
+                        {{ appUtils.convertStatus(row.instructorStatus) }}
+                    </UBadge>
+                </template>
+
+                <template #actions-data="{ row }">
+                    <UDropdown :items="items(row)">
+                        <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
+                    </UDropdown>
+                </template>
+            </UTable>
+        </UCard>
     </div>
 
     <UModal v-model="isRequestModelOpen" prevent-close>

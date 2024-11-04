@@ -82,7 +82,7 @@ const toggleMenu = () => {
                     <ul class="flex flex-col gap-y-1 p-2">
                         <li
                             class="rounded-lg p-2 duration-300 hover:bg-black/5 dark:hover:bg-white/5">
-                            <NuxtLink class="flex items-center gap-x-4">
+                            <NuxtLink to="#" class="flex items-center gap-x-4">
                                 <UIcon class="h-6 w-6 self-start" name="mingcute:notebook-line" />
                                 <div class="flex w-32 flex-col gap-y-1">
                                     <span class="text-sm font-bold">
@@ -96,8 +96,7 @@ const toggleMenu = () => {
                         </li>
                         <li
                             class="rounded-lg p-2 duration-300 hover:bg-black/5 dark:hover:bg-white/5">
-                            <NuxtLink @click="nuxtToast"
-                                      class="flex items-center gap-x-4">
+                            <NuxtLink to="#" class="flex items-center gap-x-4">
                                 <UIcon class="h-6 w-6 self-start" name="mingcute:notebook-2-line" />
                                 <div class="flex w-32 flex-col gap-y-1">
                                     <span class="text-sm font-bold">

@@ -68,7 +68,7 @@ const selectSkill = (skill: Skill) => {
                                 </transition>
                                 <span class="mt-2 block"> dành cho bạn</span>
                             </h1>
-                            <p class="max-w-2xl text-lg text-gray-500 md:text-xl dark:text-gray-400">
+                            <p class="max-w-2xl text-lg font-medium text-gray-500 md:text-xl dark:text-gray-400">
                                 Công nghệ AI, cá nhân hoá việc làm.
                             </p>
                             <div class="w-full max-w-md">
@@ -108,7 +108,7 @@ const selectSkill = (skill: Skill) => {
                                             </div>
                                         </div>
                                         <UButton color="primary" :label="'Tìm việc ' + selectedSkill?.name" size="lg"
-                                                 @click="nuxtToast" />
+                                                 @click="navigateTo('/recruitment')" />
                                     </div>
                                 </div>
                             </div>
