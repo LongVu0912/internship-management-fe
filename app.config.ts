@@ -37,12 +37,21 @@ export default defineAppConfig({
         },
         chip: {
             translate: {
-                'top-right': "-translate-y-1/4 translate-x-1/4 transform",
-            }
+                "top-right": "-translate-y-1/4 translate-x-1/4 transform",
+            },
         },
         table: {
             td: {
-                base: '',
+                base: "",
+            },
+            default: {
+                loadingState: {
+                    icon: "mingcute:loading-fill",
+                    label: "Đang tải",
+                },
+                emptyState: {
+                    label: "Không tìm thấy",
+                },
             },
         },
     },

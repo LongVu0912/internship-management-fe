@@ -65,8 +65,8 @@ const searchData = async () => {
 </script>
 
 <template>
-    <div class="flex min-h-screen flex-col items-center p-4 dark:bg-gray-900">
-        <div class="flex w-full max-w-5xl flex-col gap-6">
+    <div class="flex min-h-screen flex-col items-center dark:bg-gray-900">
+        <div class="flex w-full flex-col gap-6 md:w-4/5 lg:w-2/3">
             <div class="flex w-full flex-col gap-4 rounded-lg bg-white p-4 shadow-md dark:bg-gray-800">
                 <div>
                     <form @submit.prevent="searchData">

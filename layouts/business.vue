@@ -15,7 +15,7 @@ const sidebarItems: SidebarItem[] = [
         to: "/business/recruitment",
     },
     {
-        icon: "mingcute:settings-3-line",
+        icon: "mingcute:user-setting-line",
         label: "Cài đặt",
         to: "/business/settings",
     }

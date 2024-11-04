@@ -46,8 +46,6 @@ const fetchData = async () => {
             type: 'error',
         });
     }
-
-    console.log(instructorRequests.value);
 }
 
 const approveRequest = async (instructorRequestId: string) => {
@@ -109,7 +107,6 @@ const rejectRequest = async (instructorRequestId: string) => {
 
     fetchData();
 }
-
 
 // * Data
 const items = (row: any) => [

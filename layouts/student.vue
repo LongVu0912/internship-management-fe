@@ -15,7 +15,7 @@ const sidebarItems: SidebarItem[] = [
         to: "/student/recruitment",
     },
     {
-        icon: "mingcute:mortarboard-line",
+        icon: "mingcute:contacts-3-line",
         label: "Giảng viên hướng dẫn",
         to: "/student/instructor",
     },

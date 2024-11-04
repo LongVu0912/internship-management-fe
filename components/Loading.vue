@@ -1,5 +1,5 @@
 <template>
-    <div class="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 transform items-center justify-center">
+    <div class="flex h-full w-full items-center justify-center pt-32">
         <div class="loader bg-primary-500 dark:bg-primary-400"></div>
     </div>
 </template>

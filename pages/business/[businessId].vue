@@ -41,8 +41,8 @@ onBeforeMount(async () => {
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
     </Head>
     <Loading v-if="isPageLoading" />
-    <template v-else>
-        <UCard>
+    <div v-else class="flex flex-col items-center">
+        <UCard class="w-full shadow-md md:w-4/5 lg:w-2/3">
             <template #header>
                 <div class="flex flex-row items-center gap-4">
                     <div class="shrink-0">
@@ -143,5 +143,5 @@ onBeforeMount(async () => {
                 </div>
             </template>
         </UCard>
-    </template>
+    </div>
 </template>

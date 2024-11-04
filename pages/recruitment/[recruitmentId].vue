@@ -75,8 +75,8 @@ const onDialogCancel = () => {
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
     </Head>
     <Loading v-if="isPageLoading" />
-    <template v-else>
-        <UCard>
+    <div v-else class="flex flex-col items-center">
+        <UCard class="w-full shadow-md md:w-4/5 lg:w-2/3">
             <template #header>
                 <div class="text-center text-xl font-bold">
                     {{ recruitment?.title }}
@@ -162,7 +162,7 @@ const onDialogCancel = () => {
                 </div>
             </template>
         </UCard>
-    </template>
+    </div>
 
     <UModal v-model="isConfirmDialogOpen" prevent-close>
         <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">

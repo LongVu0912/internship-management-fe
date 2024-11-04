@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import BusinessStatus from '~/types/enums/BusinessStatus';
+import { Filter } from '~/types/page_config/Filter';
 import { Order } from '~/types/page_config/Order';
 import { PageConfig } from '~/types/page_config/PageConfig';
 import type StudentRecruitmentRequest from '~/types/student/StudentRecruitmentRequest';
@@ -9,25 +9,31 @@ definePageMeta({
     middleware: "student",
 });
 
-const isDataLoading = ref(true);
 const { $apiToken } = useNuxtApp();
 const studentRepository = StudentRepository($apiToken);
 const nuxtToast = useNuxtToast();
+const appUtils = AppUtils();
 
 // * Refs
+const isTableLoading = ref(true);
 const pageConfig = reactive(new PageConfig());
-const order = ref(new Order("businessStatus"));
-pageConfig.orders.push(order.value);
+pageConfig.orders.push(new Order("recruitment.title"));
+pageConfig.filters.push(new Filter("recruitment.title"));
 const studentRecruitmentRequests = ref<StudentRecruitmentRequest[]>([]);
+
+const sort = ref<any>({
+    column: 'recruitment.title',
+    direction: 'desc'
+})
 
 // * Lifecycle
 onBeforeMount(async () => {
-    await fetchStudentRecruitmentsRequest();
+    await fetchTableData();
 })
 
 // * Functions
-const fetchStudentRecruitmentsRequest = async () => {
-    isDataLoading.value = true;
+const fetchTableData = async () => {
+    isTableLoading.value = true;
     const apiResponse = await studentRepository.getAllStudentRecruitmentsRequestPaging(pageConfig);
 
     if (apiResponse.code != 200) {
@@ -40,37 +46,64 @@ const fetchStudentRecruitmentsRequest = async () => {
 
     pageConfig.update(apiResponse.result.pageConfig)
     studentRecruitmentRequests.value = apiResponse.result.data;
+    isTableLoading.value = false;
+}
 
-    isDataLoading.value = false;
+const searchTable = async () => {
+    if (pageConfig.currentPage !== 1) {
+        pageConfig.currentPage = 1;
+    } else {
+        fetchTableData();
+    }
 }
 
 // * Watches
 watch(
-    () => pageConfig.currentPage,
-    async (currentPage) => {
-        await fetchStudentRecruitmentsRequest();
+    [() => pageConfig.currentPage, () => pageConfig.pageSize],
+    ([newCurrentPage, newPageSize], [oldCurrentPage, oldPageSize]) => {
+        if (!isTableLoading.value) {
+            if (newPageSize !== oldPageSize) {
+                pageConfig.currentPage = 1;
+            }
+            fetchTableData();
+        }
     }
 )
+
+watch(sort, () => {
+    if (!isTableLoading.value) {
+        pageConfig.orders[0].sort = sort.value.column;
+        pageConfig.orders[0].sortOrderType = sort.value.direction.toUpperCase();
+
+        fetchTableData();
+    }
+})
 
 // * Data
 const columns = [
     {
         key: 'recruitment.title',
-        label: 'Công việc'
+        label: 'Công việc',
+        sortable: true,
     },
     {
         key: 'businessStatus',
-        label: 'Trạng thái'
+        label: 'Trạng thái',
+        sortable: true,
     },
     {
         key: 'messageToBusiness',
         label: 'Tin nhắn tới doanh nghiệp',
-        rowClass: 'break-all'
+        rowClass: 'break-all max-w-lg',
+        sortable: true,
     },
     {
-        key: 'actions'
+        key: 'actions',
+        label: 'Hành động'
     }
 ]
+
+const selectedColumns = ref([...columns]);
 
 const items = (row: any) => [
     [
@@ -89,61 +122,83 @@ const items = (row: any) => [
     [
         {
             label: 'Xoá',
-            icon: 'i-heroicons-trash-20-solid',
+            icon: 'mingcute:delete-2-line',
             click: nuxtToast,
         }
     ]
 ]
-
-const statusBadge = (businessStatus: string) => {
-    if (businessStatus == BusinessStatus.PENDING)
-        return "gray";
-    if (businessStatus == BusinessStatus.REJECT)
-        return "red";
-    if (businessStatus == BusinessStatus.APPROVED)
-        return "teal";
-    if (businessStatus == BusinessStatus.COMPLETED)
-        return "green";
-
-    return "gray"
-};
 </script>
 
 <template>
-    <div class="flex flex-col gap-4">
-        <div class="text-center text-2xl font-semibold">Danh sách yêu cầu thực tập</div>
-
+    <div class="flex flex-col gap-2">
         <div class="flex justify-end">
             <UButton to="/recruitment" color="primary">Tìm thực tập</UButton>
         </div>
 
-        <UTable class="rounded-lg border border-gray-100 dark:border-gray-700" :columns="columns"
-                :loading="isDataLoading" :rows="studentRecruitmentRequests">
-            <template #recruitment.title-data="{ row }">
-                <NuxtLink class="font-semibold" :to="`/recruitment/${row.recruitment.recruitmentId}`" target="_blank">
-                    {{ row.recruitment.title }}
-                </NuxtLink>
+        <UCard class="w-full" :ui="{
+            divide: 'divide-y divide-gray-200 dark:divide-gray-700',
+            header: { padding: 'px-4 py-5' },
+            body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' },
+            footer: { padding: 'p-4' }
+        }">
+
+            <template #header>
+                <h1 class="text-center text-xl font-semibold text-gray-900 dark:text-white">
+                    Danh sách đăng ký thực tập
+                </h1>
             </template>
 
-            <template #businessStatus-data="{ row }">
-                <UBadge class="w-20 justify-center" :color="statusBadge(row.businessStatus)" variant="outline">
-                    {{ row.businessStatus }}
-                </UBadge>
-            </template>
-
-            <template #actions-data="{ row }">
-                <UDropdown :items="items(row)">
-                    <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
-                </UDropdown>
-            </template>
-        </UTable>
-
-        <div class="flex justify-end">
-            <div class="flex flex-row items-center gap-2">
-                <USelect v-model.number="pageConfig.pageSize" :options="[5, 6, 7, 8, 9, 10]" />
-                <UPagination :max="7" v-model="pageConfig.currentPage" :page-count="pageConfig.pageSize"
-                             :total="pageConfig.totalRecords" />
+            <div class="flex flex-col justify-between gap-2 px-4 py-3 md:flex-row">
+                <form @submit.prevent="searchTable">
+                    <UInput placeholder="Tìm tên công việc..." class="min-w-64" size="sm" color="white"
+                            v-model="pageConfig.filters[0].value"
+                            :ui="{ icon: { trailing: { pointer: 'pointer-events-auto' } } }">
+                        <template #trailing>
+                            <UButton icon="heroicons:magnifying-glass-16-solid" color="primary"
+                                     class="-me-2.5 rounded-none rounded-r-md" type="submit" />
+                        </template>
+                    </UInput>
+                </form>
+                <div class="flex flex-col gap-2 md:flex-row">
+                    <USelectMenu class="min-w-56" v-model="selectedColumns" :options="columns" multiple
+                                 icon="mingcute:columns-3-line" placeholder="Columns">
+                        <template #label>
+                            <span>Chọn cột</span>
+                        </template>
+                    </USelectMenu>
+                    <USelectMenu v-model.number="pageConfig.pageSize" :options="['5', '6', '7', '8', '9', '10']"
+                                 icon="mingcute:rows-3-line" :placeholder="pageConfig.pageSize.toString()">
+                    </USelectMenu>
+                    <UPagination :max="7" v-model="pageConfig.currentPage" :page-count="pageConfig.pageSize"
+                                 :total="pageConfig.totalRecords" />
+                </div>
             </div>
-        </div>
+
+            <UTable class="rounded-lg" :columns="selectedColumns" :loading="isTableLoading"
+                    :rows="studentRecruitmentRequests"
+                    sort-mode="manual" v-model:sort="sort">
+
+                <template #recruitment.title-data="{ row }">
+                    <NuxtLink class="font-semibold" :to="`/recruitment/${row.recruitment.recruitmentId}`"
+                              target="_blank">
+                        {{ row.recruitment.title }}
+                    </NuxtLink>
+                </template>
+
+                <template #businessStatus-data="{ row }">
+                    <UBadge class="w-20 justify-center" :color="appUtils.statusBadge(row.businessStatus)"
+                            variant="subtle">
+                        {{ appUtils.convertStatus(row.businessStatus) }}
+                    </UBadge>
+                </template>
+
+                <template #actions-data="{ row }">
+                    <UDropdown :items="items(row)">
+                        <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
+                    </UDropdown>
+                </template>
+            </UTable>
+
+        </UCard>
     </div>
 </template>
