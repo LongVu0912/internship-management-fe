@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Filter } from '~/types/page_config/Filter';
+import { Order } from '~/types/page_config/Order';
 import { PageConfig } from '~/types/page_config/PageConfig';
 import type Student from '~/types/student/Student';
 
@@ -15,24 +16,31 @@ const studentRepository = StudentRepository($apiToken);
 const nuxtToast = useNuxtToast();
 
 // * Refs
-const isDataLoading = ref(true);
-const isInputModalOpen = ref(false);
-const isSubmitting = ref(false);
+const isTableLoading = ref(true);
+const inputModel = ref({
+    isOpen: false,
+    isSendingRequest: false,
+});
 const excelFile = ref<File | null>(null);
 
-const fullNameFilter = ref(new Filter("profile.fullname"));
+const sort = ref<any>({
+    column: 'profile.fullname',
+    direction: 'desc'
+})
+
 const pageConfig = reactive(new PageConfig());
-pageConfig.filters.push(fullNameFilter.value);
+pageConfig.orders.push(new Order("profile.fullname"));
+pageConfig.filters.push(new Filter("profile.fullname"));
 const studentList = ref<Student[]>([]);
 
 // * Lifecycle
 onBeforeMount(async () => {
-    await fetchData();
+    await fetchTableData();
 });
 
 // * Functions
-const fetchData = async () => {
-    isDataLoading.value = true;
+const fetchTableData = async () => {
+    isTableLoading.value = true;
 
     const apiResponse = await adminRepository.getStudentPaging(pageConfig);
 
@@ -41,7 +49,7 @@ const fetchData = async () => {
 
         pageConfig.update(apiResponse.result.pageConfig);
 
-        isDataLoading.value = false;
+        isTableLoading.value = false;
     } else {
         nuxtToast({
             description: apiResponse.message,
@@ -53,13 +61,24 @@ const fetchData = async () => {
 // * Watches
 watch(
     [() => pageConfig.currentPage, () => pageConfig.pageSize],
-    async ([newCurrentPage, newPageSize], [oldCurrentPage, oldPageSize]) => {
-        if (newPageSize !== oldPageSize) {
-            pageConfig.currentPage = 1;
+    ([newCurrentPage, newPageSize], [oldCurrentPage, oldPageSize]) => {
+        if (!isTableLoading.value) {
+            if (newPageSize !== oldPageSize) {
+                pageConfig.currentPage = 1;
+            }
+            fetchTableData();
         }
-        await fetchData();
     }
 )
+
+watch(sort, () => {
+    if (!isTableLoading.value) {
+        pageConfig.orders[0].sort = sort.value.column;
+        pageConfig.orders[0].sortOrderType = sort.value.direction.toUpperCase();
+
+        fetchTableData();
+    }
+})
 
 // * Functions
 const handleInputExcelFile = (event: any) => {
@@ -71,15 +90,14 @@ const handleInputExcelFile = (event: any) => {
 };
 
 const handleImportStudents = async () => {
-    isSubmitting.value = true;
-
     if (excelFile.value == null) {
         nuxtToast({
             description: "Hãy chọn file Excel"
         })
-        isSubmitting.value = false;
         return;
     }
+
+    inputModel.value.isSendingRequest = true;
 
     const apiResponse = await studentRepository.importStudents({
         file: excelFile.value,
@@ -90,8 +108,8 @@ const handleImportStudents = async () => {
             description: "Thêm sinh viên thành công",
             type: "success",
         });
-        fetchData();
-        isInputModalOpen.value = false;
+        fetchTableData();
+        inputModel.value.isOpen = false;
     } else {
         nuxtToast({
             description: apiResponse.message,
@@ -99,18 +117,52 @@ const handleImportStudents = async () => {
         });
     }
 
-    isSubmitting.value = false;
+    inputModel.value.isSendingRequest = false;
 }
 
-const searchData = async () => {
+const searchTable = async () => {
     if (pageConfig.currentPage !== 1) {
         pageConfig.currentPage = 1;
     } else {
-        await fetchData();
+        fetchTableData();
     }
 }
 
 // * Data
+const columns = [
+    {
+        key: "profile.fullname",
+        label: "Tên",
+        sortable: true,
+    },
+    {
+        key: "dob",
+        label: "Ngày sinh",
+        sortable: true,
+    },
+    {
+        key: "profile.email",
+        label: "Email",
+        sortable: true,
+    },
+    {
+        key: "major.name",
+        label: "Ngành",
+        sortable: true,
+    },
+    {
+        key: "year",
+        label: "Khoá",
+        sortable: true,
+    },
+    {
+        key: "actions",
+        label: "Hành động"
+    }
+]
+
+const selectedColumns = ref([...columns]);
+
 const items = (row: any) => [
     [
         {
@@ -145,48 +197,36 @@ const items = (row: any) => [
     [
         {
             label: 'Xoá',
-            icon: 'i-heroicons-trash-20-solid',
+            icon: 'mingcute:delete-2-line',
             click: nuxtToast,
         }
     ]
-]
-
-const columns = [
-    {
-        key: 'name',
-        label: 'Tên'
-    },
-    {
-        key: 'dob',
-        label: 'Ngày sinh'
-    },
-    {
-        key: 'email',
-        label: 'Email'
-    },
-    {
-        key: 'major',
-        label: 'Ngành'
-    },
-    {
-        key: 'year',
-        label: 'Khoá'
-    },
-    {
-        key: 'actions'
-    }
 ]
 </script>
 
 <template>
     <div class="flex flex-col gap-2">
-        <div class="mb-2 flex flex-col justify-between gap-2 md:flex-row">
-            <div class="flex flex-col gap-2 md:flex-row">
-                <form @submit.prevent="searchData">
-                    <UInput v-model="pageConfig.filters[0].value"
-                            placeholder="Tìm tên sinh viên..."
-                            class="w-64"
-                            size="sm"
+        <div class="flex justify-end">
+            <UButton color="primary" @click="inputModel.isOpen = true" label="Thêm sinh viên" />
+        </div>
+
+        <UCard class="w-full" :ui="{
+            divide: 'divide-y divide-gray-200 dark:divide-gray-700',
+            header: { padding: 'px-4 py-5' },
+            body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' },
+            footer: { padding: 'p-4' }
+        }">
+
+            <template #header>
+                <h1 class="text-center text-xl font-semibold text-gray-900 dark:text-white">
+                    Danh sách sinh viên
+                </h1>
+            </template>
+
+            <div class="flex flex-col justify-between gap-2 px-4 py-3 md:flex-row">
+                <form @submit.prevent="searchTable">
+                    <UInput placeholder="Tìm tên sinh viên..." class="min-w-64" size="sm" color="white"
+                            v-model="pageConfig.filters[0].value"
                             :ui="{ icon: { trailing: { pointer: 'pointer-events-auto' } } }">
                         <template #trailing>
                             <UButton icon="heroicons:magnifying-glass-16-solid" color="primary"
@@ -194,75 +234,78 @@ const columns = [
                         </template>
                     </UInput>
                 </form>
+                <div class="flex flex-col gap-2 md:flex-row">
+                    <USelectMenu class="min-w-56" v-model="selectedColumns" :options="columns" multiple
+                                 icon="mingcute:columns-3-line" placeholder="Columns">
+                        <template #label>
+                            <span>Chọn cột</span>
+                        </template>
+                    </USelectMenu>
+                    <USelectMenu v-model.number="pageConfig.pageSize" :options="['5', '6', '7', '8', '9', '10']"
+                                 icon="mingcute:rows-3-line" :placeholder="pageConfig.pageSize.toString()">
+                    </USelectMenu>
+                    <UPagination :max="7" v-model="pageConfig.currentPage" :page-count="pageConfig.pageSize"
+                                 :total="pageConfig.totalRecords" />
+                </div>
             </div>
-            <div>
-                <UButton color="primary" @click="isInputModalOpen = true;">Thêm sinh viên</UButton>
-            </div>
-        </div>
 
-        <UTable :loading="isDataLoading" class="rounded-lg border border-gray-100 dark:border-gray-700"
-                :columns="columns"
-                :rows="studentList">
-            <template #name-data="{ row }">
-                <div class="font-medium">
-                    {{ row.profile.fullname }}
-                </div>
-                <UBadge class="mt-1" color="primary" variant="outline">
-                    {{ row.studentId }}
-                </UBadge>
-            </template>
+            <UTable class="rounded-lg" :columns="selectedColumns" :loading="isTableLoading" :rows="studentList"
+                    sort-mode="manual"
+                    v-model:sort="sort">
+                <template #profile.fullname-data="{ row }">
+                    <div class="flex flex-col">
+                        <NuxtLink class="font-semibold" :to="`/student/${row.studentId}`"
+                                  target="_blank">
+                            {{ row.profile.fullname }}
+                        </NuxtLink>
+                        <div>
+                            <UBadge class="mt-1" color="primary" variant="outline">
+                                {{ row.studentId }}
+                            </UBadge>
+                        </div>
+                    </div>
+                </template>
 
-            <template #dob-data="{ row }">
-                <div class="font-medium">
-                    {{ row.dob }}
-                </div>
-                <UBadge class="mt-1 w-10 justify-center" color="gray" variant="outline">
-                    {{ row.profile.isMale ? "Nam" : "Nữ" }}
-                </UBadge>
-            </template>
+                <template #dob-data="{ row }">
+                    <div class="font-medium">
+                        {{ row.dob }}
+                    </div>
+                    <UBadge class="mt-1 w-10 justify-center" color="gray" variant="outline">
+                        {{ row.profile.isMale ? "Nam" : "Nữ" }}
+                    </UBadge>
+                </template>
 
-            <template #email-data="{ row }">
-                <div class="font-medium">
-                    {{ row.profile.email }}
-                </div>
-            </template>
+                <template #profile.email-data="{ row }">
+                    <div class="font-medium">
+                        {{ row.profile.email }}
+                    </div>
+                </template>
 
-            <template #major-data="{ row }">
-                <div class="font-medium">
-                    {{ row.major.name }}
-                </div>
-                <UBadge class="mt-1 justify-center" color="gray" variant="outline">
-                    {{ row.major.faculty.name }}
-                </UBadge>
-            </template>
+                <template #major.name-data="{ row }">
+                    <div class="font-medium">
+                        {{ row.major.name }}
+                    </div>
+                    <UBadge class="mt-1 justify-center" color="gray" variant="outline">
+                        {{ row.major.faculty.name }}
+                    </UBadge>
+                </template>
 
-            <template #year-data="{ row }">
-                <div class="font-medium">
-                    {{ row.year }}
-                </div>
-            </template>
+                <template #year-data="{ row }">
+                    <div class="font-medium">
+                        {{ row.year }}
+                    </div>
+                </template>
 
-            <template #actions-data="{ row }">
-                <UDropdown :items="items(row)">
-                    <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
-                </UDropdown>
-            </template>
-        </UTable>
-
-        <div class="flex justify-between pt-4">
-            <div>
-            </div>
-            <div class="flex flex-row items-center gap-2">
-                <div>
-                    <USelect v-model.number="pageConfig.pageSize" :options="[5, 6, 7, 8, 9, 10]" />
-                </div>
-                <UPagination :max="7" v-model="pageConfig.currentPage" :page-count="pageConfig.pageSize"
-                             :total="pageConfig.totalRecords" />
-            </div>
-        </div>
+                <template #actions-data="{ row }">
+                    <UDropdown :items="items(row)">
+                        <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
+                    </UDropdown>
+                </template>
+            </UTable>
+        </UCard>
     </div>
 
-    <UModal v-model="isInputModalOpen" prevent-close>
+    <UModal v-model="inputModel.isOpen" prevent-close>
         <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
             <template #header>
                 <div class="flex items-center justify-between">
@@ -270,7 +313,7 @@ const columns = [
                         Nhập dữ liệu từ file Excel
                     </h3>
                     <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
-                             @click="isInputModalOpen = false" />
+                             @click="inputModel.isOpen = false" />
                 </div>
             </template>
 
@@ -279,7 +322,8 @@ const columns = [
             </div>
 
             <template #footer>
-                <UButton :loading="isSubmitting" color="primary" class="w-full rounded-md" size="lg" block
+                <UButton :loading="inputModel.isSendingRequest" color="primary" class="w-full rounded-md" size="lg"
+                         block
                          @click="handleImportStudents">
                     Nhập dữ liệu
                 </UButton>

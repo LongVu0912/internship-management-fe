@@ -16,6 +16,10 @@ const appUtils = AppUtils();
 
 // * Refs
 const isTableLoading = ref(true);
+const messageModal = ref({
+    isOpen: false,
+    message: '',
+})
 const pageConfig = reactive(new PageConfig());
 pageConfig.orders.push(new Order("recruitment.title"));
 pageConfig.filters.push(new Filter("recruitment.title"));
@@ -33,20 +37,21 @@ onBeforeMount(async () => {
 
 // * Functions
 const fetchTableData = async () => {
+
     isTableLoading.value = true;
     const apiResponse = await studentRepository.getAllStudentRecruitmentsRequestPaging(pageConfig);
+    if (apiResponse.code === 200) {
+        pageConfig.update(apiResponse.result.pageConfig)
 
-    if (apiResponse.code != 200) {
+        studentRecruitmentRequests.value = apiResponse.result.data;
+
+        isTableLoading.value = false;
+    } else {
         nuxtToast({
             description: apiResponse.message,
-            type: "error",
-        })
-        return;
+            type: 'error',
+        });
     }
-
-    pageConfig.update(apiResponse.result.pageConfig)
-    studentRecruitmentRequests.value = apiResponse.result.data;
-    isTableLoading.value = false;
 }
 
 const searchTable = async () => {
@@ -55,6 +60,11 @@ const searchTable = async () => {
     } else {
         fetchTableData();
     }
+}
+
+const openMessageModal = (message: string) => {
+    messageModal.value.message = message;
+    messageModal.value.isOpen = true;
 }
 
 // * Watches
@@ -94,7 +104,6 @@ const columns = [
     {
         key: 'messageToBusiness',
         label: 'Tin nhắn tới doanh nghiệp',
-        rowClass: 'break-all max-w-lg',
         sortable: true,
     },
     {
@@ -132,7 +141,7 @@ const items = (row: any) => [
 <template>
     <div class="flex flex-col gap-2">
         <div class="flex justify-end">
-            <UButton to="/recruitment" color="primary">Tìm thực tập</UButton>
+            <UButton to="/recruitment" color="primary" label="Tìm thực tập" />
         </div>
 
         <UCard class="w-full" :ui="{
@@ -192,6 +201,12 @@ const items = (row: any) => [
                     </UBadge>
                 </template>
 
+                <template #messageToBusiness-data="{ row }">
+                    <div @click="openMessageModal(row.messageToBusiness)" class="cursor-pointer">
+                        {{ row.messageToBusiness.substring(0, 20) + '...' }}
+                    </div>
+                </template>
+
                 <template #actions-data="{ row }">
                     <UDropdown :items="items(row)">
                         <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
@@ -201,4 +216,22 @@ const items = (row: any) => [
 
         </UCard>
     </div>
+
+    <UModal v-model="messageModal.isOpen" prevent-close>
+        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <div class="text-base font-semibold">
+                        Tin nhắn
+                    </div>
+                    <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                             @click="messageModal.isOpen = false" />
+                </div>
+            </template>
+
+            <div class="py-2">
+                {{ messageModal.message }}
+            </div>
+        </UCard>
+    </UModal>
 </template>
