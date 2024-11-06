@@ -10,8 +10,8 @@ export const AppUtils = () => {
     const statusBadge = (status: String) => {
         if (status == "PENDING") return "gray";
         if (status == "REJECT") return "red";
-        if (status == "APPROVED") return "teal";
-        if (status == "COMPLETED") return "green";
+        if (status == "APPROVED") return "green";
+        if (status == "COMPLETED") return "teal";
         return "primary";
     };
 

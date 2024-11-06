@@ -39,7 +39,7 @@ onBeforeMount(async () => {
 
 <template>
     <Loading v-if="isPageLoading" />
-    <template v-else>
+    <div v-else class="px-4 md:px-24">
         <div class="flex flex-col justify-between gap-2 md:flex-row md:gap-12">
             <div class="flex w-full flex-col gap-2">
                 <div class="text-xl font-semibold">
@@ -175,5 +175,5 @@ onBeforeMount(async () => {
                        color="gray" :rows="5" :model-value="student?.profile.bio" class="w-full">
             </UTextarea>
         </div>
-    </template>
+    </div>
 </template>

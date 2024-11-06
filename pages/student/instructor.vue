@@ -20,7 +20,6 @@ const appUtils = AppUtils();
 
 // * Refs
 const isTableLoading = ref(false);
-const isRequestModelOpen = ref(false);
 
 const sort = ref<any>({
     column: 'instructor',
@@ -33,12 +32,20 @@ pageConfig.orders.push(new Order("instructor.profile.fullname"));
 pageConfig.filters.push(new Filter("instructor.profile.fullname"));
 const instructorRequestList = ref([] as InstructorRequest[]);
 
+const messageModal = ref({
+    isOpen: false,
+    message: '',
+})
+
 // * For modal
-const isOpeningModal = ref(false);
-const isSendingRequest = ref(false);
+const instructorModal = ref({
+    isOpen: false,
+    isOpening: false,
+    isSendingRequest: false,
+    messageToInstructor: '',
+})
 const modalPageConfig = reactive(new PageConfig());
 modalPageConfig.filters.push(new Filter("profile.fullname"));
-const messageToInstructor = ref('');
 const selectedInstructor = ref<Instructor>({} as Instructor);
 const instructors = ref<Instructor[]>([]);
 
@@ -82,48 +89,38 @@ const fetchInstructorsData = async () => {
 }
 
 const openRequestModal = async () => {
-    isOpeningModal.value = true;
+    instructorModal.value.isOpening = true;
 
     if (await fetchInstructorsData()) {
-        isRequestModelOpen.value = true;
+        instructorModal.value.isOpen = true;
     }
 
-    isOpeningModal.value = false;
+    instructorModal.value.isOpening = false;
 }
 
 const sendRequestToInstructor = async () => {
-    isSendingRequest.value = true;
+    instructorModal.value.isSendingRequest = true;
     const apiResponse = await studentRepository.requestInstructor({
         instructorId: selectedInstructor.value.instructorId,
-        messageToInstructor: messageToInstructor.value,
+        messageToInstructor: instructorModal.value.messageToInstructor,
     });
 
-    if (apiResponse.code != 200) {
+    if (apiResponse.code != 200 || apiResponse.result == false) {
         nuxtToast({
             description: apiResponse.message,
             type: "error",
         })
-        isSendingRequest.value = false;
-        return;
     }
-
-    if (apiResponse.result == false) {
+    else {
         nuxtToast({
-            description: apiResponse.message,
-            type: "info",
+            description: "Gửi yêu cầu thành công",
+            type: "success",
         })
-        isSendingRequest.value = false;
-        return;
+        await fetchTableData();
+        instructorModal.value.isOpen = false;
     }
 
-    nuxtToast({
-        description: "Gửi yêu cầu thành công",
-        type: "success",
-    })
-
-    await fetchTableData();
-    isSendingRequest.value = false;
-    isRequestModelOpen.value = false;
+    instructorModal.value.isSendingRequest = false;
 }
 
 const searchInstructor = async (q: string) => {
@@ -140,6 +137,11 @@ const searchTable = async () => {
     } else {
         fetchTableData();
     }
+}
+
+const openMessageModal = (message: string) => {
+    messageModal.value.message = message;
+    messageModal.value.isOpen = true;
 }
 
 // * Watches
@@ -179,7 +181,6 @@ const columns = [
     {
         key: 'messageToInstructor',
         label: 'Tin nhắn',
-        rowClass: 'break-all max-w-lg',
         sortable: true,
     },
     {
@@ -193,15 +194,9 @@ const selectedColumns = ref([...columns]);
 const items = (row: any) => [
     [
         {
-            label: 'Chi tiết tuyển dụng',
+            label: 'Chi tiết',
             icon: 'mingcute:profile-line',
-            click: () => {
-                navigateTo(`/recruitment/${row.recruitment.recruitmentId}`, {
-                    open: {
-                        target: '_blank',
-                    }
-                })
-            }
+            click: nuxtToast,
         },
     ],
     [
@@ -217,7 +212,8 @@ const items = (row: any) => [
 <template>
     <div class="flex flex-col gap-2">
         <div class="flex justify-end">
-            <UButton color="primary" @click="openRequestModal" :loading="isOpeningModal" label="Yêu cầu giảng viên" />
+            <UButton color="primary" @click="openRequestModal" :loading="instructorModal.isOpening"
+                     label="Yêu cầu giảng viên" />
         </div>
 
         <UCard class="w-full" :ui="{
@@ -276,6 +272,12 @@ const items = (row: any) => [
                     </UBadge>
                 </template>
 
+                <template #messageToInstructor-data="{ row }">
+                    <div @click="openMessageModal(row.messageToInstructor)" class="cursor-pointer">
+                        {{ row.messageToInstructor.substring(0, 20) + '...' }}
+                    </div>
+                </template>
+
                 <template #actions-data="{ row }">
                     <UDropdown :items="items(row)">
                         <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
@@ -285,7 +287,7 @@ const items = (row: any) => [
         </UCard>
     </div>
 
-    <UModal v-model="isRequestModelOpen" prevent-close>
+    <UModal v-model="instructorModal.isOpen" prevent-close>
         <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
             <template #header>
                 <div class="flex items-center justify-between">
@@ -293,7 +295,7 @@ const items = (row: any) => [
                         Gửi yêu cầu thực tập cho giảng viên
                     </div>
                     <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
-                             @click="isRequestModelOpen = false" />
+                             @click="instructorModal.isOpen = false" />
                 </div>
             </template>
 
@@ -311,20 +313,39 @@ const items = (row: any) => [
                 </USelectMenu>
 
                 <div class="mb-2 mt-4 text-base font-medium">Tin nhắn tới giảng viên</div>
-                <UTextarea :rows="3" color="gray" v-model="messageToInstructor" type="text" size="lg"
+                <UTextarea :rows="3" color="gray" v-model="instructorModal.messageToInstructor" type="text" size="lg"
                            placeholder="Tin nhắn tới giảng viên yêu cầu hướng dẫn thực tập" />
             </div>
 
             <template #footer>
                 <div class="flex justify-end">
-                    <UButton class="mr-2" color="gray" variant="ghost" @click="isRequestModelOpen = false">
+                    <UButton class="mr-2" color="gray" variant="ghost" @click="instructorModal.isOpen = false">
                         Huỷ
                     </UButton>
-                    <UButton color="primary" @click="sendRequestToInstructor" :loading="isSendingRequest">
+                    <UButton color="primary" @click="sendRequestToInstructor"
+                             :loading="instructorModal.isSendingRequest">
                         Xác nhận
                     </UButton>
                 </div>
             </template>
+        </UCard>
+    </UModal>
+
+    <UModal v-model="messageModal.isOpen" prevent-close>
+        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <div class="text-base font-semibold">
+                        Tin nhắn
+                    </div>
+                    <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                             @click="messageModal.isOpen = false" />
+                </div>
+            </template>
+
+            <div class="py-2">
+                {{ messageModal.message }}
+            </div>
         </UCard>
     </UModal>
 </template>
