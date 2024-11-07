@@ -34,6 +34,23 @@ export const StudentRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         }
     };
 
+    const getStudentPaging = async (
+        payload: PageConfig
+    ): Promise<ApiResponse> => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/student/GetStudentPaging`,
+                {
+                    method: "POST",
+                    body: JSON.stringify(payload),
+                }
+            );
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
     const uploadCV = async (payload: { cv: File }) => {
         const formData = new FormData();
         formData.append("cv", payload.cv);
@@ -139,6 +156,7 @@ export const StudentRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
     return {
         getStudentProfile,
         getStudentProfileById,
+        getStudentPaging,
         uploadCV,
         updateProfile,
         importStudents,
