@@ -1,16 +1,4 @@
-<script setup lang="ts">
-useHead({
-    meta: [
-        {
-            'http-equiv': "Content-Security-Policy",
-            'content': "upgrade-insecure-requests",
-        }
-    ],
-})
-</script>
-
 <template>
-
     <Head>
         <Title>HCMUTE INTERNSHIP</Title>
         <link rel="icon" type="image/x-icon" href="/favicon.ico">

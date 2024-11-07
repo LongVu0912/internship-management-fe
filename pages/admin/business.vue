@@ -12,7 +12,6 @@ definePageMeta({
 
 // * Imports
 const { $apiToken } = useNuxtApp();
-const adminRepository = AdminRepository($apiToken);
 const businessRepository = BusinessRepository($apiToken);
 const nuxtToast = useNuxtToast();
 
@@ -21,6 +20,11 @@ const isTableLoading = ref(true);
 const businessModal = ref({
     isOpen: false,
     isSendingRequest: false,
+})
+
+const overviewModal = ref({
+    isOpen: false,
+    overview: '',
 })
 
 const pageConfig = reactive(new PageConfig());
@@ -70,7 +74,7 @@ const fetchTableData = async () => {
 
 const onCreateNewBusiness = async () => {
     businessModal.value.isSendingRequest = true;
-    const apiResponse = await adminRepository.createBusiness(newBusiness.value);
+    const apiResponse = await businessRepository.createBusiness(newBusiness.value);
 
     if (apiResponse.code !== 200) {
         nuxtToast({
@@ -95,6 +99,11 @@ const searchTable = async () => {
     } else {
         fetchTableData();
     }
+}
+
+const openOverviewModal = (overview: string) => {
+    overviewModal.value.overview = overview;
+    overviewModal.value.isOpen = true;
 }
 
 // * Watches
@@ -213,7 +222,7 @@ const items = (row: any) => [
 <template>
     <div class="flex flex-col gap-2">
         <div class="flex justify-end">
-            <UButton color="primary" @click="businessModal.isOpen = true" label="Tạo công ty" />
+            <UButton color="primary" @click="businessModal.isOpen = true" label="Thêm công ty" />
         </div>
 
         <UCard class="w-full" :ui="{
@@ -264,6 +273,12 @@ const items = (row: any) => [
                               target="_blank">
                         {{ row.name }}
                     </NuxtLink>
+                </template>
+
+                <template #overview-data="{ row }">
+                    <div @click="openOverviewModal(row.overview)" class="cursor-pointer">
+                        {{ row.overview.substring(0, 20) + '...' }}
+                    </div>
                 </template>
 
                 <template #actions-data="{ row }">
@@ -383,6 +398,24 @@ const items = (row: any) => [
                     </UButton>
                 </div>
             </template>
+        </UCard>
+    </UModal>
+
+    <UModal v-model="overviewModal.isOpen" prevent-close>
+        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <div class="text-base font-semibold">
+                        Tổng quát
+                    </div>
+                    <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                             @click="overviewModal.isOpen = false" />
+                </div>
+            </template>
+
+            <div class="py-2">
+                {{ overviewModal.overview }}
+            </div>
         </UCard>
     </UModal>
 </template>

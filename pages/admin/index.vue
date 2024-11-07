@@ -11,7 +11,6 @@ definePageMeta({
 
 // * Imports
 const { $apiToken } = useNuxtApp();
-const adminRepository = AdminRepository($apiToken);
 const studentRepository = StudentRepository($apiToken);
 const nuxtToast = useNuxtToast();
 
@@ -42,7 +41,7 @@ onBeforeMount(async () => {
 const fetchTableData = async () => {
     isTableLoading.value = true;
 
-    const apiResponse = await adminRepository.getStudentPaging(pageConfig);
+    const apiResponse = await studentRepository.getStudentPaging(pageConfig);
 
     if (apiResponse.code === 200) {
         studentList.value = apiResponse.result.data;
@@ -58,29 +57,6 @@ const fetchTableData = async () => {
     }
 }
 
-// * Watches
-watch(
-    [() => pageConfig.currentPage, () => pageConfig.pageSize],
-    ([newCurrentPage, newPageSize], [oldCurrentPage, oldPageSize]) => {
-        if (!isTableLoading.value) {
-            if (newPageSize !== oldPageSize) {
-                pageConfig.currentPage = 1;
-            }
-            fetchTableData();
-        }
-    }
-)
-
-watch(sort, () => {
-    if (!isTableLoading.value) {
-        pageConfig.orders[0].sort = sort.value.column;
-        pageConfig.orders[0].sortOrderType = sort.value.direction.toUpperCase();
-
-        fetchTableData();
-    }
-})
-
-// * Functions
 const handleInputExcelFile = (event: any) => {
     if (event && event.length > 0) {
         excelFile.value = event[0];
@@ -127,6 +103,28 @@ const searchTable = async () => {
         fetchTableData();
     }
 }
+
+// * Watches
+watch(
+    [() => pageConfig.currentPage, () => pageConfig.pageSize],
+    ([newCurrentPage, newPageSize], [oldCurrentPage, oldPageSize]) => {
+        if (!isTableLoading.value) {
+            if (newPageSize !== oldPageSize) {
+                pageConfig.currentPage = 1;
+            }
+            fetchTableData();
+        }
+    }
+)
+
+watch(sort, () => {
+    if (!isTableLoading.value) {
+        pageConfig.orders[0].sort = sort.value.column;
+        pageConfig.orders[0].sortOrderType = sort.value.direction.toUpperCase();
+
+        fetchTableData();
+    }
+})
 
 // * Data
 const columns = [

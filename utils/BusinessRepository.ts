@@ -1,5 +1,6 @@
 import type { NitroFetchRequest, $Fetch } from "nitropack";
 import type ApiResponse from "~/types/ApiResponse";
+import type Business from "~/types/business/Business";
 import type { PageConfig } from "~/types/page_config/PageConfig";
 export const BusinessRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
     const getBusinessData = async (payload: { businessId?: string }) => {
@@ -48,9 +49,25 @@ export const BusinessRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         }
     };
 
+    const createBusiness = async (payload: Business): Promise<ApiResponse> => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/business/CreateBusiness`,
+                {
+                    method: "POST",
+                    body: JSON.stringify(payload),
+                }
+            );
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
     return {
         getBusinessData,
         getMyBusinessData,
         getBusinessPaging,
+        createBusiness,
     };
 };
