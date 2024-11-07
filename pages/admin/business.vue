@@ -191,23 +191,18 @@ const items = (row: any) => [
                 })
             }
         },
-        {
-            label: 'Sửa',
-            icon: 'i-heroicons-pencil-square-20-solid',
-            click: nuxtToast,
-        },
     ],
     [
-        {
-            label: 'Lưu trữ',
-            icon: 'i-heroicons-archive-box-20-solid',
+    {
+            label: 'Sửa',
+            icon: 'mingcute:edit-4-line',
             click: nuxtToast,
         },
         {
-            label: 'Di chuyển',
-            icon: 'i-heroicons-arrow-right-circle-20-solid',
+            label: 'Đổi mật khẩu',
+            icon: 'mingcute:key-2-line',
             click: nuxtToast,
-        }
+        },
     ],
     [
         {
