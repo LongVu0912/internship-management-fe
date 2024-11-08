@@ -138,21 +138,9 @@ const items = (row: any) => [
         },
         {
             label: 'Sửa',
-            icon: 'i-heroicons-pencil-square-20-solid',
+            icon: 'mingcute:edit-4-line',
             click: nuxtToast,
         },
-    ],
-    [
-        {
-            label: 'Lưu trữ',
-            icon: 'i-heroicons-archive-box-20-solid',
-            click: nuxtToast,
-        },
-        {
-            label: 'Di chuyển',
-            icon: 'i-heroicons-arrow-right-circle-20-solid',
-            click: nuxtToast,
-        }
     ],
     [
         {
@@ -242,7 +230,10 @@ const items = (row: any) => [
                              @click="majorModal.isOpen = false" />
                 </div>
             </template>
-            <div class="py-2">
+            <div class="space-y-2 py-2">
+                <div class="flex justify-center">
+                    <UButton color="primary" @click="nuxtToast" label="Thêm ngành" />
+                </div>
                 <div class="flex flex-col gap-2">
                     <UBadge color="gray" size="lg" v-for="major in majorList">
                         {{ major.name }}

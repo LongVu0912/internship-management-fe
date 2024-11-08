@@ -83,23 +83,6 @@ watch(sort, () => {
 })
 
 // * Data
-const items = (row: any) => [
-    [
-        {
-            label: 'Chi tiết',
-            icon: 'mingcute:profile-line',
-            click: nuxtToast,
-        },
-    ],
-    [
-        {
-            label: 'Xoá',
-            icon: 'mingcute:delete-2-line',
-            click: nuxtToast,
-        }
-    ]
-]
-
 const columns = [
     {
         key: 'profile.fullname',
@@ -123,6 +106,37 @@ const columns = [
 ]
 
 const selectedColumns = ref([...columns]);
+
+
+const items = (row: any) => [
+    [
+        {
+            label: 'Chi tiết',
+            icon: 'mingcute:profile-line',
+            click: nuxtToast,
+        },
+    ],
+    [
+        {
+            label: 'Sửa',
+            icon: 'mingcute:edit-4-line',
+            click: nuxtToast,
+        },
+        {
+            label: 'Đổi mật khẩu',
+            icon: 'mingcute:key-2-line',
+            click: nuxtToast,
+        },
+
+    ],
+    [
+        {
+            label: 'Xoá',
+            icon: 'mingcute:delete-2-line',
+            click: nuxtToast,
+        }
+    ]
+]
 </script>
 
 <template>
