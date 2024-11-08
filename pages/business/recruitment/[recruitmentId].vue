@@ -1,18 +1,21 @@
 <script setup lang="ts">
+import BusinessStatus from '~/types/enums/BusinessStatus';
 import { Filter } from '~/types/page_config/Filter';
 import { Order } from '~/types/page_config/Order';
 import { PageConfig } from '~/types/page_config/PageConfig';
 import type StudentRequestRecruitment from '~/types/student/StudentRequestRecruitment';
 
 definePageMeta({
-    layout: "student",
-    middleware: "student",
+    layout: "business",
+    middleware: "business",
 });
 
+// * Imports
 const { $apiToken } = useNuxtApp();
-const studentRepository = StudentRepository($apiToken);
-const nuxtToast = useNuxtToast();
+const recruitmentRepository = RecruitmentRepository($apiToken);
 const appUtils = AppUtils();
+const nuxtToast = useNuxtToast();
+const route = useRoute();
 
 // * Refs
 const isTableLoading = ref(true);
@@ -20,30 +23,35 @@ const messageModal = ref({
     isOpen: false,
     message: '',
 })
-const pageConfig = reactive(new PageConfig());
-pageConfig.orders.push(new Order("recruitment.title"));
-pageConfig.filters.push(new Filter("recruitment.title"));
-const studentRequestRecruitmentList = ref<StudentRequestRecruitment[]>([]);
 
 const sort = ref<any>({
-    column: 'recruitment.title',
+    column: 'student.profile.fullname',
     direction: 'desc'
 })
+
+const pageConfig = reactive(new PageConfig());
+pageConfig.orders.push(new Order("student.profile.fullname"));
+pageConfig.filters.push(new Filter("student.profile.fullname"));
+const studentRequestRecruitmentList = ref<StudentRequestRecruitment[]>([]);
 
 // * Lifecycle
 onBeforeMount(async () => {
     await fetchTableData();
-})
+});
 
 // * Functions
 const fetchTableData = async () => {
-
     isTableLoading.value = true;
-    const apiResponse = await studentRepository.getAllStudentRecruitmentsRequestPaging(pageConfig);
-    if (apiResponse.code === 200) {
-        pageConfig.update(apiResponse.result.pageConfig)
 
+    const apiResponse = await recruitmentRepository.getAllRecruitmentRequestOfRecruitmentPaging({
+        pageConfig: pageConfig,
+        recruitmentId: route.params.recruitmentId.toString(),
+    });
+
+    if (apiResponse.code === 200) {
         studentRequestRecruitmentList.value = apiResponse.result.data;
+
+        pageConfig.update(apiResponse.result.pageConfig);
 
         isTableLoading.value = false;
     } else {
@@ -52,6 +60,8 @@ const fetchTableData = async () => {
             type: 'error',
         });
     }
+
+    console.log(studentRequestRecruitmentList.value);
 }
 
 const searchTable = async () => {
@@ -65,6 +75,66 @@ const searchTable = async () => {
 const openMessageModal = (message: string) => {
     messageModal.value.message = message;
     messageModal.value.isOpen = true;
+}
+
+const approveStudentRequest = async (recruitmentRequestId: string) => {
+    const apiResponse = await recruitmentRepository.setRecruitmentRequestStatus({
+        recruitmentRequestId: recruitmentRequestId,
+        status: BusinessStatus.APPROVED,
+    })
+
+    if (apiResponse.code !== 200) {
+        nuxtToast({
+            description: apiResponse.message,
+            type: 'error',
+        });
+        return;
+    }
+
+    if (apiResponse.result == false) {
+        nuxtToast({
+            description: apiResponse.message,
+            type: 'info',
+        });
+        return;
+    }
+
+    nuxtToast({
+        description: "Đồng ý thành công",
+        type: 'success',
+    });
+
+    fetchTableData();
+}
+
+const rejectStudentRequest = async (recruitmentRequestId: string) => {
+    const apiResponse = await recruitmentRepository.setRecruitmentRequestStatus({
+        recruitmentRequestId: recruitmentRequestId,
+        status: BusinessStatus.REJECT,
+    })
+
+    if (apiResponse.code !== 200) {
+        nuxtToast({
+            description: apiResponse.message,
+            type: 'error',
+        });
+        return;
+    }
+
+    if (apiResponse.result == false) {
+        nuxtToast({
+            description: apiResponse.message,
+            type: 'info',
+        });
+        return;
+    }
+
+    nuxtToast({
+        description: "Từ chối thành công",
+        type: 'success',
+    });
+
+    fetchTableData();
 }
 
 // * Watches
@@ -92,19 +162,19 @@ watch(sort, () => {
 // * Data
 const columns = [
     {
-        key: 'recruitment.title',
-        label: 'Công việc',
-        sortable: true,
+        key: 'student.profile.fullname',
+        label: 'Tên',
+        sortable: true
     },
     {
         key: 'businessStatus',
         label: 'Trạng thái',
-        sortable: true,
+        sortable: true
     },
     {
         key: 'messageToBusiness',
-        label: 'Tin nhắn tới doanh nghiệp',
-        sortable: true,
+        label: 'Tin nhắn',
+        sortable: true
     },
     {
         key: 'actions',
@@ -112,36 +182,27 @@ const columns = [
     }
 ]
 
-const selectedColumns = ref([...columns]);
-
 const items = (row: any) => [
     [
         {
-            label: 'Chi tiết tuyển dụng',
-            icon: 'mingcute:profile-line',
-            click: () => {
-                navigateTo(`/recruitment/${row.recruitment.recruitmentId}`, {
-                    open: {
-                        target: '_blank',
-                    }
-                })
-            }
+            label: 'Đồng ý',
+            icon: 'mingcute:check-fill',
+            click: () => approveStudentRequest(row.recruitmentRequestId)
         },
-    ],
-    [
         {
-            label: 'Xoá',
-            icon: 'mingcute:delete-2-line',
-            click: nuxtToast,
-        }
+            label: 'Từ chối',
+            icon: 'mingcute:close-fill',
+            click: () => rejectStudentRequest(row.recruitmentRequestId)
+        },
     ]
 ]
+const selectedColumns = ref([...columns]);
 </script>
 
 <template>
     <div class="flex flex-col gap-2">
         <div class="flex justify-end">
-            <UButton to="/recruitment" color="primary" label="Tìm thực tập" />
+            <UButton color="primary" @click="useRouter().back" label="Quay lại" />
         </div>
 
         <UCard class="w-full" :ui="{
@@ -153,13 +214,13 @@ const items = (row: any) => [
 
             <template #header>
                 <h1 class="text-center text-xl font-semibold text-gray-900 dark:text-white">
-                    Danh sách đăng ký thực tập
+                    Danh sách ứng tuyển
                 </h1>
             </template>
 
             <div class="flex flex-col justify-between gap-2 px-4 py-3 md:flex-row">
                 <form @submit.prevent="searchTable">
-                    <UInput placeholder="Tìm tên công việc..." class="min-w-64" size="sm" color="white"
+                    <UInput placeholder="Tìm tên sinh viên..." class="min-w-64" size="sm" color="white"
                             v-model="pageConfig.filters[0].value"
                             :ui="{ icon: { trailing: { pointer: 'pointer-events-auto' } } }">
                         <template #trailing>
@@ -186,17 +247,16 @@ const items = (row: any) => [
             <UTable class="rounded-lg" :columns="selectedColumns" :loading="isTableLoading"
                     :rows="studentRequestRecruitmentList"
                     sort-mode="manual" v-model:sort="sort">
-
-                <template #recruitment.title-data="{ row }">
-                    <NuxtLink class="font-semibold" :to="`/recruitment/${row.recruitment.recruitmentId}`"
+                <template #student.profile.fullname-data="{ row }">
+                    <NuxtLink class="font-semibold" :to="`/student/${row.student.studentId}`"
                               target="_blank">
-                        {{ row.recruitment.title }}
+                        {{ row.student.profile.fullname }}
                     </NuxtLink>
                 </template>
 
                 <template #businessStatus-data="{ row }">
                     <UBadge class="w-20 justify-center" :color="appUtils.statusBadge(row.businessStatus)"
-                            variant="subtle">
+                            variant="outline">
                         {{ appUtils.convertStatus(row.businessStatus) }}
                     </UBadge>
                 </template>
@@ -213,7 +273,6 @@ const items = (row: any) => [
                     </UDropdown>
                 </template>
             </UTable>
-
         </UCard>
     </div>
 

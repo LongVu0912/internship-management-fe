@@ -4,7 +4,7 @@ import type Instructor from '~/types/instructor/Instructor';
 import { Filter } from '~/types/page_config/Filter';
 import { Order } from '~/types/page_config/Order';
 import { PageConfig } from '~/types/page_config/PageConfig';
-import type InstructorRequest from '~/types/request/InstructorRequest';
+import type StudentInstructorRequest from '~/types/student/StudentRequestInstructor';
 
 definePageMeta({
     layout: "student",
@@ -30,7 +30,7 @@ const sort = ref<any>({
 const pageConfig = reactive(new PageConfig());
 pageConfig.orders.push(new Order("instructor.profile.fullname"));
 pageConfig.filters.push(new Filter("instructor.profile.fullname"));
-const instructorRequestList = ref([] as InstructorRequest[]);
+const studentInstructorRequestList = ref([] as StudentInstructorRequest[]);
 
 const messageModal = ref({
     isOpen: false,
@@ -62,7 +62,7 @@ const fetchTableData = async () => {
     if (apiResponse.code === 200) {
         pageConfig.update(apiResponse.result.pageConfig)
 
-        instructorRequestList.value = apiResponse.result.data;
+        studentInstructorRequestList.value = apiResponse.result.data;
 
         isTableLoading.value = false;
     } else {
@@ -256,7 +256,7 @@ const items = (row: any) => [
             </div>
 
             <UTable class="rounded-lg" :columns="selectedColumns" :loading="isTableLoading"
-                    :rows="instructorRequestList"
+                    :rows="studentInstructorRequestList"
                     sort-mode="manual" v-model:sort="sort">
 
                 <template #instructor.profile.fullname-data="{ row }">

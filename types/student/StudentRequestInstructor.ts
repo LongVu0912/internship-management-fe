@@ -1,8 +1,9 @@
 import type InstructorStatus from "../enums/InstructorStatus";
 import type Instructor from "../instructor/Instructor";
-import type Student from "../student/Student";
+import type Student from "./Student";
 
-export default interface InstructorRequest {
+// * Request that student sent to instructor
+export default interface StudentRequestInstructor {
     instructorRequestId?: string;
     student?: Student;
     instructor: Instructor;

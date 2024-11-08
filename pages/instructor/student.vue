@@ -2,7 +2,7 @@
 import InstructorStatus from '~/types/enums/InstructorStatus';
 import { Order } from '~/types/page_config/Order';
 import { PageConfig } from '~/types/page_config/PageConfig';
-import type InstructorRequest from '~/types/request/InstructorRequest';
+import type StudentRequestInstructor from '~/types/student/StudentRequestInstructor';
 
 definePageMeta({
     layout: 'instructor',
@@ -19,7 +19,7 @@ const isDataLoading = ref(true);
 const pageConfig = reactive(new PageConfig());
 const order = ref(new Order("instructorStatus"));
 pageConfig.orders.push(order.value);
-const instructorRequests = ref<InstructorRequest[]>([]);
+const studentRequestInstructorList = ref<StudentRequestInstructor[]>([]);
 
 // * Lifecycle
 onBeforeMount(async () => {
@@ -35,7 +35,7 @@ const fetchData = async () => {
     });
 
     if (apiResponse.code === 200) {
-        instructorRequests.value = apiResponse.result.data;
+        studentRequestInstructorList.value = apiResponse.result.data;
 
         pageConfig.update(apiResponse.result.pageConfig);
 
@@ -191,7 +191,7 @@ const statusBadge = (instructorStatus: string) => {
     <div class="flex flex-col gap-2">
         <UTable :loading="isDataLoading" class="rounded-lg border border-gray-100 dark:border-gray-700"
                 :columns="columns"
-                :rows="instructorRequests">
+                :rows="studentRequestInstructorList">
             <template #name-data="{ row }">
                 <UTooltip text="Hồ sơ sinh viên">
                     <div class="flex flex-col">

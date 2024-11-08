@@ -1,5 +1,6 @@
 import type { NitroFetchRequest, $Fetch } from "nitropack";
 import type ApiResponse from "~/types/ApiResponse";
+import type BusinessStatus from "~/types/enums/BusinessStatus";
 import { PageConfig } from "~/types/page_config/PageConfig";
 import type Recruitment from "~/types/recruitment/Recruitment";
 import type RecruitmentRequest from "~/types/recruitment/RecruitmentRequest";
@@ -88,11 +89,55 @@ export const RecruitmentRepository = <T>(
         }
     };
 
+    const getAllRecruitmentRequestOfRecruitmentPaging = async (payload: {
+        pageConfig: PageConfig;
+        recruitmentId?: string;
+    }) => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/recruitment/GetAllRecruitmentRequestOfRecruitmentPaging`,
+                {
+                    method: "POST",
+                    body: JSON.stringify(payload.pageConfig),
+                    params: {
+                        recruitmentId: payload.recruitmentId ?? "",
+                    },
+                }
+            );
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
+    const setRecruitmentRequestStatus = async (payload: {
+        recruitmentRequestId: string;
+        status: BusinessStatus;
+    }) => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/business/SetRecruitmentRequestStatus`,
+                {
+                    method: "POST",
+                    body: JSON.stringify(payload.status),
+                    params: {
+                        recruitmentRequestId: payload.recruitmentRequestId,
+                    },
+                }
+            );
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
     return {
         getRecruitmentPaging,
         createRecruitment,
         getRecruitmentById,
         requestRecruitment,
         getAllBusinessRecruitmentPaging,
+        getAllRecruitmentRequestOfRecruitmentPaging,
+        setRecruitmentRequestStatus
     };
 };

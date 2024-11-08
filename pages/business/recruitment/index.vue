@@ -150,9 +150,11 @@ const items = (row: any) => [
             }
         },
         {
-            label: 'Danh sách sinh viên',
+            label: 'Danh sách ứng tuyển',
             icon: 'mingcute:group-line',
-            click: nuxtToast
+            click: () => {
+                navigateTo(`/business/recruitment/${row.recruitmentId}`)
+            }
         },
     ],
     [
