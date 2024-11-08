@@ -46,7 +46,7 @@ const fetchTableData = async () => {
 
     if (apiResponse.code === 200) {
         recruitmentList.value = apiResponse.result.data;
-    
+
         pageConfig.update(apiResponse.result.pageConfig);
 
         isTableLoading.value = false;
@@ -66,14 +66,16 @@ const handleCreateRecruitment = async () => {
             description: apiResponse.message,
             type: 'error',
         });
-        return;
     }
+    else {
+        nuxtToast({
+            description: 'Tạo tin tuyển dụng thành công',
+            type: 'success',
+        });
 
-    nuxtToast({
-        description: 'Tạo tin tuyển dụng thành công',
-        type: 'success',
-    });
-    createRecruitment.value.isOpen = false
+        createRecruitment.value.isOpen = false;
+        fetchTableData();
+    }
 }
 
 const searchTable = async () => {
