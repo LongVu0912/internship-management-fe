@@ -308,8 +308,6 @@ const items = (row: any) => [
             </template>
 
             <div class="flex flex-col gap-3">
-                <div class="text-base font-semibold">TÀI KHOẢN GIẢNG VIÊN</div>
-
                 <div>
                     <div class="font-medium">Khoa</div>
                     <USelectMenu v-model="selectedFaculty" size="md" color="gray" :options="facultyList">
@@ -325,39 +323,39 @@ const items = (row: any) => [
                 </div>
 
                 <div class="flex flex-col gap-4 md:flex-row">
-                    <div class="w-full">
+                    <div class="w-full space-y-1">
                         <div class="font-medium">Họ tên</div>
                         <UInput v-model="newInstructor.profile.fullname" />
                     </div>
-                    <div class="w-full">
+                    <div class="w-full space-y-1">
                         <div class="font-medium">Tài khoản</div>
                         <UInput v-model="newInstructor.profile.username" autocomplete="off" />
                     </div>
                 </div>
 
                 <div class="flex flex-col gap-4 md:flex-row">
-                    <div class="w-full">
+                    <div class="w-full space-y-1">
                         <div class="font-medium">Mật khẩu</div>
                         <UInput type="password" v-model="newInstructor.profile.password" autocomplete="off" />
                     </div>
-                    <div class="w-full">
+                    <div class="w-full space-y-1">
                         <div class="font-medium">Email</div>
                         <UInput type="email" v-model="newInstructor.profile.email" />
                     </div>
                 </div>
 
                 <div class="flex flex-col gap-4 md:flex-row">
-                    <div class="w-full">
+                    <div class="w-full space-y-1">
                         <div class="font-medium">Số điện thoại</div>
                         <UInput v-model="newInstructor.profile.phoneNumber" />
                     </div>
-                    <div class="w-full">
+                    <div class="w-full space-y-1">
                         <div class="font-medium">Giới tính</div>
                         <USelect color="gray" size="md" :options="['Nữ', 'Nam']" v-model:model-value="gender" />
                     </div>
                 </div>
 
-                <div>
+                <div class="w-full space-y-1">
                     <div class="font-medium">Bio</div>
                     <UTextarea size="lg" color="gray" :rows="3" class="w-full" v-model="newInstructor.profile.bio">
                     </UTextarea>

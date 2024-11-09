@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Role from '~/types/enums/Role';
 import type Recruitment from '~/types/recruitment/Recruitment';
 import type RecruitmentRequest from '~/types/recruitment/RecruitmentRequest';
 
@@ -156,7 +157,8 @@ const onDialogCancel = () => {
                     <div class="flex flex-row gap-2">
                         <UButton label="Xem công ty" size="lg"
                                  :to="`/business/${recruitment?.business.businessId}`" />
-                        <UButton label="Ứng tuyển ngay" size="lg" color="primary"
+                        <UButton v-if="useUserState().value.role === Role.ROLE_STUDENT" label="Ứng tuyển ngay" size="lg"
+                                 color="primary"
                                  @click="openConfirmDialog(recruitment?.recruitmentId || '')" />
                     </div>
                 </div>
@@ -176,7 +178,7 @@ const onDialogCancel = () => {
                 </div>
             </template>
 
-            <div class="py-2">
+            <div class="w-full space-y-1 py-2">
                 <div class="mb-2 text-base font-medium">Tin nhắn tới doanh nghiệp</div>
                 <UTextarea :rows="3" v-model="recruitmentRequest.messageToBusiness" type="text" size="lg" color="gray"
                            placeholder="Viết giới thiệu ngắn gọn về bản thân (điểm mạnh, điểm yếu) và nêu rõ mong muốn, lý do bạn muốn ứng tuyển cho vị trí này." />

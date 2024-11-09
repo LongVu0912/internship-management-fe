@@ -212,7 +212,8 @@ const items = (row: any) => [
 <template>
     <div class="flex flex-col gap-2">
         <div class="flex justify-end">
-            <UButton color="primary" @click="openRequestModal" :loading="instructorModal.isOpening"
+            <UButton icon="mingcute:file-new-line" color="primary" @click="openRequestModal"
+                     :loading="instructorModal.isOpening"
                      label="Yêu cầu giảng viên" />
         </div>
 
@@ -299,22 +300,27 @@ const items = (row: any) => [
                 </div>
             </template>
 
-            <div class="py-2">
-                <div class="mb-2 text-base font-medium">Giảng viên hướng dẫn</div>
-                <USelectMenu v-model="selectedInstructor" :searchable="searchInstructor"
-                             placeholder="Tìm kiếm giảng viên..." size="md" :debounce="200" color="gray"
-                             option-attribute="profile.fullname">
-                    <template #label>
-                        <div>{{ selectedInstructor.profile?.fullname || "Chọn giảng viên" }}</div>
-                    </template>
-                    <template #option="{ option: instructor }">
-                        <div>{{ instructor.profile.fullname }}</div>
-                    </template>
-                </USelectMenu>
+            <div class="flex flex-col gap-3">
+                <div class="w-full space-y-1">
+                    <div class="mb-2 text-base font-medium">Giảng viên hướng dẫn</div>
+                    <USelectMenu v-model="selectedInstructor" :searchable="searchInstructor"
+                                 placeholder="Tìm kiếm giảng viên..." size="md" :debounce="200" color="gray"
+                                 option-attribute="profile.fullname">
+                        <template #label>
+                            <div>{{ selectedInstructor.profile?.fullname || "Chọn giảng viên" }}</div>
+                        </template>
+                        <template #option="{ option: instructor }">
+                            <div>{{ instructor.profile.fullname }}</div>
+                        </template>
+                    </USelectMenu>
+                </div>
 
-                <div class="mb-2 mt-4 text-base font-medium">Tin nhắn tới giảng viên</div>
-                <UTextarea :rows="3" color="gray" v-model="instructorModal.messageToInstructor" type="text" size="lg"
-                           placeholder="Tin nhắn tới giảng viên yêu cầu hướng dẫn thực tập" />
+                <div class="w-full space-y-1">
+                    <div class="font-medium">Tin nhắn tới giảng viên</div>
+                    <UTextarea :rows="3" color="gray" v-model="instructorModal.messageToInstructor" type="text"
+                               size="lg"
+                               placeholder="Tin nhắn tới giảng viên yêu cầu hướng dẫn thực tập" />
+                </div>
             </div>
 
             <template #footer>

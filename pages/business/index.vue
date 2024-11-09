@@ -228,13 +228,13 @@ const handleUpdateProfile = async () => {
                     </div>
                 </div>
 
-                <div>
+                <div class="w-full space-y-1">
                     <div class="font-medium">Tổng quát</div>
                     <UTextarea size="lg" color="gray" :rows="3" class="w-full" v-model="business.overview">
                     </UTextarea>
                 </div>
 
-                <UDivider size="xs" class="my-4" />
+                <UDivider size="xs" class="my-2" />
 
                 <div class="text-base font-semibold">TÀI KHOẢN QUẢN LÝ</div>
 
@@ -249,7 +249,7 @@ const handleUpdateProfile = async () => {
                     </div>
                 </div>
 
-                <div>
+                <div class="w-full space-y-1">
                     <div class="font-medium">Bio</div>
                     <UTextarea size="lg" color="gray" :rows="3" class="w-full" v-model="business.managedBy.bio">
                     </UTextarea>
