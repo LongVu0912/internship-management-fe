@@ -155,7 +155,7 @@ const items = (row: any) => [
 <template>
     <div class="flex flex-col gap-2">
         <div class="flex justify-end">
-            <UButton color="primary" @click="nuxtToast" label="Thêm khoa" />
+            <UButton icon="mingcute:add-circle-line" color="primary" @click="nuxtToast" label="Thêm khoa" />
         </div>
 
         <UCard class="w-full" :ui="{

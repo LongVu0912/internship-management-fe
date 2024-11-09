@@ -200,7 +200,12 @@ const items = (row: any) => [
 <template>
     <div class="flex flex-col gap-2">
         <div class="flex justify-end">
-            <UButton color="primary" @click="inputModel.isOpen = true" label="Thêm sinh viên" />
+            <div class="flex flex-col gap-2 md:flex-row">
+                <UButton icon="mingcute:new-folder-line" color="primary" @click="inputModel.isOpen = true"
+                         label="Nhập sinh viên" />
+                <UButton icon="mingcute:add-circle-line" color="primary" @click="nuxtToast"
+                         label="Thêm sinh viên" />
+            </div>
         </div>
 
         <UCard class="w-full" :ui="{

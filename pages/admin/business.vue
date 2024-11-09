@@ -72,7 +72,7 @@ const fetchTableData = async () => {
     }
 }
 
-const onCreateNewBusiness = async () => {
+const handleCreateNewBusiness = async () => {
     businessModal.value.isSendingRequest = true;
     const apiResponse = await businessRepository.createBusiness(newBusiness.value);
 
@@ -193,7 +193,7 @@ const items = (row: any) => [
         },
     ],
     [
-    {
+        {
             label: 'Sửa',
             icon: 'mingcute:edit-4-line',
             click: nuxtToast,
@@ -217,7 +217,8 @@ const items = (row: any) => [
 <template>
     <div class="flex flex-col gap-2">
         <div class="flex justify-end">
-            <UButton color="primary" @click="businessModal.isOpen = true" label="Thêm công ty" />
+            <UButton icon="mingcute:add-circle-line" color="primary" @click="businessModal.isOpen = true"
+                     label="Thêm công ty" />
         </div>
 
         <UCard class="w-full" :ui="{
@@ -305,78 +306,78 @@ const items = (row: any) => [
                     <UInput v-model="newBusiness.name" />
                 </div>
 
-                <div>
+                <div class="w-full space-y-1">
                     <div class="font-medium">Tổng quan</div>
                     <UTextarea size="lg" color="gray" :rows="3" class="w-full" v-model="newBusiness.overview">
                     </UTextarea>
                 </div>
 
                 <div class="flex flex-col gap-4 md:flex-row">
-                    <div class="w-full">
+                    <div class="w-full space-y-1">
                         <div class="font-medium">Địa chỉ</div>
                         <UInput v-model="newBusiness.location" />
                     </div>
-                    <div class="w-full">
+                    <div class="w-full space-y-1">
                         <div class="font-medium">Loại</div>
                         <UInput v-model="newBusiness.type" />
                     </div>
                 </div>
 
-                <div>
+                <div class="w-full space-y-1">
                     <div class="font-medium">Chuyên ngành</div>
                     <UTextarea size="lg" color="gray" :rows="3" class="w-full" v-model="newBusiness.industry">
                     </UTextarea>
                 </div>
 
                 <div class="flex flex-col gap-4 md:flex-row">
-                    <div class="w-full">
+                    <div class="w-full space-y-1">
                         <div class="font-medium">Ngày làm việc</div>
                         <UInput v-model="newBusiness.workingDay" />
                     </div>
-                    <div class="w-full flex-col">
+                    <div class="w-full space-y-1">
                         <div class="font-medium">Giờ làm việc</div>
                         <UInput v-model="newBusiness.workingHour" />
                     </div>
                 </div>
 
-                <UDivider size="xs" class="my-4" />
+                <UDivider size="xs" class="my-2" />
 
                 <div class="text-base font-semibold">TÀI KHOẢN QUẢN LÝ</div>
 
                 <div class="flex flex-col gap-4 md:flex-row">
-                    <div class="w-full">
+                    <div class="w-full space-y-1">
                         <div class="font-medium">Họ tên</div>
                         <UInput v-model="newBusiness.managedBy.fullname" />
                     </div>
-                    <div class="w-full">
+                    <div class="w-full space-y-1">
                         <div class="font-medium">Tài khoản</div>
                         <UInput v-model="newBusiness.managedBy.username" autocomplete="off" />
                     </div>
                 </div>
 
                 <div class="flex flex-col gap-4 md:flex-row">
-                    <div class="w-full">
+                    <div class="w-full space-y-1">
                         <div class="font-medium">Mật khẩu</div>
                         <UInput type="password" v-model="newBusiness.managedBy.password" autocomplete="off" />
                     </div>
-                    <div class="w-full">
+                    <div class="w-full space-y-1">
                         <div class="font-medium">Email</div>
                         <UInput type="email" v-model="newBusiness.managedBy.email" />
                     </div>
                 </div>
 
                 <div class="flex flex-col gap-4 md:flex-row">
-                    <div class="w-full">
+                    <div class="w-full space-y-1">
                         <div class="font-medium">Số điện thoại</div>
                         <UInput v-model="newBusiness.managedBy.phoneNumber" />
                     </div>
-                    <div class="w-full">
+                    <div class="w-full space-y-1">
                         <div class="font-medium">Giới tính</div>
                         <USelect color="gray" size="md" :options="['Nữ', 'Nam']" v-model:model-value="gender" />
                     </div>
                 </div>
 
-                <div>
+                <div class="w-full space-y-1">
                     <div class="font-medium">Bio</div>
                     <UTextarea size="lg" color="gray" :rows="3" class="w-full" v-model="newBusiness.managedBy.bio">
                     </UTextarea>
@@ -388,7 +389,7 @@ const items = (row: any) => [
                     <UButton class="mr-2" color="gray" variant="ghost" @click="businessModal.isOpen = false">
                         Huỷ
                     </UButton>
-                    <UButton color="primary" @click="onCreateNewBusiness" :loading="businessModal.isSendingRequest">
+                    <UButton color="primary" @click="handleCreateNewBusiness" :loading="businessModal.isSendingRequest">
                         Tạo
                     </UButton>
                 </div>

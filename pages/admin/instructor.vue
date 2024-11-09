@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import type Faculty from '~/types/faculty/Faculty';
 import type Instructor from '~/types/instructor/Instructor';
 import { Filter } from '~/types/page_config/Filter';
 import { Order } from '~/types/page_config/Order';
 import { PageConfig } from '~/types/page_config/PageConfig';
+import type Profile from '~/types/profile/Profile';
 
 definePageMeta({
     layout: "admin",
@@ -12,6 +14,7 @@ definePageMeta({
 // * Imports
 const { $apiToken } = useNuxtApp();
 const instructorRepository = InstructorRepository($apiToken);
+const facultyRepository = FacultyRepository($apiToken);
 const nuxtToast = useNuxtToast();
 
 // * Refs
@@ -26,6 +29,29 @@ const pageConfig = reactive(new PageConfig());
 pageConfig.orders.push(new Order("profile.fullname"));
 pageConfig.filters.push(new Filter("profile.fullname"));
 const instructorList = ref<Instructor[]>([]);
+
+// * For creating new instructor
+const createInstructorModal = ref({
+    isOpen: false,
+    isCreatingInstructor: false
+})
+
+const newInstructor = ref<Instructor>({
+    profile: {} as Profile
+} as Instructor);
+
+const selectedFaculty = ref<Faculty>();
+const facultyList = ref<Faculty[]>([]);
+
+const facultyPageConfig = reactive(new PageConfig());
+facultyPageConfig.pageSize = -1;
+
+const gender = computed({
+    get: () => (newInstructor.value.profile.isMale ? 'Nam' : 'Nữ'),
+    set: (value: string) => {
+        newInstructor.value.profile.isMale = (value === 'Nam');
+    }
+});
 
 // * Lifecycle
 onBeforeMount(async () => {
@@ -58,6 +84,55 @@ const searchTable = async () => {
     } else {
         fetchTableData();
     }
+}
+
+const openCreateInstructorModal = async () => {
+    await fetchFaculties();
+
+    console.log(facultyList.value);
+
+    createInstructorModal.value.isOpen = true;
+}
+
+const fetchFaculties = async () => {
+    const apiResponse = await facultyRepository.getFacultyPaging(facultyPageConfig);
+
+    if (apiResponse.code === 200) {
+        facultyList.value = apiResponse.result.data;
+
+        facultyPageConfig.update(apiResponse.result.pageConfig);
+
+        isTableLoading.value = false;
+    } else {
+        nuxtToast({
+            description: apiResponse.message,
+            type: 'error',
+        });
+    }
+}
+
+const handleCreateInstructor = async () => {
+    createInstructorModal.value.isCreatingInstructor = true;
+    newInstructor.value.facultyId = selectedFaculty.value?.facultyId;
+
+    const apiResponse = await instructorRepository.createInstructor(newInstructor.value);
+
+    if (apiResponse.code !== 200) {
+        nuxtToast({
+            description: apiResponse.message,
+            type: 'error',
+        });
+    }
+    else {
+        nuxtToast({
+            description: "Tạo tài khoản thành công",
+            type: "success",
+        });
+        createInstructorModal.value.isOpen = false;
+    }
+
+    fetchTableData();
+    createInstructorModal.value.isCreatingInstructor = false;
 }
 
 // * Watches
@@ -142,7 +217,8 @@ const items = (row: any) => [
 <template>
     <div class="flex flex-col gap-2">
         <div class="flex justify-end">
-            <UButton @click="nuxtToast" color="primary" label="Thêm giảng viên" />
+            <UButton icon="mingcute:add-circle-line" @click="openCreateInstructorModal" color="primary"
+                     label="Thêm giảng viên" />
         </div>
         <UCard class="w-full" :ui="{
             divide: 'divide-y divide-gray-200 dark:divide-gray-700',
@@ -218,4 +294,86 @@ const items = (row: any) => [
             </UTable>
         </UCard>
     </div>
+
+    <UModal :ui="{ width: 'sm:max-w-3xl' }" v-model="createInstructorModal.isOpen" prevent-close>
+        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                        Tạo giảng viên
+                    </h3>
+                    <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                             @click="createInstructorModal.isOpen = false" />
+                </div>
+            </template>
+
+            <div class="flex flex-col gap-3">
+                <div>
+                    <div class="font-medium">Khoa</div>
+                    <USelectMenu v-model="selectedFaculty" size="md" color="gray" :options="facultyList">
+                        <template #label>
+                            <div>
+                                {{ (selectedFaculty) ? `${selectedFaculty.facultyId} - ${selectedFaculty.name}` : "Chọn khoa" }}
+                            </div>
+                        </template>
+                        <template #option="{ option: faculty }">
+                            <div>{{ faculty.facultyId + ' - ' + faculty.name }}</div>
+                        </template>
+                    </USelectMenu>
+                </div>
+
+                <div class="flex flex-col gap-4 md:flex-row">
+                    <div class="w-full space-y-1">
+                        <div class="font-medium">Họ tên</div>
+                        <UInput v-model="newInstructor.profile.fullname" />
+                    </div>
+                    <div class="w-full space-y-1">
+                        <div class="font-medium">Tài khoản</div>
+                        <UInput v-model="newInstructor.profile.username" autocomplete="off" />
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-4 md:flex-row">
+                    <div class="w-full space-y-1">
+                        <div class="font-medium">Mật khẩu</div>
+                        <UInput type="password" v-model="newInstructor.profile.password" autocomplete="off" />
+                    </div>
+                    <div class="w-full space-y-1">
+                        <div class="font-medium">Email</div>
+                        <UInput type="email" v-model="newInstructor.profile.email" />
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-4 md:flex-row">
+                    <div class="w-full space-y-1">
+                        <div class="font-medium">Số điện thoại</div>
+                        <UInput v-model="newInstructor.profile.phoneNumber" />
+                    </div>
+                    <div class="w-full space-y-1">
+                        <div class="font-medium">Giới tính</div>
+                        <USelect color="gray" size="md" :options="['Nữ', 'Nam']" v-model:model-value="gender" />
+                    </div>
+                </div>
+
+                <div class="w-full space-y-1">
+                    <div class="font-medium">Bio</div>
+                    <UTextarea size="lg" color="gray" :rows="3" class="w-full" v-model="newInstructor.profile.bio">
+                    </UTextarea>
+                </div>
+            </div>
+
+            <template #footer>
+                <div class="flex justify-end">
+                    <UButton class="mr-2" color="gray" variant="ghost" @click="createInstructorModal.isOpen = false">
+                        Huỷ
+                    </UButton>
+                    <UButton color="primary"
+                             @click="handleCreateInstructor"
+                             :loading="createInstructorModal.isCreatingInstructor">
+                        Tạo
+                    </UButton>
+                </div>
+            </template>
+        </UCard>
+    </UModal>
 </template>

@@ -16,8 +16,9 @@ const nuxtToast = useNuxtToast();
 
 // * Refs
 const isTableLoading = ref(true);
-const createRecruitment = ref({
+const createRecruitmentModal = ref({
     isOpen: false,
+    isCreatingRecruitment: false,
 })
 
 const recruitment = ref<Recruitment>({} as Recruitment);
@@ -59,6 +60,7 @@ const fetchTableData = async () => {
 }
 
 const handleCreateRecruitment = async () => {
+    createRecruitmentModal.value.isCreatingRecruitment = true;
     const apiResponse = await recruitmentRepository.createRecruitment(recruitment.value);
 
     if (apiResponse.code !== 200) {
@@ -73,9 +75,11 @@ const handleCreateRecruitment = async () => {
             type: 'success',
         });
 
-        createRecruitment.value.isOpen = false;
+        createRecruitmentModal.value.isOpen = false;
         fetchTableData();
     }
+
+    createRecruitmentModal.value.isCreatingRecruitment = false;
 }
 
 const searchTable = async () => {
@@ -183,10 +187,10 @@ const selectedColumns = ref([...columns]);
 <template>
     <div class="flex flex-col gap-2">
         <div class="flex justify-end">
-            <UButton color="primary" @click="createRecruitment.isOpen = true" label="Thêm tuyển dụng" />
+            <UButton icon="mingcute:add-circle-line" color="primary" @click="createRecruitmentModal.isOpen = true" label="Thêm tuyển dụng" />
         </div>
 
-        <UCard v-if="!createRecruitment.isOpen" class="w-full" :ui="{
+        <UCard class="w-full" :ui="{
             divide: 'divide-y divide-gray-200 dark:divide-gray-700',
             header: { padding: 'px-4 py-5' },
             body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' },
@@ -241,76 +245,76 @@ const selectedColumns = ref([...columns]);
                 </template>
             </UTable>
         </UCard>
+    </div>
 
-        <div v-else>
-            <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <div class="text-lg font-semibold leading-6 text-gray-900 dark:text-white">
-                            Tạo tin tuyển dụng
-                        </div>
+    <UModal :ui="{ width: 'sm:max-w-3xl' }" v-model="createRecruitmentModal.isOpen" prevent-close>
+        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                        Tạo tuyển dụng
+                    </h3>
+                    <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                             @click="createRecruitmentModal.isOpen = false" />
+                </div>
+            </template>
+
+            <div class="flex flex-col gap-3">
+                <div class="w-full space-y-1">
+                    <div class="font-medium">Tựa đề</div>
+                    <UInput v-model="recruitment.title" />
+                </div>
+
+                <div class="w-full space-y-1">
+                    <div class="font-medium">Mô tả</div>
+                    <UTextarea size="lg" color="gray" :rows="3" class="w-full" v-model="recruitment.description">
+                    </UTextarea>
+                </div>
+
+                <div class="flex flex-col gap-4 md:flex-row">
+                    <div class="w-full space-y-1">
+                        <div class="font-medium">Địa điểm</div>
+                        <UInput v-model="recruitment.location" />
                     </div>
-                </template>
-
-                <div class="flex flex-col gap-3">
-                    <div class="text-base font-semibold">THÔNG TIN TUYỂN DỤNG</div>
-
-                    <div class="space-y-2">
-                        <div class="font-medium">Tựa đề</div>
-                        <UInput v-model="recruitment.title" />
-                    </div>
-
-                    <div class="space-y-2">
-                        <div class="font-medium">Mô tả</div>
-                        <UTextarea size="lg" color="gray" :rows="3" class="w-full" v-model="recruitment.description">
-                        </UTextarea>
-                    </div>
-
-                    <div class="flex flex-col gap-4 md:flex-row">
-                        <div class="w-full space-y-2">
-                            <div class="font-medium">Địa điểm</div>
-                            <UInput v-model="recruitment.location" />
-                        </div>
-                        <div class="w-full space-y-2">
-                            <div class="font-medium">Loại</div>
-                            <UInput v-model="recruitment.type" />
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col gap-4 md:flex-row">
-                        <div class="w-full space-y-2">
-                            <div class="font-medium">Ngày làm việc</div>
-                            <UInput v-model="recruitment.workingDay" />
-                        </div>
-                        <div class="w-full space-y-2">
-                            <div class="font-medium">Giờ làm việc</div>
-                            <UInput v-model="recruitment.workingHour" />
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col gap-4 md:flex-row">
-                        <div class="w-full space-y-2">
-                            <div class="font-medium">Kỹ năng</div>
-                            <UInput v-model="recruitment.keySkills" />
-                        </div>
-                        <div class="w-full space-y-2">
-                            <div class="font-medium">Vị trí</div>
-                            <UInput v-model="recruitment.position" />
-                        </div>
+                    <div class="w-full space-y-1">
+                        <div class="font-medium">Loại</div>
+                        <UInput v-model="recruitment.type" />
                     </div>
                 </div>
 
-                <template #footer>
-                    <div class="flex justify-end">
-                        <UButton class="mr-2" color="gray" variant="ghost" @click="createRecruitment.isOpen = false">
-                            Huỷ
-                        </UButton>
-                        <UButton color="primary" @click="handleCreateRecruitment">
-                            Tạo
-                        </UButton>
+                <div class="flex flex-col gap-4 md:flex-row">
+                    <div class="w-full space-y-1">
+                        <div class="font-medium">Ngày làm việc</div>
+                        <UInput v-model="recruitment.workingDay" />
                     </div>
-                </template>
-            </UCard>
-        </div>
-    </div>
+                    <div class="w-full space-y-1">
+                        <div class="font-medium">Giờ làm việc</div>
+                        <UInput v-model="recruitment.workingHour" />
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-4 md:flex-row">
+                    <div class="w-full space-y-1">
+                        <div class="font-medium">Kỹ năng</div>
+                        <UInput v-model="recruitment.keySkills" />
+                    </div>
+                    <div class="w-full space-y-1">
+                        <div class="font-medium">Vị trí</div>
+                        <UInput v-model="recruitment.position" />
+                    </div>
+                </div>
+            </div>
+
+            <template #footer>
+                <div class="flex justify-end">
+                    <UButton class="mr-2" color="gray" variant="ghost" @click="createRecruitmentModal.isOpen = false">
+                        Huỷ
+                    </UButton>
+                    <UButton color="primary" @click="handleCreateRecruitment">
+                        Tạo
+                    </UButton>
+                </div>
+            </template>
+        </UCard>
+    </UModal>
 </template>
