@@ -1,6 +1,7 @@
 import type { NitroFetchRequest, $Fetch } from "nitropack";
 import type ApiResponse from "~/types/ApiResponse";
 import type InstructorStatus from "~/types/enums/InstructorStatus";
+import type Instructor from "~/types/instructor/Instructor";
 import type { PageConfig } from "~/types/page_config/PageConfig";
 
 export const InstructorRepository = <T>(
@@ -63,9 +64,25 @@ export const InstructorRepository = <T>(
         }
     };
 
+    const createInstructor = async (payload: Instructor) => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/instructor/CreateInstructor`,
+                {
+                    method: "POST",
+                    body: JSON.stringify(payload),
+                }
+            );
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
     return {
         getInstructorPaging,
         getAllInstructorRequestOfInstructorPaging,
         setRequestStatus,
+        createInstructor,
     };
 };

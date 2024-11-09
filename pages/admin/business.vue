@@ -72,7 +72,7 @@ const fetchTableData = async () => {
     }
 }
 
-const onCreateNewBusiness = async () => {
+const handleCreateNewBusiness = async () => {
     businessModal.value.isSendingRequest = true;
     const apiResponse = await businessRepository.createBusiness(newBusiness.value);
 
@@ -217,7 +217,7 @@ const items = (row: any) => [
 <template>
     <div class="flex flex-col gap-2">
         <div class="flex justify-end">
-            <UButton color="primary" @click="businessModal.isOpen = true" label="Thêm công ty" />
+            <UButton icon="mingcute:add-circle-line" color="primary" @click="businessModal.isOpen = true" label="Thêm công ty" />
         </div>
 
         <UCard class="w-full" :ui="{
@@ -388,7 +388,7 @@ const items = (row: any) => [
                     <UButton class="mr-2" color="gray" variant="ghost" @click="businessModal.isOpen = false">
                         Huỷ
                     </UButton>
-                    <UButton color="primary" @click="onCreateNewBusiness" :loading="businessModal.isSendingRequest">
+                    <UButton color="primary" @click="handleCreateNewBusiness" :loading="businessModal.isSendingRequest">
                         Tạo
                     </UButton>
                 </div>
