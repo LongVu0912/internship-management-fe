@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import InstructorStatus from '~/types/enums/InstructorStatus';
+import { Filter } from '~/types/page_config/Filter';
 import { Order } from '~/types/page_config/Order';
 import { PageConfig } from '~/types/page_config/PageConfig';
 import type StudentRequestInstructor from '~/types/student/StudentRequestInstructor';
@@ -12,26 +13,36 @@ definePageMeta({
 // * Imports
 const { $apiToken } = useNuxtApp();
 const instructorRepository = InstructorRepository($apiToken);
+const appUtils = AppUtils();
 const nuxtToast = useNuxtToast();
 
 // * Refs
-const isDataLoading = ref(true);
+const isTableLoading = ref(true);
+const messageModal = ref({
+    isOpen: false,
+    message: '',
+})
 const pageConfig = reactive(new PageConfig());
-const order = ref(new Order("instructorStatus"));
-pageConfig.orders.push(order.value);
+pageConfig.orders.push(new Order("student.profile.fullname"));
+pageConfig.filters.push(new Filter("student.profile.fullname"));
+const sort = ref<any>({
+    column: 'student.profile.fullname',
+    direction: 'desc'
+})
+
 const studentRequestInstructorList = ref<StudentRequestInstructor[]>([]);
 
 // * Lifecycle
 onBeforeMount(async () => {
-    fetchData();
+    fetchTableData();
 })
 
 // * Functions
-const fetchData = async () => {
-    isDataLoading.value = true;
+const fetchTableData = async () => {
+    isTableLoading.value = true;
 
     const apiResponse = await instructorRepository.getAllInstructorRequestOfInstructorPaging({
-        pageConfig: pageConfig,
+        pageConfig: pageConfig
     });
 
     if (apiResponse.code === 200) {
@@ -39,7 +50,7 @@ const fetchData = async () => {
 
         pageConfig.update(apiResponse.result.pageConfig);
 
-        isDataLoading.value = false;
+        isTableLoading.value = false;
     } else {
         nuxtToast({
             description: apiResponse.message,
@@ -75,7 +86,7 @@ const approveRequest = async (instructorRequestId: string) => {
         type: 'success',
     });
 
-    fetchData();
+    fetchTableData();
 }
 
 const rejectRequest = async (instructorRequestId: string) => {
@@ -105,8 +116,43 @@ const rejectRequest = async (instructorRequestId: string) => {
         type: 'success',
     });
 
-    fetchData();
+    fetchTableData();
 }
+
+const searchTable = async () => {
+    if (pageConfig.currentPage !== 1) {
+        pageConfig.currentPage = 1;
+    } else {
+        fetchTableData();
+    }
+}
+
+const openMessageModal = (message: string) => {
+    messageModal.value.message = message;
+    messageModal.value.isOpen = true;
+}
+
+// * Watches
+watch(
+    [() => pageConfig.currentPage, () => pageConfig.pageSize],
+    ([newCurrentPage, newPageSize], [oldCurrentPage, oldPageSize]) => {
+        if (!isTableLoading.value) {
+            if (newPageSize !== oldPageSize) {
+                pageConfig.currentPage = 1;
+            }
+            fetchTableData();
+        }
+    }
+)
+
+watch(sort, () => {
+    if (!isTableLoading.value) {
+        pageConfig.orders[0].sort = sort.value.column;
+        pageConfig.orders[0].sortOrderType = sort.value.direction.toUpperCase();
+
+        fetchTableData();
+    }
+})
 
 // * Data
 const items = (row: any) => [
@@ -150,46 +196,139 @@ const items = (row: any) => [
 
 const columns = [
     {
-        key: 'name',
+        key: 'student.profile.fullname',
         label: 'Tên',
-        rowClass: 'whitespace-nowrap'
+        sortable: true
     },
     {
-        key: 'recruitment',
+        key: 'recruitmentTitle',
         label: 'Thực tập',
-        rowClass: 'min-w-32'
+        sortable: true
     },
     {
         key: 'instructorStatus',
-        label: 'Trạng thái'
+        label: 'Trạng thái',
+        sortable: true
     },
     {
         key: 'messageToInstructor',
         label: 'Tin nhắn',
-        rowClass: 'break-all max-w-96'
+        sortable: true
     },
     {
-        key: 'actions'
+        key: 'actions',
+        label: 'Hành động',
     }
 ]
 
-const statusBadge = (instructorStatus: string) => {
-    if (instructorStatus == InstructorStatus.PENDING)
-        return "gray";
-    if (instructorStatus == InstructorStatus.REJECT)
-        return "red";
-    if (instructorStatus == InstructorStatus.APPROVED)
-        return "teal";
-    if (instructorStatus == InstructorStatus.COMPLETED)
-        return "green";
-
-    return "gray"
-};
+const selectedColumns = ref([...columns]);
 </script>
 
 <template>
     <div class="flex flex-col gap-2">
-        <UTable :loading="isDataLoading" class="rounded-lg border border-gray-100 dark:border-gray-700"
+        <UCard class="w-full" :ui="{
+            divide: 'divide-y divide-gray-200 dark:divide-gray-700',
+            header: { padding: 'px-4 py-5' },
+            body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' },
+            footer: { padding: 'p-4' }
+        }">
+
+            <template #header>
+                <h1 class="text-center text-xl font-semibold text-gray-900 dark:text-white">
+                    Danh sách sinh viên yêu cầu hỗ trợ
+                </h1>
+            </template>
+
+            <div class="flex flex-col justify-between gap-2 px-4 py-3 md:flex-row">
+                <form @submit.prevent="searchTable">
+                    <UInput placeholder="Tìm tên sinh viên..." class="min-w-64" size="sm" color="white"
+                            v-model="pageConfig.filters[0].value"
+                            :ui="{ icon: { trailing: { pointer: 'pointer-events-auto' } } }">
+                        <template #trailing>
+                            <UButton icon="heroicons:magnifying-glass-16-solid" color="primary"
+                                     class="-me-2.5 rounded-none rounded-r-md" type="submit" />
+                        </template>
+                    </UInput>
+                </form>
+                <div class="flex flex-col gap-2 md:flex-row">
+                    <USelectMenu class="min-w-56" v-model="selectedColumns" :options="columns" multiple
+                                 icon="mingcute:columns-3-line" placeholder="Columns">
+                        <template #label>
+                            <span>Chọn cột</span>
+                        </template>
+                    </USelectMenu>
+                    <USelectMenu v-model.number="pageConfig.pageSize" :options="['5', '6', '7', '8', '9', '10']"
+                                 icon="mingcute:rows-3-line" :placeholder="pageConfig.pageSize.toString()">
+                    </USelectMenu>
+                    <UPagination :max="7" v-model="pageConfig.currentPage" :page-count="pageConfig.pageSize"
+                                 :total="pageConfig.totalRecords" />
+                </div>
+            </div>
+
+            <UTable class="rounded-lg" :columns="selectedColumns" :loading="isTableLoading"
+                    :rows="studentRequestInstructorList"
+                    sort-mode="manual" v-model:sort="sort">
+
+                <template #student.profile.fullname-data="{ row }">
+                    <NuxtLink class="font-semibold" :to="`/student/${row.student.studentId}`"
+                              target="_blank">
+                        {{ row.student.profile.fullname }}
+                    </NuxtLink>
+                </template>
+
+                <template #recruitmentTitle-data="{ row }">
+                    <NuxtLink v-if="row.recruitmentId != null" class="font-semibold"
+                              :to="`/recruitment/${row.recruitmentId}`"
+                              target="_blank">
+                        {{ row.recruitmentTitle }}
+                    </NuxtLink>
+                    <div v-else class="font-semibold">
+                        Chưa có
+                    </div>
+                </template>
+
+                <template #instructorStatus-data="{ row }">
+                    <UBadge class="w-20 justify-center" :color="appUtils.statusBadge(row.instructorStatus)"
+                            variant="outline">
+                        {{ appUtils.convertStatus(row.instructorStatus) }}
+                    </UBadge>
+                </template>
+
+                <template #messageToInstructor-data="{ row }">
+                    <div @click="openMessageModal(row.messageToInstructor)" class="cursor-pointer">
+                        {{ row.messageToInstructor.substring(0, 20) + '...' }}
+                    </div>
+                </template>
+
+                <template #actions-data="{ row }">
+                    <UDropdown :items="items(row)">
+                        <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
+                    </UDropdown>
+                </template>
+            </UTable>
+        </UCard>
+    </div>
+
+    <UModal v-model="messageModal.isOpen" prevent-close>
+        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <div class="text-base font-semibold">
+                        Tin nhắn
+                    </div>
+                    <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                             @click="messageModal.isOpen = false" />
+                </div>
+            </template>
+
+            <div class="py-2">
+                {{ messageModal.message }}
+            </div>
+        </UCard>
+    </UModal>
+
+    <!-- <div class="flex flex-col gap-2">
+        <UTable :loading="isTableLoading" class="rounded-lg border border-gray-100 dark:border-gray-700"
                 :columns="columns"
                 :rows="studentRequestInstructorList">
             <template #name-data="{ row }">
@@ -232,7 +371,8 @@ const statusBadge = (instructorStatus: string) => {
             </template>
 
             <template #instructorStatus-data="{ row }">
-                <UBadge class="w-20 justify-center" :color="statusBadge(row.instructorStatus)" variant="outline">
+                <UBadge class="w-20 justify-center" :color="appUtils.statusBadge(row.instructorStatus)"
+                        variant="outline">
                     {{ row.instructorStatus }}
                 </UBadge>
             </template>
@@ -251,5 +391,5 @@ const statusBadge = (instructorStatus: string) => {
                              :total="pageConfig.totalRecords" />
             </div>
         </div>
-    </div>
+    </div> -->
 </template>

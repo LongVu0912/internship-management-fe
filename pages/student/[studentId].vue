@@ -89,6 +89,9 @@ onBeforeMount(async () => {
                              :to="backendUrl + `/file/${student?.profile.uploadContent.uploadContentId}`">
                         {{ student?.profile.uploadContent?.fileName }}
                     </UButton>
+                    <div v-else class="font-medium">
+                        Không có
+                    </div>
                 </div>
             </div>
         </div>

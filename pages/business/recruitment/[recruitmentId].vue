@@ -202,7 +202,7 @@ const selectedColumns = ref([...columns]);
 <template>
     <div class="flex flex-col gap-2">
         <div class="flex justify-end">
-            <UButton color="primary" @click="useRouter().back" label="Quay lại" />
+            <UButton icon="mingcute:back-line" color="primary" @click="useRouter().back" label="Quay lại" />
         </div>
 
         <UCard class="w-full" :ui="{

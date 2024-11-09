@@ -56,6 +56,14 @@ const onDialogConfirm = async () => {
         return;
     }
 
+    if (apiResponse.result == false) {
+        nuxtToast({
+            description: apiResponse.message,
+            type: 'info',
+        });
+        return;
+    }
+
     nuxtToast({
         description: 'Gửi yêu cầu thành công',
         type: 'success',
