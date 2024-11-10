@@ -263,12 +263,15 @@ const items = (row: any) => [
                     sort-mode="manual" v-model:sort="sort">
 
                 <template #profile.fullname-data="{ row }">
-                    <div class="font-medium">
-                        {{ row.profile.fullname }}
+                    <div class="flex flex-col">
+                        <NuxtLink class="font-semibold" :to="`/instructor/${row.instructorId}`"
+                                  target="_blank">
+                            {{ row.profile.fullname }}
+                        </NuxtLink>
+                        <UBadge class="mt-1 w-10 justify-center" color="gray" variant="outline">
+                            {{ row.profile.isMale ? "Nam" : "Nữ" }}
+                        </UBadge>
                     </div>
-                    <UBadge class="mt-1 w-10 justify-center" color="gray" variant="outline">
-                        {{ row.profile.isMale ? "Nam" : "Nữ" }}
-                    </UBadge>
                 </template>
 
                 <template #profile.email-data="{ row }">

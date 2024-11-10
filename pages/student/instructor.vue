@@ -261,9 +261,10 @@ const items = (row: any) => [
                     sort-mode="manual" v-model:sort="sort">
 
                 <template #instructor.profile.fullname-data="{ row }">
-                    <div class="font-semibold">
+                    <NuxtLink class="font-semibold" :to="`/instructor/${row.instructor.instructorId}`"
+                              target="_blank">
                         {{ row.instructor.profile.fullname }}
-                    </div>
+                    </NuxtLink>
                 </template>
 
                 <template #instructorStatus-data="{ row }">
