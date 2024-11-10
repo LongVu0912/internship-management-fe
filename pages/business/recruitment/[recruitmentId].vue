@@ -83,28 +83,19 @@ const approveStudentRequest = async (recruitmentRequestId: string) => {
         status: BusinessStatus.APPROVED,
     })
 
-    if (apiResponse.code !== 200) {
+    if (apiResponse.code != 200 || apiResponse.result == false) {
         nuxtToast({
             description: apiResponse.message,
-            type: 'error',
-        });
-        return;
+            type: "error",
+        })
     }
-
-    if (apiResponse.result == false) {
+    else {
         nuxtToast({
-            description: apiResponse.message,
-            type: 'info',
+            description: "Đồng ý thành công",
+            type: 'success',
         });
-        return;
+        fetchTableData();
     }
-
-    nuxtToast({
-        description: "Đồng ý thành công",
-        type: 'success',
-    });
-
-    fetchTableData();
 }
 
 const rejectStudentRequest = async (recruitmentRequestId: string) => {
@@ -113,28 +104,19 @@ const rejectStudentRequest = async (recruitmentRequestId: string) => {
         status: BusinessStatus.REJECT,
     })
 
-    if (apiResponse.code !== 200) {
+    if (apiResponse.code != 200 || apiResponse.result == false) {
         nuxtToast({
             description: apiResponse.message,
-            type: 'error',
-        });
-        return;
+            type: "error",
+        })
     }
-
-    if (apiResponse.result == false) {
+    else {
         nuxtToast({
-            description: apiResponse.message,
-            type: 'info',
+            description: "Từ chối thành công",
+            type: 'success',
         });
-        return;
+        fetchTableData();
     }
-
-    nuxtToast({
-        description: "Từ chối thành công",
-        type: 'success',
-    });
-
-    fetchTableData();
 }
 
 // * Watches

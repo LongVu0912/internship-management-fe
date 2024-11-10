@@ -79,10 +79,59 @@ export const InstructorRepository = <T>(
         }
     };
 
+    const getInstructorData = async (payload: { instructorId: string }) => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/instructor/GetInstructorData`,
+                {
+                    method: "GET",
+                    params: {
+                        instructorId: payload.instructorId,
+                    },
+                }
+            );
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
+    const getMyInstructorData = async () => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/instructor/GetMyInstructorData`,
+                {
+                    method: "GET",
+                }
+            );
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
+    const updateInstructor = async (payload: Instructor): Promise<ApiResponse> => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/instructor/UpdateInstructor`,
+                {
+                    method: "POST",
+                    body: JSON.stringify(payload),
+                }
+            );
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
     return {
         getInstructorPaging,
         getAllInstructorRequestOfInstructorPaging,
         setRequestStatus,
         createInstructor,
+        getInstructorData,
+        getMyInstructorData,
+        updateInstructor,
     };
 };
