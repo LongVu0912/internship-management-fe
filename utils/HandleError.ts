@@ -9,7 +9,12 @@ export const HandleError = (error: any): ApiResponse => {
         if (error.response.status === 401) {
             code = 401;
             message = "Phiên đăng nhập hết hạn, vui lòng đăng nhập lại";
-        } else {
+        } 
+        else if (error.response.status === 404) {
+            code = 404;
+            message = "Không tìm thấy";
+        }
+        else {
             return error.response._data as ApiResponse;
         }
     }

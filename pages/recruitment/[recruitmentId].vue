@@ -48,28 +48,19 @@ const openConfirmDialog = async (recruitmentId: string) => {
 const onDialogConfirm = async () => {
     const apiResponse = await recruitmentRepository.requestRecruitment(recruitmentRequest.value);
 
-    if (apiResponse.code !== 200) {
+    if (apiResponse.code != 200 || apiResponse.result == false) {
         nuxtToast({
             description: apiResponse.message,
-            type: 'error',
-        });
-        return;
+            type: "error",
+        })
     }
-
-    if (apiResponse.result == false) {
+    else {
         nuxtToast({
-            description: apiResponse.message,
-            type: 'info',
+            description: 'Gửi yêu cầu thành công',
+            type: 'success',
         });
-        return;
+        isConfirmDialogOpen.value = false;
     }
-
-    nuxtToast({
-        description: 'Gửi yêu cầu thành công',
-        type: 'success',
-    });
-
-    isConfirmDialogOpen.value = false;
 }
 
 const onDialogCancel = () => {

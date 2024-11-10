@@ -72,14 +72,13 @@ const handleUpdateProfile = async () => {
 
     updateModal.value.isSubmitting = false;
 }
-
 </script>
 
 <template>
     <div v-if="isPageLoading">
         <Loading />
     </div>
-    <UCard>
+    <UCard v-else>
         <template #header>
             <div class="flex flex-row items-center gap-4">
                 <div class="shrink-0">
