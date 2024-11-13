@@ -51,8 +51,6 @@ const handleUpdateProfile = async () => {
     updateModal.value.isSubmitting = true;
     const apiResponse = await instructorRepository.updateInstructor(instructor.value);
 
-    console.log(apiResponse.message);
-
     if (apiResponse.code !== 200) {
         nuxtToast({
             description: apiResponse.message,
@@ -134,9 +132,7 @@ const handleUpdateProfile = async () => {
                     <div class="text-xl font-bold leading-6">
                         Bio
                     </div>
-                    <p>
-                        {{ instructor?.profile.bio }}
-                    </p>
+                    <NewLineText :text="instructor?.profile.bio" />
                 </div>
             </div>
         </div>
@@ -173,7 +169,7 @@ const handleUpdateProfile = async () => {
 
                 <div class="w-full space-y-1">
                     <div class="font-medium">Bio</div>
-                    <UTextarea size="lg" color="gray" :rows="3" class="w-full" v-model="instructor.profile.bio">
+                    <UTextarea size="lg" color="gray" :rows="5" class="w-full" v-model="instructor.profile.bio">
                     </UTextarea>
                 </div>
             </div>

@@ -145,9 +145,7 @@ const onDialogCancel = () => {
                 <UDivider />
                 <div>
                     <div class="text-lg font-bold leading-9">Mô tả công việc</div>
-                    <p>
-                        {{ recruitment?.description }}
-                    </p>
+                    <NewLineText :text="recruitment?.description" />
                 </div>
             </div>
 
@@ -179,7 +177,7 @@ const onDialogCancel = () => {
 
             <div class="w-full space-y-1 py-2">
                 <div class="mb-2 text-base font-medium">Tin nhắn tới doanh nghiệp</div>
-                <UTextarea :rows="3" v-model="recruitmentRequest.messageToBusiness" type="text" size="lg" color="gray"
+                <UTextarea :rows="5" v-model="recruitmentRequest.messageToBusiness" type="text" size="lg" color="gray"
                            placeholder="Viết giới thiệu ngắn gọn về bản thân (điểm mạnh, điểm yếu) và nêu rõ mong muốn, lý do bạn muốn ứng tuyển cho vị trí này." />
             </div>
 

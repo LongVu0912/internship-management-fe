@@ -78,18 +78,20 @@ const handleUpdateProfile = async () => {
     <div v-if="isPageLoading">
         <Loading />
     </div>
-    <UCard v-else>
+    <UCard v-else class="w-full shadow-md">
         <template #header>
             <div class="flex flex-row items-center gap-4">
                 <div class="shrink-0">
-                    <NuxtImg src="/business.jpg" class="h-16 w-16 md:h-24 md:w-24" quality="80" alt="business" />
+                    <UAvatar
+                             size="xl"
+                             :alt="business?.name" />
                 </div>
                 <div class="text-xl font-bold">
                     {{ business?.name }}
                 </div>
             </div>
         </template>
-        <div class="flex gap-4 py-2">
+        <div class="flex flex-col gap-4 py-2">
             <div class="flex w-full flex-col justify-between gap-4 md:flex-row">
                 <div class="flex flex-col gap-4 md:w-1/2">
                     <div class="text-xl font-bold leading-6">
@@ -132,13 +134,6 @@ const handleUpdateProfile = async () => {
                             </div>
                         </div>
                     </div>
-                    <UDivider size="xs" />
-                    <div class="text-xl font-bold leading-6">
-                        Giới thiệu
-                    </div>
-                    <p>
-                        {{ business?.overview }}
-                    </p>
                 </div>
 
                 <div class="flex flex-col gap-4 rounded-lg bg-gray-500/5 p-4 md:w-1/2">
@@ -161,16 +156,22 @@ const handleUpdateProfile = async () => {
                         <UIcon name="mingcute:mail-line" class="h-6 w-6 flex-shrink-0" />
                         <div>{{ business?.managedBy.email }}</div>
                     </div>
-                    <UDivider size="xs" />
                     <div class="flex flex-row items-center gap-2">
                         <UIcon name="mingcute:webhook-line" class="h-6 w-6 flex-shrink-0" />
-                        <div>https://business.com</div>
+                        <div>{{ business?.businessWebsite }}</div>
                     </div>
-                    <div class="flex flex-row items-center gap-2">
-
+                    <UDivider size="xs" />
+                    <div class="text-xl font-bold leading-6">
+                        Bio
                     </div>
+                    <NewLineText :text="business?.managedBy.bio" />
                 </div>
             </div>
+            <UDivider size="xs" />
+            <div class="text-xl font-bold leading-6">
+                Giới thiệu
+            </div>
+            <NewLineText :text="business?.overview" />
         </div>
 
         <template #footer>
@@ -205,6 +206,11 @@ const handleUpdateProfile = async () => {
                     <UInput v-model="business.location" />
                 </div>
 
+                <div class="space-y-1">
+                    <div class="font-medium">Website</div>
+                    <UInput v-model="business.businessWebsite" />
+                </div>
+
                 <div class="flex flex-col gap-4 md:flex-row">
                     <div class="w-full space-y-1">
                         <div class="font-medium">Loại</div>
@@ -229,7 +235,7 @@ const handleUpdateProfile = async () => {
 
                 <div class="w-full space-y-1">
                     <div class="font-medium">Tổng quát</div>
-                    <UTextarea size="lg" color="gray" :rows="3" class="w-full" v-model="business.overview">
+                    <UTextarea size="lg" color="gray" :rows="5" class="w-full" v-model="business.overview">
                     </UTextarea>
                 </div>
 
@@ -250,7 +256,7 @@ const handleUpdateProfile = async () => {
 
                 <div class="w-full space-y-1">
                     <div class="font-medium">Bio</div>
-                    <UTextarea size="lg" color="gray" :rows="3" class="w-full" v-model="business.managedBy.bio">
+                    <UTextarea size="lg" color="gray" :rows="5" class="w-full" v-model="business.managedBy.bio">
                     </UTextarea>
                 </div>
             </div>

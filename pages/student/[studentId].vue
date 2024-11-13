@@ -89,7 +89,7 @@ onBeforeMount(async () => {
                              :to="backendUrl + `/file/${student?.profile.uploadContent.uploadContentId}`">
                         {{ student?.profile.uploadContent?.fileName }}
                     </UButton>
-                    <div v-else class="font-medium">
+                    <div v-else class="font-normal">
                         Không có
                     </div>
                 </div>
@@ -172,11 +172,7 @@ onBeforeMount(async () => {
             <div class="text-xl font-medium">
                 Mô tả
             </div>
-            <UTextarea :ui="{ base: 'disabled:cursor-text disabled:select-text', placeholder: 'placeholder-gray-900 dark:placeholder-gray-100' }"
-                       disabled
-                       size="lg"
-                       color="gray" :rows="5" :model-value="student?.profile.bio" class="w-full">
-            </UTextarea>
+            <NewLineText :text="student?.profile.bio" />
         </div>
     </div>
 </template>

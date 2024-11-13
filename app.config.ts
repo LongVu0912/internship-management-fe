@@ -3,7 +3,7 @@ export default defineAppConfig({
         primary: "blue",
         gray: "slate",
         select: {
-            base: "font-medium",
+            base: "font-normal",
             icon: {
                 base: "",
             },
@@ -18,7 +18,7 @@ export default defineAppConfig({
             },
         },
         input: {
-            base: "font-medium disabled:cursor-text disabled:select-text",
+            base: "font-normal disabled:cursor-text disabled:select-text",
             icon: {
                 base: "",
             },
@@ -28,7 +28,7 @@ export default defineAppConfig({
             },
         },
         textarea: {
-            base: "font-base",
+            base: "font-normal",
         },
         card: {
             body: {

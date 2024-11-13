@@ -12,4 +12,5 @@ export default interface Recruitment {
     position:      string;
     business:      Business;
     businessName:      string;
+    status: "OPEN" | "CLOSED";
 }
