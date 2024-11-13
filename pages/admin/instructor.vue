@@ -89,8 +89,6 @@ const searchTable = async () => {
 const openCreateInstructorModal = async () => {
     await fetchFaculties();
 
-    console.log(facultyList.value);
-
     createInstructorModal.value.isOpen = true;
 }
 
@@ -114,6 +112,8 @@ const fetchFaculties = async () => {
 const handleCreateInstructor = async () => {
     createInstructorModal.value.isCreatingInstructor = true;
     newInstructor.value.facultyId = selectedFaculty.value?.facultyId;
+
+    console.log(newInstructor.value);
 
     const apiResponse = await instructorRepository.createInstructor(newInstructor.value);
 

@@ -351,7 +351,7 @@ const items = (row: any) => [
             </template>
 
             <div class="py-2">
-                {{ messageModal.message }}
+                <NewLineText :text="messageModal.message" />
             </div>
         </UCard>
     </UModal>

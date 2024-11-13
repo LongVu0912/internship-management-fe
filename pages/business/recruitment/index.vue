@@ -187,7 +187,8 @@ const selectedColumns = ref([...columns]);
 <template>
     <div class="flex flex-col gap-2">
         <div class="flex justify-end">
-            <UButton icon="mingcute:add-circle-line" color="primary" @click="createRecruitmentModal.isOpen = true" label="Thêm tuyển dụng" />
+            <UButton icon="mingcute:add-circle-line" color="primary" @click="createRecruitmentModal.isOpen = true"
+                     label="Thêm tuyển dụng" />
         </div>
 
         <UCard class="w-full" :ui="{

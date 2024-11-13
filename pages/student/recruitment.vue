@@ -21,13 +21,13 @@ const messageModal = ref({
     message: '',
 })
 const pageConfig = reactive(new PageConfig());
-pageConfig.orders.push(new Order("recruitment.title"));
+pageConfig.orders.push(new Order("businessStatus"));
 pageConfig.filters.push(new Filter("recruitment.title"));
 const studentRequestRecruitmentList = ref<StudentRequestRecruitment[]>([]);
 
 const sort = ref<any>({
-    column: 'recruitment.title',
-    direction: 'desc'
+    column: 'businessStatus',
+    direction: 'asc'
 })
 
 // * Lifecycle
@@ -37,7 +37,6 @@ onBeforeMount(async () => {
 
 // * Functions
 const fetchTableData = async () => {
-
     isTableLoading.value = true;
     const apiResponse = await studentRepository.getAllStudentRecruitmentsRequestPaging(pageConfig);
     if (apiResponse.code === 200) {
@@ -231,7 +230,7 @@ const items = (row: any) => [
             </template>
 
             <div class="py-2">
-                {{ messageModal.message }}
+                <NewLineText :text="messageModal.message" />
             </div>
         </UCard>
     </UModal>

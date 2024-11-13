@@ -95,9 +95,7 @@ onBeforeMount(async () => {
                         <div class="text-xl font-bold leading-6">
                             Bio
                         </div>
-                        <p>
-                            {{ instructor?.profile.bio }}
-                        </p>
+                        <NewLineText :text="instructor?.profile.bio" />
                     </div>
                 </div>
             </div>

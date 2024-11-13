@@ -60,8 +60,6 @@ const fetchTableData = async () => {
             type: 'error',
         });
     }
-
-    console.log(studentRequestRecruitmentList.value);
 }
 
 const searchTable = async () => {
