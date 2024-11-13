@@ -131,6 +131,27 @@ export const RecruitmentRepository = <T>(
         }
     };
 
+    const updateRecruitment = async (payload: {
+        recruitment: Recruitment,
+        businessId?: string,
+    }) => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/recruitment/UpdateRecruitment`,
+                {
+                    method: "POST",
+                    body: JSON.stringify(payload.recruitment),
+                    params: {
+                        businessId: payload.businessId || '',
+                    }
+                }
+            );
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
     return {
         getRecruitmentPaging,
         createRecruitment,
@@ -138,6 +159,7 @@ export const RecruitmentRepository = <T>(
         requestRecruitment,
         getAllBusinessRecruitmentPaging,
         getAllRecruitmentRequestOfRecruitmentPaging,
-        setRecruitmentRequestStatus
+        setRecruitmentRequestStatus,
+        updateRecruitment
     };
 };

@@ -78,7 +78,7 @@ const handleUpdateProfile = async () => {
     <div v-if="isPageLoading">
         <Loading />
     </div>
-    <UCard class="w-full shadow-md">
+    <UCard v-else class="w-full shadow-md">
         <template #header>
             <div class="flex flex-row items-center gap-4">
                 <div class="shrink-0">
@@ -235,7 +235,7 @@ const handleUpdateProfile = async () => {
 
                 <div class="w-full space-y-1">
                     <div class="font-medium">Tổng quát</div>
-                    <UTextarea size="lg" color="gray" :rows="3" class="w-full" v-model="business.overview">
+                    <UTextarea size="lg" color="gray" :rows="5" class="w-full" v-model="business.overview">
                     </UTextarea>
                 </div>
 
@@ -256,7 +256,7 @@ const handleUpdateProfile = async () => {
 
                 <div class="w-full space-y-1">
                     <div class="font-medium">Bio</div>
-                    <UTextarea size="lg" color="gray" :rows="3" class="w-full" v-model="business.managedBy.bio">
+                    <UTextarea size="lg" color="gray" :rows="5" class="w-full" v-model="business.managedBy.bio">
                     </UTextarea>
                 </div>
             </div>

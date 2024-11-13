@@ -318,7 +318,7 @@ const items = (row: any) => [
 
                 <div class="w-full space-y-1">
                     <div class="font-medium">Tin nhắn tới giảng viên</div>
-                    <UTextarea :rows="3" color="gray" v-model="instructorModal.messageToInstructor" type="text"
+                    <UTextarea :rows="5" color="gray" v-model="instructorModal.messageToInstructor" type="text"
                                size="lg"
                                placeholder="Tin nhắn tới giảng viên yêu cầu hướng dẫn thực tập" />
                 </div>

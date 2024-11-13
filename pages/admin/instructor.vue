@@ -328,11 +328,11 @@ const items = (row: any) => [
                 <div class="flex flex-col gap-4 md:flex-row">
                     <div class="w-full space-y-1">
                         <div class="font-medium">Họ tên</div>
-                        <UInput v-model="newInstructor.profile.fullname" />
+                        <UInput v-model="newInstructor.profile.fullname" placeholder="Nguyễn Văn A" />
                     </div>
                     <div class="w-full space-y-1">
                         <div class="font-medium">Tài khoản</div>
-                        <UInput v-model="newInstructor.profile.username" autocomplete="off" />
+                        <UInput v-model="newInstructor.profile.username" placeholder="nguyenvana" autocomplete="off" />
                     </div>
                 </div>
 
@@ -343,14 +343,15 @@ const items = (row: any) => [
                     </div>
                     <div class="w-full space-y-1">
                         <div class="font-medium">Email</div>
-                        <UInput type="email" v-model="newInstructor.profile.email" />
+                        <UInput type="email" v-model="newInstructor.profile.email"
+                                placeholder="nguyenvana@hcmute.edu.vn" />
                     </div>
                 </div>
 
                 <div class="flex flex-col gap-4 md:flex-row">
                     <div class="w-full space-y-1">
                         <div class="font-medium">Số điện thoại</div>
-                        <UInput v-model="newInstructor.profile.phoneNumber" />
+                        <UInput v-model="newInstructor.profile.phoneNumber" placeholder="09999999999" />
                     </div>
                     <div class="w-full space-y-1">
                         <div class="font-medium">Giới tính</div>
@@ -360,7 +361,8 @@ const items = (row: any) => [
 
                 <div class="w-full space-y-1">
                     <div class="font-medium">Bio</div>
-                    <UTextarea size="lg" color="gray" :rows="3" class="w-full" v-model="newInstructor.profile.bio">
+                    <UTextarea size="lg" color="gray" :rows="5" class="w-full" v-model="newInstructor.profile.bio"
+                               placeholder="Giới thiệu ngắn về bản thân...">
                     </UTextarea>
                 </div>
             </div>

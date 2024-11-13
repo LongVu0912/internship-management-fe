@@ -303,40 +303,47 @@ const items = (row: any) => [
 
                 <div>
                     <div class="font-medium">Tên công ty</div>
-                    <UInput v-model="newBusiness.name" />
+                    <UInput v-model="newBusiness.name" placeholder="Công ty ABC" />
+                </div>
+
+                <div>
+                    <div class="font-medium">Website</div>
+                    <UInput v-model="newBusiness.businessWebsite" placeholder="https://business.com" />
                 </div>
 
                 <div class="w-full space-y-1">
                     <div class="font-medium">Tổng quan</div>
-                    <UTextarea size="lg" color="gray" :rows="3" class="w-full" v-model="newBusiness.overview">
+                    <UTextarea size="lg" color="gray" :rows="5" class="w-full" v-model="newBusiness.overview"
+                               placeholder="Công ty chuyên về công nghệ...">
                     </UTextarea>
                 </div>
 
                 <div class="flex flex-col gap-4 md:flex-row">
                     <div class="w-full space-y-1">
                         <div class="font-medium">Địa chỉ</div>
-                        <UInput v-model="newBusiness.location" />
+                        <UInput v-model="newBusiness.location" placeholder="123 Đường ABC, Quận 1, TP.HCM" />
                     </div>
                     <div class="w-full space-y-1">
                         <div class="font-medium">Loại</div>
-                        <UInput v-model="newBusiness.type" />
+                        <UInput v-model="newBusiness.type" placeholder="Công ty TNHH" />
                     </div>
                 </div>
 
                 <div class="w-full space-y-1">
                     <div class="font-medium">Chuyên ngành</div>
-                    <UTextarea size="lg" color="gray" :rows="3" class="w-full" v-model="newBusiness.industry">
+                    <UTextarea size="lg" color="gray" :rows="5" class="w-full" v-model="newBusiness.industry"
+                               placeholder="Công nghệ thông tin, Kế toán...">
                     </UTextarea>
                 </div>
 
                 <div class="flex flex-col gap-4 md:flex-row">
                     <div class="w-full space-y-1">
                         <div class="font-medium">Ngày làm việc</div>
-                        <UInput v-model="newBusiness.workingDay" />
+                        <UInput v-model="newBusiness.workingDay" placeholder="Thứ 2 - Thứ 6" />
                     </div>
                     <div class="w-full space-y-1">
                         <div class="font-medium">Giờ làm việc</div>
-                        <UInput v-model="newBusiness.workingHour" />
+                        <UInput v-model="newBusiness.workingHour" placeholder="8:00 - 17:00" />
                     </div>
                 </div>
 
@@ -347,39 +354,44 @@ const items = (row: any) => [
                 <div class="flex flex-col gap-4 md:flex-row">
                     <div class="w-full space-y-1">
                         <div class="font-medium">Họ tên</div>
-                        <UInput v-model="newBusiness.managedBy.fullname" />
+                        <UInput v-model="newBusiness.managedBy.fullname" placeholder="Nguyễn Văn A" />
                     </div>
                     <div class="w-full space-y-1">
                         <div class="font-medium">Tài khoản</div>
-                        <UInput v-model="newBusiness.managedBy.username" autocomplete="off" />
+                        <UInput v-model="newBusiness.managedBy.username" autocomplete="off"
+                                placeholder="nguyenvana" />
                     </div>
                 </div>
 
                 <div class="flex flex-col gap-4 md:flex-row">
                     <div class="w-full space-y-1">
                         <div class="font-medium">Mật khẩu</div>
-                        <UInput type="password" v-model="newBusiness.managedBy.password" autocomplete="off" />
+                        <UInput type="password" v-model="newBusiness.managedBy.password" autocomplete="off"
+                                placeholder="********" />
                     </div>
                     <div class="w-full space-y-1">
                         <div class="font-medium">Email</div>
-                        <UInput type="email" v-model="newBusiness.managedBy.email" />
+                        <UInput type="email" v-model="newBusiness.managedBy.email"
+                                placeholder="email@example.com" />
                     </div>
                 </div>
 
                 <div class="flex flex-col gap-4 md:flex-row">
                     <div class="w-full space-y-1">
                         <div class="font-medium">Số điện thoại</div>
-                        <UInput v-model="newBusiness.managedBy.phoneNumber" />
+                        <UInput v-model="newBusiness.managedBy.phoneNumber" placeholder="0123456789" />
                     </div>
                     <div class="w-full space-y-1">
                         <div class="font-medium">Giới tính</div>
-                        <USelect color="gray" size="md" :options="['Nữ', 'Nam']" v-model:model-value="gender" />
+                        <USelect color="gray" size="md" :options="['Nữ', 'Nam']" v-model:model-value="gender"
+                                 placeholder="Chọn giới tính" />
                     </div>
                 </div>
 
                 <div class="w-full space-y-1">
                     <div class="font-medium">Bio</div>
-                    <UTextarea size="lg" color="gray" :rows="3" class="w-full" v-model="newBusiness.managedBy.bio">
+                    <UTextarea size="lg" color="gray" :rows="5" class="w-full" v-model="newBusiness.managedBy.bio"
+                               placeholder="Giới thiệu ngắn về bản thân...">
                     </UTextarea>
                 </div>
             </div>

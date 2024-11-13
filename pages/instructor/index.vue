@@ -169,7 +169,7 @@ const handleUpdateProfile = async () => {
 
                 <div class="w-full space-y-1">
                     <div class="font-medium">Bio</div>
-                    <UTextarea size="lg" color="gray" :rows="3" class="w-full" v-model="instructor.profile.bio">
+                    <UTextarea size="lg" color="gray" :rows="5" class="w-full" v-model="instructor.profile.bio">
                     </UTextarea>
                 </div>
             </div>
