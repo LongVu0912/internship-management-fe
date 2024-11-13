@@ -3,7 +3,7 @@
 // * Imports
 const { $apiToken } = useNuxtApp();
 const nuxtToast = useNuxtToast();
-const userRepository = UserRepository($apiToken);
+const userRepository = AuthRepository($apiToken);
 
 // * Refs
 const isChangePasswordModalOpen = ref(false);

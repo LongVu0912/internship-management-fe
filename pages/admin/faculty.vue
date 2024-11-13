@@ -95,7 +95,7 @@ const openMajorModal = async (facultyId: string) => {
         facultyId: facultyId
     });
 
-    if (apiResponse.code == 200) {
+    if (apiResponse.code === 200) {
         majorList.value = apiResponse.result;
         majorModal.value.isOpen = true;
     }

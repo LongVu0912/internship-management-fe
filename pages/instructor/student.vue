@@ -65,7 +65,7 @@ const approveRequest = async (instructorRequestId: string) => {
         status: InstructorStatus.APPROVED,
     })
 
-    if (apiResponse.code != 200 || apiResponse.result == false) {
+    if (apiResponse.code !== 200 || apiResponse.result === false) {
         nuxtToast({
             description: apiResponse.message,
             type: "error",
@@ -86,7 +86,7 @@ const rejectRequest = async (instructorRequestId: string) => {
         status: InstructorStatus.REJECT,
     })
 
-    if (apiResponse.code != 200 || apiResponse.result == false) {
+    if (apiResponse.code !== 200 || apiResponse.result === false) {
         nuxtToast({
             description: apiResponse.message,
             type: "error",

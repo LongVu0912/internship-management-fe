@@ -2,14 +2,19 @@
 import Role from '~/types/enums/Role';
 
 // * Imports
-const { $api } = useNuxtApp();
+const { $api, $apiToken } = useNuxtApp();
 const authRepository = AuthRepository($api);
+const notificationRepository = NotificationRepository($apiToken);
 
 // * Refs
 const userState = useUserState();
+const notificationQuantity = ref<number>(0);
 
 // * Lifecycle
 onBeforeMount(async () => {
+    if (userState.value.isLogged) {
+        notificationQuantity.value = await notificationRepository.getQuantityOfNotification();
+    }
 })
 
 // * Functions
@@ -70,7 +75,8 @@ const items = [
 
 <template>
     <div class="flex flex-row items-center gap-1">
-        <UChip v-if="userState.isLogged" position="top-right" text="3" :show="true" size="2xl" class="mr-0.5">
+        <UChip v-if="userState.isLogged" position="top-right" :text="notificationQuantity" :show="true"
+               size="2xl" class="mr-0.5">
             <UButton icon="mingcute:notification-line" color="gray" variant="ghost" to="/notification" />
         </UChip>
 

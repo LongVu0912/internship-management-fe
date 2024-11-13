@@ -36,7 +36,7 @@ const fetchData = async () => {
     isPageLoading.value = true;
     const apiResponse = await instructorRepository.getMyInstructorData();
 
-    if (apiResponse.code != 200) {
+    if (apiResponse.code !== 200) {
         showError({
             statusCode: 404,
             statusMessage: "Page not found",
