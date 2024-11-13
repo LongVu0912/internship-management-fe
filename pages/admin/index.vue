@@ -33,8 +33,8 @@ pageConfig.filters.push(new Filter("profile.fullname"));
 const studentList = ref<Student[]>([]);
 
 // * Lifecycle
-onBeforeMount(async () => {
-    await fetchTableData();
+onBeforeMount(() => {
+    fetchTableData();
 });
 
 // * Functions

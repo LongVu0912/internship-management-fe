@@ -21,7 +21,7 @@ onBeforeMount(async () => {
         businessId: route.params.businessId as string,
     });
 
-    if (apiResponse.code != 200) {
+    if (apiResponse.code !== 200) {
         showError({
             statusCode: 404,
             statusMessage: "Page not found",

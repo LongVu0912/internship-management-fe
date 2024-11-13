@@ -81,7 +81,7 @@ const approveStudentRequest = async (recruitmentRequestId: string) => {
         status: BusinessStatus.APPROVED,
     })
 
-    if (apiResponse.code != 200 || apiResponse.result == false) {
+    if (apiResponse.code !== 200 || apiResponse.result === false) {
         nuxtToast({
             description: apiResponse.message,
             type: "error",
@@ -102,7 +102,7 @@ const rejectStudentRequest = async (recruitmentRequestId: string) => {
         status: BusinessStatus.REJECT,
     })
 
-    if (apiResponse.code != 200 || apiResponse.result == false) {
+    if (apiResponse.code !== 200 || apiResponse.result === false) {
         nuxtToast({
             description: apiResponse.message,
             type: "error",

@@ -102,11 +102,31 @@ export const AuthRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         return userState;
     };
 
+    const changePassword = async (payload: {
+        oldPassword: string;
+        newPassword: string;
+    }): Promise<ApiResponse> => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/profile/ChangePassword`,
+                {
+                    method: "POST",
+                    body: JSON.stringify(payload),
+                }
+            );
+
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
     return {
         login,
         logout,
         getUserState,
         saveTokenToCookie,
         getProfileName,
+        changePassword,
     };
 };

@@ -76,7 +76,7 @@ const fetchTableData = async () => {
 const fetchInstructorsData = async () => {
     const apiResponse = await instructorRepository.getInstructorPaging(modalPageConfig);
 
-    if (apiResponse.code != 200) {
+    if (apiResponse.code !== 200) {
         nuxtToast({
             description: apiResponse.message,
             type: "error",
@@ -105,7 +105,7 @@ const sendRequestToInstructor = async () => {
         messageToInstructor: instructorModal.value.messageToInstructor,
     });
 
-    if (apiResponse.code != 200 || apiResponse.result == false) {
+    if (apiResponse.code !== 200 || apiResponse.result === false) {
         nuxtToast({
             description: apiResponse.message,
             type: "error",

@@ -39,7 +39,7 @@ onBeforeMount(() => {
 const fetchData = async () => {
     const apiResponse = await businessRepository.getMyBusinessData();
 
-    if (apiResponse.code != 200) {
+    if (apiResponse.code !== 200) {
         showError({
             statusCode: 404,
             statusMessage: "Page not found",

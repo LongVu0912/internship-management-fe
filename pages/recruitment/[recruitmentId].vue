@@ -27,7 +27,7 @@ onBeforeMount(async () => {
         recruitmentId: route.params.recruitmentId as string,
     });
 
-    if (apiResponse.code != 200) {
+    if (apiResponse.code !== 200) {
         showError({
             statusCode: 404,
             statusMessage: "Page not found",
@@ -48,7 +48,7 @@ const openConfirmDialog = async (recruitmentId: string) => {
 const onDialogConfirm = async () => {
     const apiResponse = await recruitmentRepository.requestRecruitment(recruitmentRequest.value);
 
-    if (apiResponse.code != 200 || apiResponse.result == false) {
+    if (apiResponse.code !== 200 || apiResponse.result === false) {
         nuxtToast({
             description: apiResponse.message,
             type: "error",
