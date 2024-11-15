@@ -138,7 +138,8 @@ const handleUpdateProfile = async () => {
         </div>
         <template #footer>
             <div class="flex justify-end">
-                <UButton label="Cập nhật" color="primary" @click="updateModal.isOpen = true" />
+                <UButton icon="mingcute:save-2-line" label="Cập nhật" color="primary"
+                         @click="updateModal.isOpen = true" />
             </div>
         </template>
     </UCard>

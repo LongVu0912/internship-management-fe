@@ -8,12 +8,11 @@ const notificationRepository = NotificationRepository($apiToken);
 
 // * Refs
 const userState = useUserState();
-const notificationQuantity = ref<number>(0);
 
 // * Lifecycle
 onBeforeMount(async () => {
     if (userState.value.isLogged) {
-        notificationQuantity.value = await notificationRepository.getQuantityOfNotification();
+        useUserState().value.quantityOfNotifications = await notificationRepository.getQuantityOfNotification();
     }
 })
 
@@ -75,7 +74,8 @@ const items = [
 
 <template>
     <div class="flex flex-row items-center gap-1">
-        <UChip v-if="userState.isLogged" position="top-right" :text="notificationQuantity" :show="true"
+        <UChip v-if="userState.isLogged" position="top-right" :text="useUserState().value.quantityOfNotifications"
+               :show="true"
                size="2xl" class="mr-0.5">
             <UButton icon="mingcute:notification-line" color="gray" variant="ghost" to="/notification" />
         </UChip>

@@ -106,13 +106,6 @@ const handleUpdateProfile = async () => {
                             </div>
                         </div>
                         <div class="flex flex-row items-center gap-2">
-                            <UIcon name="mingcute:profile-line" class="h-6 w-6 flex-shrink-0" />
-                            <div class="flex flex-col">
-                                <div class="font-bold">Loại</div>
-                                <div>{{ business?.type }}</div>
-                            </div>
-                        </div>
-                        <div class="flex flex-row items-center gap-2">
                             <UIcon name="mingcute:book-3-line" class="h-6 w-6 flex-shrink-0" />
                             <div class="flex flex-col">
                                 <div class="font-bold">Ngành</div>
@@ -144,7 +137,7 @@ const handleUpdateProfile = async () => {
                         <div class="flex flex-row items-center gap-2">
                             <UIcon name="mingcute:user-2-line" class="h-6 w-6 flex-shrink-0" />
                             <div>{{ business?.managedBy.fullname }}</div>
-                            <UBadge variant="outline">{{ business?.managedBy.isMale ? "Nam" : "Nữ" }}</UBadge>
+                            <UBadge variant="subtle">{{ business?.managedBy.isMale ? "Nam" : "Nữ" }}</UBadge>
                         </div>
                     </div>
                     <UDivider size="xs" />
@@ -211,15 +204,9 @@ const handleUpdateProfile = async () => {
                     <UInput v-model="business.businessWebsite" />
                 </div>
 
-                <div class="flex flex-col gap-4 md:flex-row">
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Loại</div>
-                        <UInput v-model="business.type" />
-                    </div>
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Ngành</div>
-                        <UInput v-model="business.industry" />
-                    </div>
+                <div class="space-y-1">
+                    <div class="font-medium">Ngành</div>
+                    <UInput v-model="business.industry" />
                 </div>
 
                 <div class="flex flex-col gap-4 md:flex-row">
