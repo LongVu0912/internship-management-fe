@@ -236,7 +236,7 @@ const selectedColumns = ref([...columns]);
 
                 <template #businessStatus-data="{ row }">
                     <UBadge class="w-20 justify-center" :color="appUtils.statusBadge(row.businessStatus)"
-                            variant="outline">
+                            variant="subtle">
                         {{ appUtils.convertStatus(row.businessStatus) }}
                     </UBadge>
                 </template>

@@ -1,7 +1,8 @@
 import type Faculty from "../faculty/Faculty";
 
-export interface Major {
+export default interface Major {
     majorId: string;
     name: string;
-    faculty: Faculty
+    faculty: Faculty;
+    facultyId?: string;
 }

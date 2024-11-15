@@ -113,8 +113,6 @@ const handleCreateInstructor = async () => {
     createInstructorModal.value.isCreatingInstructor = true;
     newInstructor.value.facultyId = selectedFaculty.value?.facultyId;
 
-    console.log(newInstructor.value);
-
     const apiResponse = await instructorRepository.createInstructor(newInstructor.value);
 
     if (apiResponse.code !== 200) {
@@ -125,7 +123,7 @@ const handleCreateInstructor = async () => {
     }
     else {
         nuxtToast({
-            description: "Tạo tài khoản thành công",
+            description: "Tạo khoa thành công",
             type: "success",
         });
         createInstructorModal.value.isOpen = false;
@@ -268,7 +266,7 @@ const items = (row: any) => [
                                   target="_blank">
                             {{ row.profile.fullname }}
                         </NuxtLink>
-                        <UBadge class="mt-1 w-10 justify-center" color="gray" variant="outline">
+                        <UBadge class="mt-1 w-10 justify-center" color="gray" variant="subtle">
                             {{ row.profile.isMale ? "Nam" : "Nữ" }}
                         </UBadge>
                     </div>
@@ -278,7 +276,7 @@ const items = (row: any) => [
                     <div class="font-medium">
                         {{ row.profile.email }}
                     </div>
-                    <UBadge class="mt-1 w-10 justify-center" color="gray" variant="outline">
+                    <UBadge class="mt-1 w-10 justify-center" color="primary" variant="subtle">
                         {{ row.faculty.facultyId }}
                     </UBadge>
                 </template>

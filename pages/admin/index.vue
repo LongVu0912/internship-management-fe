@@ -257,7 +257,7 @@ const items = (row: any) => [
                             {{ row.profile.fullname }}
                         </NuxtLink>
                         <div>
-                            <UBadge class="mt-1" color="primary" variant="outline">
+                            <UBadge class="mt-1" color="primary" variant="subtle">
                                 {{ row.studentId }}
                             </UBadge>
                         </div>
@@ -268,7 +268,7 @@ const items = (row: any) => [
                     <div class="font-medium">
                         {{ row.dob }}
                     </div>
-                    <UBadge class="mt-1 w-10 justify-center" color="gray" variant="outline">
+                    <UBadge class="mt-1 w-10 justify-center" color="gray" variant="subtle">
                         {{ row.profile.isMale ? "Nam" : "Nữ" }}
                     </UBadge>
                 </template>
@@ -283,7 +283,7 @@ const items = (row: any) => [
                     <div class="font-medium">
                         {{ row.major.name }}
                     </div>
-                    <UBadge class="mt-1 justify-center" color="gray" variant="outline">
+                    <UBadge class="mt-1 justify-center" color="gray" variant="subtle">
                         {{ row.major.faculty.name }}
                     </UBadge>
                 </template>

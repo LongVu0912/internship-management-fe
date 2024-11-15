@@ -15,7 +15,7 @@ const notificationRepository = NotificationRepository($apiToken);
 const appUtils = AppUtils();
 
 const pageConfig = reactive(new PageConfig());
-pageConfig.orders.push(new Order("profile.fullname"));
+pageConfig.orders.push(new Order("dateCreated"));
 const notificationList = ref<Notification[]>([]);
 
 // * Refs
@@ -55,9 +55,11 @@ const fetchTableData = async () => {
 
 const openNotificationModal = async (notification: Notification) => {
     if (!notification.read) {
-        notificationRepository.markAsRead({
+        await notificationRepository.markAsRead({
             notificationId: notification.notificationId,
         });
+        useUserState().value.quantityOfNotifications = await notificationRepository.getQuantityOfNotification();
+        fetchTableData();
     }
 
     notificationModal.value.content = notification.content;

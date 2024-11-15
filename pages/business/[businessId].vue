@@ -70,13 +70,6 @@ onBeforeMount(async () => {
                                 </div>
                             </div>
                             <div class="flex flex-row items-center gap-2">
-                                <UIcon name="mingcute:profile-line" class="h-6 w-6 flex-shrink-0" />
-                                <div class="flex flex-col">
-                                    <div class="font-bold">Loại</div>
-                                    <div>{{ business?.type }}</div>
-                                </div>
-                            </div>
-                            <div class="flex flex-row items-center gap-2">
                                 <UIcon name="mingcute:book-3-line" class="h-6 w-6 flex-shrink-0" />
                                 <div class="flex flex-col">
                                     <div class="font-bold">Ngành</div>
@@ -108,7 +101,7 @@ onBeforeMount(async () => {
                             <div class="flex flex-row items-center gap-2">
                                 <UIcon name="mingcute:user-2-line" class="h-6 w-6 flex-shrink-0" />
                                 <div>{{ business?.managedBy.fullname }}</div>
-                                <UBadge variant="outline">{{ business?.managedBy.isMale ? "Nam" : "Nữ" }}</UBadge>
+                                <UBadge variant="subtle">{{ business?.managedBy.isMale ? "Nam" : "Nữ" }}</UBadge>
                             </div>
                         </div>
                         <UDivider size="xs" />

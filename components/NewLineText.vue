@@ -9,9 +9,9 @@ const splitLines = computed(() => {
 </script>
 
 <template>
-    <div>
+    <p>
         <p v-for="(line, index) in splitLines" :key="index">
             {{ line }}
         </p>
-    </div>
+    </p>
 </template>

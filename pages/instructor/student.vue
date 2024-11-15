@@ -271,7 +271,7 @@ const selectedColumns = ref([...columns]);
 
                 <template #instructorStatus-data="{ row }">
                     <UBadge class="w-20 justify-center" :color="appUtils.statusBadge(row.instructorStatus)"
-                            variant="outline">
+                            variant="subtle">
                         {{ appUtils.convertStatus(row.instructorStatus) }}
                     </UBadge>
                 </template>

@@ -318,15 +318,9 @@ const items = (row: any) => [
                     </UTextarea>
                 </div>
 
-                <div class="flex flex-col gap-4 md:flex-row">
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Địa chỉ</div>
-                        <UInput v-model="newBusiness.location" placeholder="123 Đường ABC, Quận 1, TP.HCM" />
-                    </div>
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Loại</div>
-                        <UInput v-model="newBusiness.type" placeholder="Công ty TNHH" />
-                    </div>
+                <div>
+                    <div class="font-medium">Địa chỉ</div>
+                    <UInput v-model="newBusiness.location" placeholder="123 Đường ABC, Quận 1, TP.HCM" />
                 </div>
 
                 <div class="w-full space-y-1">

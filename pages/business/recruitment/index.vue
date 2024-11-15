@@ -332,14 +332,26 @@ const selectedColumns = ref([...columns]);
                     </UTextarea>
                 </div>
 
+                <div class="w-full space-y-1">
+                    <div class="font-medium">Kỹ năng</div>
+                    <UTextarea size="lg" color="gray" :rows="5" class="w-full" v-model="recruitment.keySkills"
+                               placeholder="JavaScript, React, Node.js">
+                    </UTextarea>
+                </div>
+
+                <div class="w-full space-y-1">
+                    <div class="font-medium">Địa điểm</div>
+                    <UInput v-model="recruitment.location" placeholder="Hà Nội, Việt Nam" />
+                </div>
+
                 <div class="flex flex-col gap-4 md:flex-row">
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Địa điểm</div>
-                        <UInput v-model="recruitment.location" placeholder="Hà Nội, Việt Nam" />
-                    </div>
                     <div class="w-full space-y-1">
                         <div class="font-medium">Loại</div>
                         <UInput v-model="recruitment.type" placeholder="Toàn thời gian, Bán thời gian" />
+                    </div>
+                    <div class="w-full space-y-1">
+                        <div class="font-medium">Vị trí</div>
+                        <UInput v-model="recruitment.position" placeholder="Lập trình viên Frontend" />
                     </div>
                 </div>
 
@@ -351,17 +363,6 @@ const selectedColumns = ref([...columns]);
                     <div class="w-full space-y-1">
                         <div class="font-medium">Giờ làm việc</div>
                         <UInput v-model="recruitment.workingHour" placeholder="9:00 - 18:00" />
-                    </div>
-                </div>
-
-                <div class="flex flex-col gap-4 md:flex-row">
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Kỹ năng</div>
-                        <UInput v-model="recruitment.keySkills" placeholder="JavaScript, React, Node.js" />
-                    </div>
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Vị trí</div>
-                        <UInput v-model="recruitment.position" placeholder="Lập trình viên Frontend" />
                     </div>
                 </div>
             </div>
@@ -411,15 +412,29 @@ const selectedColumns = ref([...columns]);
                     </UTextarea>
                 </div>
 
+                <div class="w-full space-y-1">
+                    <div class="font-medium">Kỹ năng</div>
+                    <UTextarea size="lg" color="gray" :rows="5" class="w-full"
+                               v-model="updateRecruitmentModal.recruitment.keySkills"
+                               placeholder="JavaScript, React, Node.js">
+                    </UTextarea>
+                </div>
+
+                <div class="w-full space-y-1">
+                    <div class="font-medium">Địa điểm</div>
+                    <UInput v-model="updateRecruitmentModal.recruitment.location" placeholder="Hà Nội, Việt Nam" />
+                </div>
+
                 <div class="flex flex-col gap-4 md:flex-row">
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Địa điểm</div>
-                        <UInput v-model="updateRecruitmentModal.recruitment.location" placeholder="Hà Nội, Việt Nam" />
-                    </div>
                     <div class="w-full space-y-1">
                         <div class="font-medium">Loại</div>
                         <UInput v-model="updateRecruitmentModal.recruitment.type"
                                 placeholder="Toàn thời gian, Bán thời gian" />
+                    </div>
+                    <div class="w-full space-y-1">
+                        <div class="font-medium">Vị trí</div>
+                        <UInput v-model="updateRecruitmentModal.recruitment.position"
+                                placeholder="Lập trình viên Frontend" />
                     </div>
                 </div>
 
@@ -431,19 +446,6 @@ const selectedColumns = ref([...columns]);
                     <div class="w-full space-y-1">
                         <div class="font-medium">Giờ làm việc</div>
                         <UInput v-model="updateRecruitmentModal.recruitment.workingHour" placeholder="9:00 - 18:00" />
-                    </div>
-                </div>
-
-                <div class="flex flex-col gap-4 md:flex-row">
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Kỹ năng</div>
-                        <UInput v-model="updateRecruitmentModal.recruitment.keySkills"
-                                placeholder="JavaScript, React, Node.js" />
-                    </div>
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Vị trí</div>
-                        <UInput v-model="updateRecruitmentModal.recruitment.position"
-                                placeholder="Lập trình viên Frontend" />
                     </div>
                 </div>
             </div>

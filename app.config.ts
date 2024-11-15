@@ -18,7 +18,7 @@ export default defineAppConfig({
             },
         },
         input: {
-            base: "font-medium disabled:cursor-text disabled:select-text",
+            base: "font-medium",
             icon: {
                 base: "",
             },
