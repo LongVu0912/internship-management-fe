@@ -8,10 +8,10 @@ import type RecruitmentRequest from "~/types/recruitment/RecruitmentRequest";
 export const RecruitmentRepository = <T>(
     fetch: $Fetch<T, NitroFetchRequest>
 ) => {
-    const getRecruitmentPaging = async (payload: PageConfig) => {
+    const getOpenRecruitmentPaging = async (payload: PageConfig) => {
         try {
             const response: ApiResponse = await fetch(
-                `/recruitment/GetRecruitmentPaging`,
+                `/recruitment/GetOpenRecruitmentPaging`,
                 {
                     method: "POST",
                     body: JSON.stringify(payload),
@@ -153,7 +153,7 @@ export const RecruitmentRepository = <T>(
     };
 
     return {
-        getRecruitmentPaging,
+        getOpenRecruitmentPaging,
         createRecruitment,
         getRecruitmentById,
         requestRecruitment,

@@ -1,4 +1,4 @@
-import type { Major } from "../major/Major";
+import type Major from "../major/Major";
 import type Profile from "../profile/Profile";
 
 export default interface Student {

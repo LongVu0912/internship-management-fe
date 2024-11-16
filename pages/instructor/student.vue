@@ -278,7 +278,7 @@ const selectedColumns = ref([...columns]);
 
                 <template #messageToInstructor-data="{ row }">
                     <div @click="openMessageModal(row.messageToInstructor)" class="cursor-pointer">
-                        {{ row.messageToInstructor.substring(0, 20) + '...' }}
+                        {{ appUtils.subLongText(row.messageToInstructor) }}
                     </div>
                 </template>
 

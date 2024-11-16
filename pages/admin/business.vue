@@ -14,6 +14,7 @@ definePageMeta({
 const { $apiToken } = useNuxtApp();
 const businessRepository = BusinessRepository($apiToken);
 const nuxtToast = useNuxtToast();
+const appUtils = AppUtils();
 
 // * Refs
 const isTableLoading = ref(true);
@@ -273,7 +274,7 @@ const items = (row: any) => [
 
                 <template #overview-data="{ row }">
                     <div @click="openOverviewModal(row.overview)" class="cursor-pointer">
-                        {{ row.overview.substring(0, 20) + '...' }}
+                        {{ appUtils.subLongText(row.overview) }}
                     </div>
                 </template>
 
@@ -352,8 +353,7 @@ const items = (row: any) => [
                     </div>
                     <div class="w-full space-y-1">
                         <div class="font-medium">Tài khoản</div>
-                        <UInput v-model="newBusiness.managedBy.username" autocomplete="off"
-                                placeholder="nguyenvana" />
+                        <UInput v-model="newBusiness.managedBy.username" autocomplete="off" placeholder="nguyenvana" />
                     </div>
                 </div>
 
@@ -365,8 +365,7 @@ const items = (row: any) => [
                     </div>
                     <div class="w-full space-y-1">
                         <div class="font-medium">Email</div>
-                        <UInput type="email" v-model="newBusiness.managedBy.email"
-                                placeholder="email@example.com" />
+                        <UInput type="email" v-model="newBusiness.managedBy.email" placeholder="email@example.com" />
                     </div>
                 </div>
 

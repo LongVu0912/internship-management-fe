@@ -19,6 +19,14 @@ const route = useRoute();
 
 // * Refs
 const isTableLoading = ref(true);
+const confirmDialog = ref({
+    isOpen: false,
+    title: 'Xác nhận yêu cầu ứng tuyển',
+    description: '',
+    isApproved: false,
+    recruitmentRequestId: '',
+})
+
 const messageModal = ref({
     isOpen: false,
     message: '',
@@ -117,6 +125,23 @@ const rejectStudentRequest = async (recruitmentRequestId: string) => {
     }
 }
 
+const openConfirmDialog = (recruitmentRequestId: string, description: string, isApproved: boolean) => {
+    confirmDialog.value.recruitmentRequestId = recruitmentRequestId;
+    confirmDialog.value.isApproved = isApproved;
+    confirmDialog.value.description = description;
+    confirmDialog.value.isOpen = true;
+}
+
+const onDialogConfirm = () => {
+    if (confirmDialog.value.isApproved) {
+        approveStudentRequest(confirmDialog.value.recruitmentRequestId)
+    }
+    else {
+        rejectStudentRequest(confirmDialog.value.recruitmentRequestId);
+    }
+    confirmDialog.value.isOpen = false;
+}
+
 // * Watches
 watch(
     [() => pageConfig.currentPage, () => pageConfig.pageSize],
@@ -167,12 +192,16 @@ const items = (row: any) => [
         {
             label: 'Đồng ý',
             icon: 'mingcute:check-fill',
-            click: () => approveStudentRequest(row.recruitmentRequestId)
+            click: () => {
+                openConfirmDialog(row.recruitmentRequestId, "Bạn có chắc muốn đồng ý sinh viên này", true);
+            }
         },
         {
             label: 'Từ chối',
             icon: 'mingcute:close-fill',
-            click: () => rejectStudentRequest(row.recruitmentRequestId)
+            click: () => {
+                openConfirmDialog(row.recruitmentRequestId, "Bạn có chắc muốn từ chối sinh viên này", false);
+            }
         },
     ]
 ]
@@ -243,7 +272,7 @@ const selectedColumns = ref([...columns]);
 
                 <template #messageToBusiness-data="{ row }">
                     <div @click="openMessageModal(row.messageToBusiness)" class="cursor-pointer">
-                        {{ row.messageToBusiness.substring(0, 20) + '...' }}
+                        {{ appUtils.subLongText(row.messageToBusiness) }}
                     </div>
                 </template>
 
@@ -273,4 +302,7 @@ const selectedColumns = ref([...columns]);
             </div>
         </UCard>
     </UModal>
+
+    <ConfirmDialog :isOpen="confirmDialog.isOpen" :title="confirmDialog.title" :description="confirmDialog.description"
+                   :onCancel="() => confirmDialog.isOpen = false" :onConfirm="onDialogConfirm" />
 </template>

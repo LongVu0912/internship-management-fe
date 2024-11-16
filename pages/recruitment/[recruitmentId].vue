@@ -138,9 +138,7 @@ const onDialogCancel = () => {
                 <UDivider />
                 <div>
                     <div class="text-lg font-bold leading-9">Kỹ năng</div>
-                    <p>
-                        {{ recruitment?.keySkills }}
-                    </p>
+                    <NewLineText :text="recruitment?.keySkills" />
                 </div>
                 <UDivider />
                 <div>

@@ -24,7 +24,7 @@ const sidebarItems: SidebarItem[] = [
         label: "Cài đặt",
         to: "/student/settings",
     }
-]
+]   
 </script>
 
 <template>
