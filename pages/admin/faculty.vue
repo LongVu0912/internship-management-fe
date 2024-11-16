@@ -124,6 +124,14 @@ const handleSaveFaculty = async () => {
 }
 
 const handleEditMajor = async (index: any) => {
+    if (majorList.value && (majorList.value[index].facultyId == null || majorList.value[index].facultyId == '')) {
+        nuxtToast({
+            description: "Không được để trống thông tin",
+            type: "info",
+        })
+        return;
+    }
+
     majorModal.value.isSavingMajor = true;
 
     if (majorList.value) {
@@ -175,7 +183,7 @@ const handleCreateMajor = async (index: any) => {
                 description: "Thêm ngành mới thành công",
                 type: "success",
             });
-            
+
             majorModal.value.isCreatingMajor = false;
             majorModal.value.newMajor = {} as Major;
             majorModal.value.isOpen = false;

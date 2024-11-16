@@ -130,7 +130,7 @@ export const AuthRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
                 `/profile/AdminChangePassword/${payload.profileId}`,
                 {
                     method: "POST",
-                    body: JSON.stringify(payload.newPassword),
+                    body: payload.newPassword,
                 }
             );
 
