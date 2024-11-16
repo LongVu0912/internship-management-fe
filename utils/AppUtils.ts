@@ -34,7 +34,7 @@ export const AppUtils = () => {
         return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     };
 
-    const subLongText = (text: string, maxLength: number = 20): string => {
+    const subLongText = (text: string, maxLength: number = 10): string => {
         if (text === null || text === undefined) {
             return "";
         }

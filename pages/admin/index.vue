@@ -127,7 +127,7 @@ const handleChangePassword = () => {
     changePasswordModal.value.isSubmitting = false;
 }
 
-const openAdminChangePasswordModal = (row: any) => {
+const openAdminChangePasswordModal = (row: Student) => {
     adminChangePasswordModal.value.profileId = row.profile.profileId;
     adminChangePasswordModal.value.isOpen = true;
 }
@@ -189,7 +189,7 @@ const columns = [
 
 const selectedColumns = ref([...columns]);
 
-const items = (row: any) => [
+const items = (row: Student) => [
     [
         {
             label: 'Hồ sơ',

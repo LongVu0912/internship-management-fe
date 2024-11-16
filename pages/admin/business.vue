@@ -28,6 +28,11 @@ const overviewModal = ref({
     overview: '',
 })
 
+const adminChangePasswordModal = ref({
+    isOpen: false,
+    profileId: '',
+})
+
 const pageConfig = reactive(new PageConfig());
 pageConfig.orders.push(new Order("name"));
 pageConfig.filters.push(new Filter("name"));
@@ -107,6 +112,11 @@ const openOverviewModal = (overview: string) => {
     overviewModal.value.isOpen = true;
 }
 
+const openAdminChangePasswordModal = (row: Business) => {
+    adminChangePasswordModal.value.profileId = row.managedBy.profileId;
+    adminChangePasswordModal.value.isOpen = true;
+}
+
 // * Watches
 watch(
     [() => pageConfig.currentPage, () => pageConfig.pageSize],
@@ -179,7 +189,7 @@ const columns = [
 
 const selectedColumns = ref([...columns]);
 
-const items = (row: any) => [
+const items = (row: Business) => [
     [
         {
             label: 'Hồ sơ',
@@ -192,17 +202,12 @@ const items = (row: any) => [
                 })
             }
         },
-    ],
-    [
-        {
-            label: 'Sửa',
-            icon: 'mingcute:edit-4-line',
-            click: nuxtToast,
-        },
         {
             label: 'Đổi mật khẩu',
             icon: 'mingcute:key-2-line',
-            click: nuxtToast,
+            click: () => {
+                openAdminChangePasswordModal(row);
+            },
         },
     ],
     [
@@ -419,4 +424,7 @@ const items = (row: any) => [
             </div>
         </UCard>
     </UModal>
+
+    <AdminChangePassword @hideModal="adminChangePasswordModal.isOpen = false"
+                         :profileId="adminChangePasswordModal.profileId" :isOpen="adminChangePasswordModal.isOpen" />
 </template>

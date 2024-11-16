@@ -20,6 +20,11 @@ const nuxtToast = useNuxtToast();
 // * Refs
 const isTableLoading = ref(false);
 
+const adminChangePasswordModal = ref({
+    isOpen: false,
+    profileId: '',
+})
+
 const sort = ref<any>({
     column: 'profile.fullname',
     direction: 'desc'
@@ -133,6 +138,11 @@ const handleCreateInstructor = async () => {
     createInstructorModal.value.isCreatingInstructor = false;
 }
 
+const openAdminChangePasswordModal = (row: Instructor) => {
+    adminChangePasswordModal.value.profileId = row.profile.profileId;
+    adminChangePasswordModal.value.isOpen = true;
+}
+
 // * Watches
 watch(
     [() => pageConfig.currentPage, () => pageConfig.pageSize],
@@ -180,27 +190,20 @@ const columns = [
 
 const selectedColumns = ref([...columns]);
 
-
-const items = (row: any) => [
+const items = (row: Instructor) => [
     [
         {
             label: 'Chi tiết',
             icon: 'mingcute:profile-line',
             click: nuxtToast,
         },
-    ],
-    [
-        {
-            label: 'Sửa',
-            icon: 'mingcute:edit-4-line',
-            click: nuxtToast,
-        },
         {
             label: 'Đổi mật khẩu',
             icon: 'mingcute:key-2-line',
-            click: nuxtToast,
+            click: () => {
+                openAdminChangePasswordModal(row);
+            },
         },
-
     ],
     [
         {
@@ -379,4 +382,7 @@ const items = (row: any) => [
             </template>
         </UCard>
     </UModal>
+
+    <AdminChangePassword @hideModal="adminChangePasswordModal.isOpen = false"
+                         :profileId="adminChangePasswordModal.profileId" :isOpen="adminChangePasswordModal.isOpen" />
 </template>

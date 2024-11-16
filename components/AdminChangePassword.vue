@@ -19,13 +19,15 @@ const changePasswordModal = ref({
 })
 
 const changePasswordState = reactive({
-    newPassword: undefined,
-    confirmPassword: undefined
+    newPassword: "",
+    confirmPassword: ""
 });
 
 // * Functions
 const hideModal = () => {
     changePasswordModal.value.isOpen = false;
+    changePasswordState.newPassword = "";
+    changePasswordState.confirmPassword = "";
     emit('hideModal');
 };
 
@@ -66,6 +68,7 @@ const submitChangePassword = async () => {
     }
 
     changePasswordModal.value.isSubmitting = false;
+    hideModal();
 };
 
 // * Watches
