@@ -9,7 +9,7 @@ const splitLines = computed(() => {
 </script>
 
 <template>
-    <p>
+    <p class="break-words">
         <p v-for="(line, index) in splitLines" :key="index">
             {{ line }}
         </p>

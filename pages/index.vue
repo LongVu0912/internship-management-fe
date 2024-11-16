@@ -77,7 +77,7 @@ const selectSkill = (skill: Skill) => {
                                         :ui="{ icon: { trailing: { pointer: 'pointer-events-auto', padding: { lg: 'px-1' } } } }">
                                     <template #trailing>
                                         <UButton color="primary"
-                                                 @click="nuxtToast"
+                                                 @click="navigateTo('/recruitment')"
                                                  class="rounded-md" label="Tìm kiếm" />
                                     </template>
                                 </UInput>

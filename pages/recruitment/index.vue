@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type Business from '~/types/business/Business';
 import { Filter } from '~/types/page_config/Filter';
 import { PageConfig } from '~/types/page_config/PageConfig';
 import type Recruitment from '~/types/recruitment/Recruitment';
@@ -10,14 +11,23 @@ definePageMeta({
 // * Imports
 const { $api } = useNuxtApp();
 const recruitmentRepository = RecruitmentRepository($api);
+const businessRepository = BusinessRepository($api);
 const nuxtToast = useNuxtToast();
 
 // * Refs
 const isDataLoading = ref(true);
-const titleFilter = ref(new Filter("title"));
 const pageConfig = reactive(new PageConfig());
-pageConfig.filters.push(titleFilter.value);
+pageConfig.filters.push(new Filter("title"));
+pageConfig.filters.push(new Filter("business.name"));
+pageConfig.filters.push(new Filter("location"));
 const recruitmentPaging = ref<Recruitment[]>();
+
+const searchLocation = ref('');
+
+const businessPageConfig = reactive(new PageConfig());
+businessPageConfig.filters.push(new Filter("name"));
+const selectedBusiness = ref<Business>({} as Business);
+const businessList = ref<Business[]>([]);
 
 // * Lifecycle
 onBeforeMount(async () => {
@@ -25,21 +35,13 @@ onBeforeMount(async () => {
     isDataLoading.value = false;
 })
 
-// * Watches
-watch(
-    [() => pageConfig.currentPage, () => pageConfig.pageSize],
-    async ([newCurrentPage, newPageSize], [oldCurrentPage, oldPageSize]) => {
-        if (newPageSize !== oldPageSize) {
-            pageConfig.currentPage = 1;
-        }
-        await fetchData();
-    }
-)
-
 // * Functions
 const fetchData = async () => {
     isDataLoading.value = true;
-    const apiResponse = await recruitmentRepository.getRecruitmentPaging(pageConfig);
+    pageConfig.filters[1].value = selectedBusiness?.value.name || '';
+    pageConfig.filters[2].value = searchLocation.value;
+
+    const apiResponse = await recruitmentRepository.getOpenRecruitmentPaging(pageConfig);
 
     if (apiResponse.code !== 200) {
         nuxtToast({
@@ -55,6 +57,21 @@ const fetchData = async () => {
     isDataLoading.value = false;
 }
 
+const fetchBusinessData = async () => {
+    const apiResponse = await businessRepository.getBusinessPaging(businessPageConfig);
+
+    if (apiResponse.code !== 200) {
+        nuxtToast({
+            description: apiResponse.message,
+            type: "error",
+        })
+        return false;
+    }
+
+    businessList.value = apiResponse.result.data;
+    return true;
+}
+
 const searchData = async () => {
     if (pageConfig.currentPage !== 1) {
         pageConfig.currentPage = 1;
@@ -62,6 +79,30 @@ const searchData = async () => {
         await fetchData();
     }
 }
+
+const searchInstructor = async (q: string) => {
+    businessPageConfig.filters[0].value = q;
+
+    await fetchBusinessData();
+
+    return businessList.value;
+}
+
+const clearFilters = () => {
+    selectedBusiness.value = {} as Business;
+    searchLocation.value = '';
+}
+
+// * Watches
+watch(
+    [() => pageConfig.currentPage, () => pageConfig.pageSize, () => selectedBusiness.value],
+    async ([newCurrentPage, newPageSize], [oldCurrentPage, oldPageSize]) => {
+        if (newPageSize !== oldPageSize) {
+            pageConfig.currentPage = 1;
+        }
+        await fetchData();
+    }
+)
 </script>
 
 <template>
@@ -70,26 +111,39 @@ const searchData = async () => {
             <div class="flex w-full flex-col gap-4 rounded-lg bg-white p-4 shadow-md dark:bg-gray-800">
                 <div>
                     <form @submit.prevent="searchData">
-                        <UInput icon="mingcute:search-2-fill" placeholder="Tìm theo tên công ty, tên công việc..."
+                        <UInput icon="mingcute:search-2-fill" placeholder="Tìm theo tên công việc..."
                                 v-model="pageConfig.filters[0].value"
                                 class="w-full"
-                                color="white"
-                                size="sm" :ui="{ icon: { trailing: { pointer: 'pointer-events-auto' } } }">
+                                size="md" :ui="{ icon: { trailing: { pointer: 'pointer-events-auto' } } }">
                             <template #trailing>
                                 <UButton icon="mingcute:search-2-fill" color="primary"
                                          type="submit"
-                                         class="-me-2.5 rounded-none rounded-r-md" />
+                                         size="md"
+                                         class="-me-3.5 rounded-none rounded-r-md" />
                             </template>
                         </UInput>
                     </form>
                 </div>
-                <div class="flex flex-row gap-2">
-                    <USelect class="w-1/2" icon="mingcute:building-3-line" color="white" size="sm"
-                             :options="['Tất cả nhà tuyển dụng', 'FPT Software', 'Viettel Cooperation', 'VNPT', 'VNG']"
-                             model-value="Tất cả nhà tuyển dụng" />
-                    <USelect class="w-1/2" icon="mingcute:book-3-line" color="white" size="sm"
-                             :options="['Tất cả ngành', 'Công nghệ thông tin', 'Cơ khí', 'Ngôn ngữ Anh', 'Kinh tế']"
-                             model-value="Tất cả ngành" />
+                <div class="flex flex-col gap-2 md:flex-row">
+                    <USelectMenu v-model="selectedBusiness" :searchable="searchInstructor"
+                                 icon="mingcute:building-3-line"
+                                 class="w-full" placeholder="Tìm kiếm giảng viên..." size="md" :debounce="200"
+                                 color="gray"
+                                 option-attribute="name">
+                        <template #label>
+                            <div>{{ selectedBusiness.name || "Tất cả công ty" }}</div>
+                        </template>
+                        <template #option="{ option: business }">
+                            <div>{{ business.name }}</div>
+                        </template>
+                    </USelectMenu>
+                    <UInput v-model="searchLocation" icon="mingcute:location-3-line" placeholder="Tìm theo vị trí..."
+                            class="w-full"
+                            size="md" :ui="{ icon: { trailing: { pointer: 'pointer-events-auto' } } }">
+                    </UInput>
+                    <div class="flex justify-end">
+                        <UButton icon="mingcute:delete-2-line" color="primary" @click="clearFilters" />
+                    </div>
                 </div>
             </div>
             <div
@@ -107,8 +161,7 @@ const searchData = async () => {
                 <div v-for="recruitment in recruitmentPaging"
                      class="hover:border-primary-500 dark:hover:border-primary-500 flex h-auto w-full transform flex-row gap-4 self-center rounded-lg bg-white p-4 shadow-md transition-transform duration-300 hover:scale-105 dark:bg-gray-800">
                     <div class="flex flex-shrink-0 items-center">
-                        <NuxtImg src="/job.png" class="h-16 w-16 rounded-full md:h-32 md:w-32" quality="80"
-                                 alt="job" />
+                        <NuxtImg src="/job.png" class="h-16 w-16 rounded-full md:h-32 md:w-32" quality="80" alt="job" />
                     </div>
                     <div class="flex w-full flex-col justify-between gap-4">
                         <div class="flex flex-col justify-between gap-2">

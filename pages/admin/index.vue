@@ -2,6 +2,7 @@
 import { Filter } from '~/types/page_config/Filter';
 import { Order } from '~/types/page_config/Order';
 import { PageConfig } from '~/types/page_config/PageConfig';
+import type Profile from '~/types/profile/Profile';
 import type Student from '~/types/student/Student';
 
 definePageMeta({
@@ -20,6 +21,20 @@ const inputModel = ref({
     isOpen: false,
     isSendingRequest: false,
 });
+
+const changePasswordModal = ref({
+    isOpen: false,
+    isSubmitting: false,
+    profileId: '',
+    newPassword: '',
+    confirmPassword: '',
+})
+
+const adminChangePasswordModal = ref({
+    isOpen: false,
+    profileId: '',
+})
+
 const excelFile = ref<File | null>(null);
 
 const sort = ref<any>({
@@ -104,6 +119,19 @@ const searchTable = async () => {
     }
 }
 
+const handleChangePassword = () => {
+    changePasswordModal.value.isSubmitting = true;
+
+    console.log(changePasswordModal.value);
+
+    changePasswordModal.value.isSubmitting = false;
+}
+
+const openAdminChangePasswordModal = (row: any) => {
+    adminChangePasswordModal.value.profileId = row.profile.profileId;
+    adminChangePasswordModal.value.isOpen = true;
+}
+
 // * Watches
 watch(
     [() => pageConfig.currentPage, () => pageConfig.pageSize],
@@ -179,7 +207,9 @@ const items = (row: any) => [
         {
             label: 'Đổi mật khẩu',
             icon: 'mingcute:key-2-line',
-            click: nuxtToast,
+            click: () => {
+                openAdminChangePasswordModal(row);
+            },
         },
         {
             label: 'Dừng hoạt động',
@@ -328,4 +358,44 @@ const items = (row: any) => [
             </template>
         </UCard>
     </UModal>
+
+    <UModal v-model="changePasswordModal.isOpen" prevent-close>
+        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <div class="text-base font-semibold">
+                        Đổi mật khẩu
+                    </div>
+                    <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                             @click="changePasswordModal.isOpen = false" />
+                </div>
+            </template>
+
+            <div class="space-y-4">
+                <div class="w-full space-y-1">
+                    <div class="font-medium">Mật khẩu mới</div>
+                    <UInput size="lg" v-model="changePasswordModal.newPassword" type="password"
+                            icon="mingcute:mail-line" />
+                </div>
+
+                <div class="w-full space-y-1">
+                    <div class="font-medium">Xác nhận mật khẩu</div>
+                    <UInput size="lg" v-model="changePasswordModal.confirmPassword" type="password"
+                            icon="mingcute:mail-line" />
+                </div>
+            </div>
+
+            <template #footer>
+                <UButton :loading="changePasswordModal.isSubmitting" class="w-full rounded-md" size="lg" color="primary"
+                         type="submit"
+                         @click="handleChangePassword"
+                         block>
+                    Đổi mật khẩu
+                </UButton>
+            </template>
+        </UCard>
+    </UModal>
+
+    <AdminChangePassword @hideModal="adminChangePasswordModal.isOpen = false"
+                         :profileId="adminChangePasswordModal.profileId" :isOpen="adminChangePasswordModal.isOpen" />
 </template>

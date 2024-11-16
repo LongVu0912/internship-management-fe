@@ -16,8 +16,6 @@ const backendUrl = window.localStorage.getItem("backendUrl") || useRuntimeConfig
 
 // * Refs
 const isPageLoading = ref(true);
-const isConfirmDialogOpen = ref(false);
-const isUpdating = ref(false);
 
 const student = ref<Student>({} as Student);
 

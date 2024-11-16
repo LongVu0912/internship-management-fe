@@ -12,9 +12,9 @@ const sidebarState = useSidebarState();
                      variant="ghost"
                      aria-label="Theme"
                      @click="sidebarState = true" />
-            <div class="ml-4 hidden font-bold lg:block">
+            <ULink to="/" class="ml-4 hidden font-bold lg:block">
                 TRƯỜNG ĐẠI HỌC SƯ PHẠM KỸ THUẬT TP.HCM
-            </div>
+            </ULink>
         </div>
 
         <div>

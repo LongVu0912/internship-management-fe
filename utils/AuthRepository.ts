@@ -121,6 +121,25 @@ export const AuthRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         }
     };
 
+    const adminChangePassword = async (payload: {
+        profileId: string;
+        newPassword: string;
+    }): Promise<ApiResponse> => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/profile/AdminChangePassword/${payload.profileId}`,
+                {
+                    method: "POST",
+                    body: JSON.stringify(payload.newPassword),
+                }
+            );
+
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
     return {
         login,
         logout,
@@ -128,5 +147,6 @@ export const AuthRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         saveTokenToCookie,
         getProfileName,
         changePassword,
+        adminChangePassword,
     };
 };

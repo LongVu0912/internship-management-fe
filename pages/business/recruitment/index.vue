@@ -138,6 +138,11 @@ const handleUpdateRecruitment = async () => {
     updateRecruitmentModal.value.isOpen = false;
 }
 
+const closeUpdateModal = async () => {
+    await fetchTableData();
+    updateRecruitmentModal.value.isOpen = false;
+}
+
 // * Watches
 watch(
     [() => pageConfig.currentPage, () => pageConfig.pageSize],
@@ -452,7 +457,7 @@ const selectedColumns = ref([...columns]);
 
             <template #footer>
                 <div class="flex justify-end">
-                    <UButton class="mr-2" color="gray" variant="ghost" @click="createRecruitmentModal.isOpen = false">
+                    <UButton class="mr-2" color="gray" variant="ghost" @click="closeUpdateModal">
                         Huỷ
                     </UButton>
                     <UButton color="primary" @click="handleUpdateRecruitment"

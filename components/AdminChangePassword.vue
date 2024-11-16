@@ -1,4 +1,11 @@
 <script setup lang="ts">
+// ? Emit event to parent component to close dialog
+const emit = defineEmits(['hideModal']);
+
+const props = defineProps<{
+    isOpen: boolean;
+    profileId: string;
+}>();
 
 // * Imports
 const { $apiToken } = useNuxtApp();
@@ -6,18 +13,24 @@ const nuxtToast = useNuxtToast();
 const authRepository = AuthRepository($apiToken);
 
 // * Refs
-const isChangePasswordModalOpen = ref(false);
-const isSubmitting = ref(false);
+const changePasswordModal = ref({
+    isOpen: false,
+    isSubmitting: false,
+})
 
 const changePasswordState = reactive({
-    oldPassword: undefined,
     newPassword: undefined,
     confirmPassword: undefined
 });
 
 // * Functions
+const hideModal = () => {
+    changePasswordModal.value.isOpen = false;
+    emit('hideModal');
+};
+
 const submitChangePassword = async () => {
-    if (!changePasswordState.oldPassword || !changePasswordState.newPassword || !changePasswordState.confirmPassword) {
+    if (!changePasswordState.newPassword || !changePasswordState.confirmPassword) {
         nuxtToast({
             description: "Hãy nhập đầy đủ thông tin",
             type: "info",
@@ -33,18 +46,10 @@ const submitChangePassword = async () => {
         return;
     }
 
-    if (changePasswordState.oldPassword == changePasswordState.newPassword) {
-        nuxtToast({
-            description: "Mật khẩu mới không được trùng với mật khẩu cũ",
-            type: "error",
-        });
-        return;
-    }
+    changePasswordModal.value.isSubmitting = true;
 
-    isSubmitting.value = true;
-
-    const apiResponse = await authRepository.changePassword({
-        oldPassword: changePasswordState.oldPassword,
+    const apiResponse = await authRepository.adminChangePassword({
+        profileId: props.profileId,
         newPassword: changePasswordState.newPassword,
     });
 
@@ -53,23 +58,24 @@ const submitChangePassword = async () => {
             description: "Đổi mật khẩu thành công",
             type: "success",
         });
-        isChangePasswordModalOpen.value = false;
     } else {
         nuxtToast({
             description: apiResponse.message,
             type: 'error',
         });
     }
-    isSubmitting.value = false;
+
+    changePasswordModal.value.isSubmitting = false;
 };
+
+// * Watches
+watch(() => props.isOpen, (newValue) => {
+    changePasswordModal.value.isOpen = newValue;
+});
 </script>
 
 <template>
-    <UButton color="primary" @click="isChangePasswordModalOpen = true">
-        Đổi mật khẩu
-    </UButton>
-
-    <UModal v-model="isChangePasswordModalOpen" prevent-close>
+    <UModal v-model="changePasswordModal.isOpen" prevent-close>
         <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
             <template #header>
                 <div class="flex items-center justify-between">
@@ -77,27 +83,23 @@ const submitChangePassword = async () => {
                         Đổi mật khẩu
                     </div>
                     <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
-                             @click="isChangePasswordModalOpen = false" />
+                             @click="hideModal" />
                 </div>
             </template>
 
-            <div class="flex w-full flex-col justify-start">
-                <div class="mb-2 text-sm font-medium">Mật khẩu cũ</div>
-                <UInput v-model="changePasswordState.oldPassword" type="password" icon="mingcute:key-2-line" size="lg"
-                        color="gray"
-                        autocomplete="on" />
-                <div class="mb-2 mt-4 text-sm font-medium">Mật khẩu mới</div>
-                <UInput v-model="changePasswordState.newPassword" type="password" icon="mingcute:key-1-line" size="lg"
+            <div class="space-y-2">
+                <div class="mb-2 text-sm font-medium">Mật khẩu mới</div>
+                <UInput v-model="changePasswordState.newPassword" type="password" icon="mingcute:key-2-line" size="lg"
                         color="gray"
                         autocomplete="on" />
                 <div class="mb-2 mt-4 text-sm font-medium">Xác nhận mật khẩu</div>
-                <UInput v-model="changePasswordState.confirmPassword" type="password" icon="mingcute:key-1-line"
+                <UInput v-model="changePasswordState.confirmPassword" type="password" icon="mingcute:key-2-line"
                         size="lg"
                         color="gray" autocomplete="on" />
             </div>
 
             <template #footer>
-                <UButton :loading="isSubmitting" class="w-full rounded-md" size="lg" color="primary"
+                <UButton :loading="changePasswordModal.isSubmitting" class="w-full rounded-md" size="lg" color="primary"
                          type="submit"
                          @click="submitChangePassword"
                          block>

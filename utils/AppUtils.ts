@@ -34,9 +34,22 @@ export const AppUtils = () => {
         return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     };
 
+    const subLongText = (text: string, maxLength: number = 20): string => {
+        if (text === null || text === undefined) {
+            return "";
+        }
+
+        if (text.length <= maxLength) {
+            return text;
+        }
+
+        return text.substring(0, maxLength) + "...";
+    };
+
     return {
         convertStatus,
         statusBadge,
         convertDateToString,
+        subLongText
     };
 };

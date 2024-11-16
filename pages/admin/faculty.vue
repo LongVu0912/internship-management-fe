@@ -113,7 +113,7 @@ const handleSaveFaculty = async () => {
     }
     else {
         nuxtToast({
-            description: "Tạo tài khoản thành công",
+            description: "Lưu khoa thành công",
             type: "success",
         });
         saveFacultyModal.value.isOpen = false;

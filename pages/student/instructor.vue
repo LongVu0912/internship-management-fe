@@ -194,9 +194,15 @@ const selectedColumns = ref([...columns]);
 const items = (row: any) => [
     [
         {
-            label: 'Chi tiết',
+            label: 'Thông tin giảng viên',
             icon: 'mingcute:profile-line',
-            click: nuxtToast,
+            click: () => {
+                navigateTo(`/instructor/${row.instructor.instructorId}`, {
+                    open: {
+                        target: '_blank',
+                    }
+                })
+            },
         },
     ],
     [
@@ -276,7 +282,7 @@ const items = (row: any) => [
 
                 <template #messageToInstructor-data="{ row }">
                     <div @click="openMessageModal(row.messageToInstructor)" class="cursor-pointer">
-                        {{ row.messageToInstructor.substring(0, 20) + '...' }}
+                        {{ appUtils.subLongText(row.messageToInstructor) }}
                     </div>
                 </template>
 

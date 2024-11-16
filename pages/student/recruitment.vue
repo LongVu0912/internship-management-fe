@@ -203,7 +203,7 @@ const items = (row: any) => [
 
                 <template #messageToBusiness-data="{ row }">
                     <div @click="openMessageModal(row.messageToBusiness)" class="cursor-pointer">
-                        {{ row.messageToBusiness.substring(0, 20) + '...' }}
+                        {{ appUtils.subLongText(row.messageToBusiness) }}
                     </div>
                 </template>
 
