@@ -208,6 +208,10 @@ const selectedColumns = ref([...columns]);
 
 <template>
     <div class="flex flex-col gap-2">
+        <div class="flex justify-end">
+            <CreateStudent />
+        </div>
+
         <UCard class="w-full" :ui="{
             divide: 'divide-y divide-gray-200 dark:divide-gray-700',
             header: { padding: 'px-4 py-5' },

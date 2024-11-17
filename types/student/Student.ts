@@ -9,4 +9,5 @@ export default interface Student {
     classId: string;
     profile: Profile;
     major: Major;
+    majorId?: string;
 }

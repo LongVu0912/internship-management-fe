@@ -233,8 +233,7 @@ const items = (row: Student) => [
             <div class="flex flex-col gap-2 md:flex-row">
                 <UButton icon="mingcute:new-folder-line" color="primary" @click="inputModel.isOpen = true"
                          label="Nhập sinh viên" />
-                <UButton icon="mingcute:add-circle-line" color="primary" @click="nuxtToast"
-                         label="Thêm sinh viên" />
+                <CreateStudent />
             </div>
         </div>
 
