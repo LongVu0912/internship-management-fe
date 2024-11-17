@@ -1,8 +1,4 @@
 <template>
-    <Head>
-        <Title>HCMUTE INTERNSHIP</Title>
-        <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    </Head>
     <NuxtLoadingIndicator color="primary" />
     <NuxtLayout>
         <NuxtPage />

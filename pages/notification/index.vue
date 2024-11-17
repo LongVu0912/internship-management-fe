@@ -24,6 +24,7 @@ const isTableLoading = ref(false);
 const notificationModal = ref({
     isOpen: false,
     content: '',
+    path: '',
 })
 
 const sort = ref<any>({
@@ -63,6 +64,7 @@ const openNotificationModal = async (notification: Notification) => {
     }
 
     notificationModal.value.content = notification.content;
+    notificationModal.value.path = notification.path;
     notificationModal.value.isOpen = true;
 }
 
@@ -166,6 +168,8 @@ const columns = [
 
             <div class="py-2">
                 <NewLineText :text="notificationModal.content" />
+                <UButton size="lg" color="primary" variant="link" target="_blank" :padded="false"
+                         :to="notificationModal.path" label="Link" />
             </div>
         </UCard>
     </UModal>

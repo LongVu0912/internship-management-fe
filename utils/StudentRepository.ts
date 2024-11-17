@@ -153,6 +153,21 @@ export const StudentRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         }
     };
 
+    const createStudent = async (payload: Student) => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/student/CreateStudent`,
+                {
+                    method: "POST",
+                    body: JSON.stringify(payload),
+                }
+            );
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
     return {
         getStudentProfile,
         getStudentProfileById,
@@ -163,5 +178,6 @@ export const StudentRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         getAllStudentInstructorsRequestPaging,
         getAllStudentRecruitmentsRequestPaging,
         requestInstructor,
+        createStudent
     };
 };

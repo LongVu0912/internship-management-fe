@@ -22,7 +22,8 @@ const toggleMenu = () => {
                      @click="toggleMenu"
                      aria-label="Menu" />
             <div class="hidden items-center gap-2 md:flex">
-                <NuxtImg src="/hcmute.png" width="40" height="40" quality="80"
+                <NuxtImg src="/hcmute.png" width="40" height="40"
+                         format="webp"
                          alt="hcmute" />
                 <NuxtLink class="font-bold" to="/">
                     HCMUTE
