@@ -27,4 +27,45 @@ export default defineNuxtConfig({
         "@vueuse/nuxt",
         "@nuxt/image",
     ],
+    app: {
+        head: {
+            title: "HCMUTE INTERNSHIP",
+            link: [
+                {
+                    rel: "icon",
+                    type: "image/x-icon",
+                    href: "/favicon.ico",
+                },
+            ],
+            meta: [
+                {
+                    name: "viewport",
+                    content: "width=device-width, initial-scale=1",
+                },
+                {
+                    charset: "utf-8",
+                },
+                {
+                    name: "description",
+                    content: "HCMUTE Internship - Tìm kiếm thực tập HCMUTE",
+                },
+                {
+                    property: "og:image",
+                    content: "/hcmute.png",
+                },
+                {
+                    property: "og:title",
+                    content: "Tìm kiếm thực tập HCMUTE",
+                },
+                {
+                    property: "og:description",
+                    content: "HCMUTE Internship - Tìm kiếm thực tập HCMUTE",
+                },
+                {
+                    property: "og:type",
+                    content: "website",
+                },
+            ],
+        },
+    },
 });
