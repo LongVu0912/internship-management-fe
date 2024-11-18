@@ -27,6 +27,9 @@ export default defineNuxtConfig({
         "@vueuse/nuxt",
         "@nuxt/image",
     ],
+    image: {
+        quality: 80,
+    },
     app: {
         head: {
             title: "HCMUTE INTERNSHIP",

@@ -238,9 +238,8 @@ watch(faculty.value, async () => {
                     <div class="w-full space-y-1">
                         <div class="font-medium">Ngày sinh</div>
                         <UPopover class="w-full" :popper="{ placement: 'bottom-start' }">
-                            <UButton class="w-full" :label="format(new Date(), 'd MMM, yyy', { locale: vi })"
-                                     color="white"
-                                     size="md">
+                            <UButton class="w-full" :label="format(birthday, 'd MMM, yyy', { locale: vi })"
+                                     color="white" size="md">
                             </UButton>
 
                             <template #panel="{ close }">

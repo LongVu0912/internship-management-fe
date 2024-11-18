@@ -168,8 +168,8 @@ const columns = [
 
             <div class="py-2">
                 <NewLineText :text="notificationModal.content" />
-                <UButton size="lg" color="primary" variant="link" target="_blank" :padded="false"
-                         :to="notificationModal.path" label="Link" />
+                <UButton v-if="notificationModal.path != null" size="lg" color="primary" variant="link" target="_blank"
+                         :padded="false" :to="notificationModal.path" label="Link" />
             </div>
         </UCard>
     </UModal>
