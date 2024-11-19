@@ -49,6 +49,14 @@ const openConfirmDialog = async (recruitmentId: string) => {
 }
 
 const onDialogConfirm = async () => {
+    if (recruitmentRequest.value.messageToBusiness == '' || recruitmentRequest.value.messageToBusiness == undefined) {
+        nuxtToast({
+            description: "Tin nhắn không được để trống",
+            type: "info",
+        })
+        return;
+    }
+
     confirmDialog.value.isSendingRequest = true;
     const apiResponse = await recruitmentRepository.requestRecruitment(recruitmentRequest.value);
 
