@@ -214,7 +214,7 @@ watch(faculty.value, async () => {
                     </div>
                     <div class="w-full space-y-1">
                         <div class="font-medium">Mã số sinh viên</div>
-                        <UInput v-model="newStudent.profile.username" placeholder="nguyenvana" autocomplete="off" />
+                        <UInput v-model="newStudent.profile.username" placeholder="21110000" autocomplete="off" />
                     </div>
                 </div>
 
@@ -226,7 +226,7 @@ watch(faculty.value, async () => {
                     <div class="w-full space-y-1">
                         <div class="font-medium">Email</div>
                         <UInput type="email" v-model="newStudent.profile.email"
-                                placeholder="nguyenvana@hcmute.edu.vn" />
+                                placeholder="21110000@student.hcmute.edu.vn" />
                     </div>
                 </div>
 
@@ -238,9 +238,8 @@ watch(faculty.value, async () => {
                     <div class="w-full space-y-1">
                         <div class="font-medium">Ngày sinh</div>
                         <UPopover class="w-full" :popper="{ placement: 'bottom-start' }">
-                            <UButton class="w-full" :label="format(new Date(), 'd MMM, yyy', { locale: vi })"
-                                     color="white"
-                                     size="md">
+                            <UButton class="w-full" :label="format(birthday, 'd MMM, yyy', { locale: vi })"
+                                     color="white" size="md">
                             </UButton>
 
                             <template #panel="{ close }">

@@ -190,7 +190,7 @@ const handleUpdateProfile = async () => {
                                     <div class="flex flex-col">
                                         <div class="font-bold">Email</div>
                                         <div>
-                                            {{ student?.profile.email }}
+                                            {{ student?.profile.email ? student?.profile.email : 'N/A' }}
                                         </div>
                                     </div>
                                 </div>
@@ -199,7 +199,7 @@ const handleUpdateProfile = async () => {
                                     <div class="flex flex-col">
                                         <div class="font-bold">Số điện thoại</div>
                                         <div>
-                                            {{ student?.profile.phoneNumber }}
+                                            {{ student?.profile.phoneNumber ? student?.profile.phoneNumber : 'N/A' }}
                                         </div>
                                     </div>
                                 </div>
@@ -219,7 +219,7 @@ const handleUpdateProfile = async () => {
                                     <div class="flex flex-col">
                                         <div class="font-bold">Khóa</div>
                                         <div>
-                                            {{ student?.year.toString() }}
+                                            {{ student?.year ? student.year.toString() : 'N/A' }}
                                         </div>
                                     </div>
                                 </div>

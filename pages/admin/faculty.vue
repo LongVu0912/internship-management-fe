@@ -124,7 +124,7 @@ const handleSaveFaculty = async () => {
 }
 
 const handleEditMajor = async (index: any) => {
-    if (majorList.value && (majorList.value[index].facultyId == null || majorList.value[index].facultyId == '')) {
+    if (majorList.value && (majorList.value[index].facultyId == null || majorList.value[index].facultyId == '' || majorList.value[index].name == '')) {
         nuxtToast({
             description: "Không được để trống thông tin",
             type: "info",
@@ -168,6 +168,14 @@ const handleCreateMajor = async (index: any) => {
         majorModal.value.isCreatingMajor = true;
     }
     else {
+        if (majorModal.value.newMajor.name == '') {
+            nuxtToast({
+                description: "Tên ngành không được để trống",
+                type: "info",
+            })
+            return;
+        }
+
         majorModal.value.newMajor.majorId = '';
         majorModal.value.newMajor.facultyId = majorModal.value.currentFacultyId;
         const apiResponse = await facultyRepository.saveMajor(majorModal.value.newMajor);

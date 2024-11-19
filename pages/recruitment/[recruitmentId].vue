@@ -16,7 +16,10 @@ const route = useRoute();
 
 // * Refs
 const isPageLoading = ref(true);
-const isConfirmDialogOpen = ref(false);
+const confirmDialog = ref({
+    isOpen: false,
+    isSendingRequest: false,
+})
 
 const recruitment = ref<Recruitment>();
 const recruitmentRequest = ref<RecruitmentRequest>({} as RecruitmentRequest);
@@ -42,10 +45,19 @@ onBeforeMount(async () => {
 // * Functions
 const openConfirmDialog = async (recruitmentId: string) => {
     recruitmentRequest.value.recruitmentId = recruitmentId;
-    isConfirmDialogOpen.value = true;
+    confirmDialog.value.isOpen = true;
 }
 
 const onDialogConfirm = async () => {
+    if (recruitmentRequest.value.messageToBusiness == '' || recruitmentRequest.value.messageToBusiness == undefined) {
+        nuxtToast({
+            description: "Tin nhắn không được để trống",
+            type: "info",
+        })
+        return;
+    }
+
+    confirmDialog.value.isSendingRequest = true;
     const apiResponse = await recruitmentRepository.requestRecruitment(recruitmentRequest.value);
 
     if (apiResponse.code !== 200 || apiResponse.result === false) {
@@ -59,12 +71,15 @@ const onDialogConfirm = async () => {
             description: 'Gửi yêu cầu thành công',
             type: 'success',
         });
-        isConfirmDialogOpen.value = false;
+        confirmDialog.value.isOpen = false;
     }
+
+    confirmDialog.value.isSendingRequest = false;
 }
 
 const onDialogCancel = () => {
-    isConfirmDialogOpen.value = false;
+    recruitmentRequest.value = {} as RecruitmentRequest;
+    confirmDialog.value.isOpen = false;
 }
 </script>
 
@@ -161,7 +176,7 @@ const onDialogCancel = () => {
         </UCard>
     </div>
 
-    <UModal v-model="isConfirmDialogOpen" prevent-close>
+    <UModal v-model="confirmDialog.isOpen" prevent-close>
         <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
             <template #header>
                 <div class="flex items-center justify-between">
@@ -169,7 +184,7 @@ const onDialogCancel = () => {
                         Bạn có chắc muốn ứng tuyển công việc này?
                     </div>
                     <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
-                             @click="isConfirmDialogOpen = false" />
+                             @click="onDialogCancel" />
                 </div>
             </template>
 
@@ -184,7 +199,7 @@ const onDialogCancel = () => {
                     <UButton class="mr-2" color="gray" variant="ghost" @click="onDialogCancel">
                         Huỷ
                     </UButton>
-                    <UButton color="primary" @click="onDialogConfirm">
+                    <UButton :loading="confirmDialog.isSendingRequest" color="primary" @click="onDialogConfirm">
                         Xác nhận
                     </UButton>
                 </div>
