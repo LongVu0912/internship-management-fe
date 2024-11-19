@@ -94,7 +94,7 @@ const rejectRequest = async (instructorRequestId: string) => {
     }
     else {
         nuxtToast({
-            description: "Đồng ý thành công",
+            description: "Từ chối thành công",
             type: 'success',
         });
         fetchTableData();
