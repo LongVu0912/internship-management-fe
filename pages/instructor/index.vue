@@ -49,6 +49,7 @@ const fetchData = async () => {
 
 const handleUpdateProfile = async () => {
     updateModal.value.isSubmitting = true;
+    instructor.value.facultyId = instructor.value.faculty.facultyId;
     const apiResponse = await instructorRepository.updateInstructor(instructor.value);
 
     if (apiResponse.code !== 200) {
