@@ -49,7 +49,7 @@ const openConfirmDialog = async (recruitmentId: string) => {
 }
 
 const onDialogConfirm = async () => {
-    if (recruitmentRequest.value.messageToBusiness == '' || recruitmentRequest.value.messageToBusiness == undefined) {
+    if (!recruitmentRequest.value.messageToBusiness) {
         nuxtToast({
             description: "Tin nhắn không được để trống",
             type: "info",
@@ -177,33 +177,38 @@ const onDialogCancel = () => {
     </div>
 
     <UModal v-model="confirmDialog.isOpen" prevent-close>
-        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <div class="text-base font-semibold">
-                        Bạn có chắc muốn ứng tuyển công việc này?
+        <form @submit.prevent="onDialogConfirm">
+            <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <div class="text-base font-semibold">
+                            Bạn có chắc muốn ứng tuyển công việc này?
+                        </div>
+                        <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                                 @click="onDialogCancel" />
                     </div>
-                    <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
-                             @click="onDialogCancel" />
-                </div>
-            </template>
+                </template>
 
-            <div class="w-full space-y-1 py-2">
-                <div class="mb-2 text-base font-medium">Tin nhắn tới doanh nghiệp</div>
-                <UTextarea :rows="5" v-model="recruitmentRequest.messageToBusiness" type="text" size="lg" color="gray"
-                           placeholder="Viết giới thiệu ngắn gọn về bản thân (điểm mạnh, điểm yếu) và nêu rõ mong muốn, lý do bạn muốn ứng tuyển cho vị trí này." />
-            </div>
-
-            <template #footer>
-                <div class="flex justify-end">
-                    <UButton class="mr-2" color="gray" variant="ghost" @click="onDialogCancel">
-                        Huỷ
-                    </UButton>
-                    <UButton :loading="confirmDialog.isSendingRequest" color="primary" @click="onDialogConfirm">
-                        Xác nhận
-                    </UButton>
+                <div class="w-full space-y-1 py-2">
+                    <div class="mb-2 text-base font-medium">Tin nhắn tới doanh nghiệp</div>
+                    <UTextarea :rows="5" v-model="recruitmentRequest.messageToBusiness" type="text" size="lg"
+                               color="gray"
+                               aria-required="true"
+                               required
+                               placeholder="Viết giới thiệu ngắn gọn về bản thân (điểm mạnh, điểm yếu) và nêu rõ mong muốn, lý do bạn muốn ứng tuyển cho vị trí này." />
                 </div>
-            </template>
-        </UCard>
+
+                <template #footer>
+                    <div class="flex justify-end">
+                        <UButton class="mr-2" color="gray" variant="ghost" @click="onDialogCancel">
+                            Huỷ
+                        </UButton>
+                        <UButton :loading="confirmDialog.isSendingRequest" color="primary" type="submit">
+                            Xác nhận
+                        </UButton>
+                    </div>
+                </template>
+            </UCard>
+        </form>
     </UModal>
 </template>
