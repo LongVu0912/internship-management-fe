@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type GradePoint from '~/types/business/GradePoint';
 import BusinessStatus from '~/types/enums/BusinessStatus';
 import { Filter } from '~/types/page_config/Filter';
 import { Order } from '~/types/page_config/Order';
@@ -13,6 +14,7 @@ definePageMeta({
 // * Imports
 const { $apiToken } = useNuxtApp();
 const recruitmentRepository = RecruitmentRepository($apiToken);
+const businessRepository = BusinessRepository($apiToken);
 const appUtils = AppUtils();
 const nuxtToast = useNuxtToast();
 const route = useRoute();
@@ -30,6 +32,12 @@ const confirmDialog = ref({
 const messageModal = ref({
     isOpen: false,
     message: '',
+})
+
+const gradePointModal = ref({
+    isOpen: false,
+    isSubmitting: false,
+    gradePoint: {} as GradePoint,
 })
 
 const sort = ref<any>({
@@ -142,6 +150,41 @@ const onDialogConfirm = () => {
     confirmDialog.value.isOpen = false;
 }
 
+const openGradePointModal = (studentRequestRecruitment: StudentRequestRecruitment) => {
+    gradePointModal.value.gradePoint.recruitmentRequestId = studentRequestRecruitment.recruitmentRequestId || '';
+    gradePointModal.value.isOpen = true;
+}
+
+const handleGradePoint = async () => {
+    if (gradePointModal.value.gradePoint.point < 0 || gradePointModal.value.gradePoint.point > 10) {
+        nuxtToast({
+            description: "Điểm phải từ 0 đến 10",
+            type: "info"
+        })
+        return;
+    }
+
+    gradePointModal.value.isSubmitting = true;
+
+    const apiResponse = await businessRepository.gradePoint(gradePointModal.value.gradePoint);
+
+    if (apiResponse.code !== 200) {
+        nuxtToast({
+            description: apiResponse.message,
+            type: "error",
+        })
+    }
+    else {
+        nuxtToast({
+            description: "Chấm điểm thành công",
+            type: 'success',
+        });
+        fetchTableData();
+    }
+
+    gradePointModal.value.isSubmitting = false;
+}
+
 // * Watches
 watch(
     [() => pageConfig.currentPage, () => pageConfig.pageSize],
@@ -180,6 +223,11 @@ const columns = [
         key: 'messageToBusiness',
         label: 'Tin nhắn',
         sortable: true
+    },
+    {
+        key: 'grade',
+        label: 'Chấm điểm',
+        class: "text-center"
     },
     {
         key: 'actions',
@@ -249,7 +297,7 @@ const selectedColumns = ref([...columns]);
                                  icon="mingcute:rows-3-line" :placeholder="pageConfig.pageSize.toString()">
                     </USelectMenu>
                     <UPagination :max="7" v-model="pageConfig.currentPage" :page-count="pageConfig.pageSize"
-                                 :total="pageConfig.totalRecords" />
+                                 :total="pageConfig.totalRecords" :disabled="isTableLoading" />
                 </div>
             </div>
 
@@ -273,6 +321,13 @@ const selectedColumns = ref([...columns]);
                 <template #messageToBusiness-data="{ row }">
                     <div @click="openMessageModal(row.messageToBusiness)" class="cursor-pointer">
                         {{ appUtils.subLongText(row.messageToBusiness) }}
+                    </div>
+                </template>
+
+                <template #grade-data="{ row }">
+                    <div class="text-center">
+                        <UButton icon="mingcute:edit-2-line" v-if="row.businessStatus == BusinessStatus.APPROVED"
+                                 color="primary" variant="soft" @click="openGradePointModal(row)" />
                     </div>
                 </template>
 
@@ -301,6 +356,49 @@ const selectedColumns = ref([...columns]);
                 {{ messageModal.message }}
             </div>
         </UCard>
+    </UModal>
+
+    <UModal v-model="gradePointModal.isOpen" prevent-close>
+        <form @submit.prevent="handleGradePoint">
+            <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <div class="text-base font-semibold">
+                            Chấm điểm cho sinh viên
+                        </div>
+                        <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                                 @click="gradePointModal.isOpen = false" />
+                    </div>
+                </template>
+
+                <div class="space-y-4">
+                    <div class="w-full space-y-1">
+                        <div class="font-medium">Điểm</div>
+                        <UInput v-model="gradePointModal.gradePoint.point" size="lg" type="number" placeholder="10"
+                                required />
+                    </div>
+
+                    <div class="w-full space-y-1">
+                        <div class="font-medium">Tin nhắn tới sinh viên</div>
+                        <UTextarea :rows="5" v-model="gradePointModal.gradePoint.messageToStudent" type="text" size="lg"
+                                   color="gray" required placeholder="Đánh giá, nhận xét sinh viên" />
+                    </div>
+                </div>
+
+                <template #footer>
+                    <div class="flex justify-end">
+                        <div>
+                            <UButton :loading="gradePointModal.isSubmitting" class="w-full rounded-md" size="md"
+                                     color="primary"
+                                     type="submit"
+                                     block>
+                                Chấm điểm
+                            </UButton>
+                        </div>
+                    </div>
+                </template>
+            </UCard>
+        </form>
     </UModal>
 
     <ConfirmDialog :isOpen="confirmDialog.isOpen" :title="confirmDialog.title" :description="confirmDialog.description"

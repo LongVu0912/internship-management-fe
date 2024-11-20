@@ -130,7 +130,7 @@ const columns = [
                                  icon="mingcute:rows-3-line" :placeholder="pageConfig.pageSize.toString()">
                     </USelectMenu>
                     <UPagination :max="7" v-model="pageConfig.currentPage" :page-count="pageConfig.pageSize"
-                                 :total="pageConfig.totalRecords" />
+                                 :total="pageConfig.totalRecords" :disabled="isTableLoading" />
                 </div>
             </div>
 
@@ -169,7 +169,7 @@ const columns = [
             <div class="py-2">
                 <NewLineText :text="notificationModal.content" />
                 <UButton v-if="notificationModal.path != null" size="lg" color="primary" variant="link" target="_blank"
-                         :padded="false" :to="notificationModal.path" label="Link" />
+                         :padded="false" :to="notificationModal.path" label="Chi tiết" />
             </div>
         </UCard>
     </UModal>

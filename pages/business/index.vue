@@ -236,90 +236,81 @@ const handleUploadAvatar = async () => {
     </UCard>
 
     <UModal :ui="{ width: 'sm:max-w-3xl' }" v-model="updateModal.isOpen" prevent-close>
-        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <div class="text-base font-semibold">
-                        Cập nhật thông tin
+        <form @submit.prevent="handleUpdateProfile">
+            <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <div class="text-base font-semibold">
+                            Cập nhật thông tin
+                        </div>
+                        <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                                 @click="updateModal.isOpen = false" />
                     </div>
-                    <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
-                             @click="updateModal.isOpen = false" />
-                </div>
-            </template>
-
-            <div class="flex flex-col gap-3">
-                <div class="text-base font-bold">THÔNG TIN CÔNG TY</div>
-
-                <div class="space-y-1">
-                    <div class="font-medium">Tên công ty</div>
-                    <UInput v-model="business.name" />
-                </div>
-
-                <div class="space-y-1">
-                    <div class="font-medium">Địa điểm</div>
-                    <UInput v-model="business.location" />
-                </div>
-
-                <div class="space-y-1">
-                    <div class="font-medium">Website</div>
-                    <UInput v-model="business.businessWebsite" />
-                </div>
-
-                <div class="space-y-1">
-                    <div class="font-medium">Ngành</div>
-                    <UInput v-model="business.industry" />
-                </div>
-
-                <div class="flex flex-col gap-4 md:flex-row">
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Ngày làm việc</div>
-                        <UInput v-model="business.workingDay" />
+                </template>
+                <div class="flex flex-col gap-3">
+                    <div class="text-base font-bold">THÔNG TIN CÔNG TY</div>
+                    <div class="space-y-1">
+                        <div class="font-medium">Tên công ty</div>
+                        <UInput required v-model="business.name" />
                     </div>
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Giờ làm việc</div>
-                        <UInput v-model="business.workingHour" />
+                    <div class="space-y-1">
+                        <div class="font-medium">Địa điểm</div>
+                        <UInput required v-model="business.location" />
                     </div>
-                </div>
-
-                <div class="w-full space-y-1">
-                    <div class="font-medium">Tổng quát</div>
-                    <UTextarea size="lg" color="gray" :rows="5" class="w-full" v-model="business.overview">
-                    </UTextarea>
-                </div>
-
-                <UDivider size="xs" class="my-2" />
-
-                <div class="text-base font-semibold">TÀI KHOẢN QUẢN LÝ</div>
-
-                <div class="flex flex-col gap-4 md:flex-row">
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Số điện thoại</div>
-                        <UInput v-model="business.managedBy.phoneNumber" />
+                    <div class="space-y-1">
+                        <div class="font-medium">Website</div>
+                        <UInput required v-model="business.businessWebsite" />
+                    </div>
+                    <div class="space-y-1">
+                        <div class="font-medium">Ngành</div>
+                        <UInput required v-model="business.industry" />
+                    </div>
+                    <div class="flex flex-col gap-4 md:flex-row">
+                        <div class="w-full space-y-1">
+                            <div class="font-medium">Ngày làm việc</div>
+                            <UInput required v-model="business.workingDay" />
+                        </div>
+                        <div class="w-full space-y-1">
+                            <div class="font-medium">Giờ làm việc</div>
+                            <UInput required v-model="business.workingHour" />
+                        </div>
                     </div>
                     <div class="w-full space-y-1">
-                        <div class="font-medium">Giới tính</div>
-                        <USelect color="gray" size="md" :options="['Nữ', 'Nam']" v-model:model-value="gender" />
+                        <div class="font-medium">Tổng quát</div>
+                        <UTextarea required size="lg" color="gray" :rows="5" class="w-full" v-model="business.overview">
+                        </UTextarea>
+                    </div>
+                    <UDivider size="xs" class="my-2" />
+                    <div class="text-base font-semibold">TÀI KHOẢN QUẢN LÝ</div>
+                    <div class="flex flex-col gap-4 md:flex-row">
+                        <div class="w-full space-y-1">
+                            <div class="font-medium">Số điện thoại</div>
+                            <UInput required v-model="business.managedBy.phoneNumber" />
+                        </div>
+                        <div class="w-full space-y-1">
+                            <div class="font-medium">Giới tính</div>
+                            <USelect color="gray" size="md" :options="['Nữ', 'Nam']" v-model:model-value="gender" />
+                        </div>
+                    </div>
+                    <div class="w-full space-y-1">
+                        <div class="font-medium">Bio</div>
+                        <UTextarea required size="lg" color="gray" :rows="5" class="w-full"
+                                   v-model="business.managedBy.bio">
+                        </UTextarea>
                     </div>
                 </div>
-
-                <div class="w-full space-y-1">
-                    <div class="font-medium">Bio</div>
-                    <UTextarea size="lg" color="gray" :rows="5" class="w-full" v-model="business.managedBy.bio">
-                    </UTextarea>
-                </div>
-            </div>
-
-            <template #footer>
-                <div class="flex justify-end">
-                    <UButton class="mr-2" color="gray" variant="ghost" @click="updateModal.isOpen = false">
-                        Huỷ
-                    </UButton>
-                    <UButton color="primary" @click="handleUpdateProfile" :loading="updateModal.isSubmitting">
-                        Cập nhật
-                    </UButton>
-                </div>
-            </template>
-        </UCard>
+                <template #footer>
+                    <div class="flex justify-end">
+                        <UButton class="mr-2" color="gray" variant="ghost" @click="updateModal.isOpen = false">
+                            Huỷ
+                        </UButton>
+                        <UButton color="primary" type="submit" :loading="updateModal.isSubmitting">
+                            Cập nhật
+                        </UButton>
+                    </div>
+                </template>
+            </UCard>
+        </form>
     </UModal>
 
     <UModal v-model="avatarModal.isOpen" prevent-close>

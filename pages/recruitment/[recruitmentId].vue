@@ -21,6 +21,11 @@ const confirmDialog = ref({
     isSendingRequest: false,
 })
 
+const inviteStudentModal = ref({
+    isOpen: false,
+    isSubmitting: false
+})
+
 const recruitment = ref<Recruitment>();
 const recruitmentRequest = ref<RecruitmentRequest>({} as RecruitmentRequest);
 
@@ -49,14 +54,6 @@ const openConfirmDialog = async (recruitmentId: string) => {
 }
 
 const onDialogConfirm = async () => {
-    if (!recruitmentRequest.value.messageToBusiness) {
-        nuxtToast({
-            description: "Tin nhắn không được để trống",
-            type: "info",
-        })
-        return;
-    }
-
     confirmDialog.value.isSendingRequest = true;
     const apiResponse = await recruitmentRepository.requestRecruitment(recruitmentRequest.value);
 
@@ -81,6 +78,11 @@ const onDialogCancel = () => {
     recruitmentRequest.value = {} as RecruitmentRequest;
     confirmDialog.value.isOpen = false;
 }
+
+const closeInviteStudentModal = () => {
+    inviteStudentModal.value.isOpen = false;
+}
+
 </script>
 
 <template>
@@ -170,6 +172,11 @@ const onDialogCancel = () => {
                         <UButton v-if="useUserState().value.role === Role.ROLE_STUDENT" label="Ứng tuyển ngay" size="lg"
                                  color="primary"
                                  @click="openConfirmDialog(recruitment?.recruitmentId || '')" />
+
+                        <UButton v-if="useUserState().value.username == recruitment?.business.managedBy.username"
+                                 label="Mời sinh viên" size="lg"
+                                 color="primary"
+                                 @click="inviteStudentModal.isOpen = true" />
                     </div>
                 </div>
             </template>
@@ -193,8 +200,7 @@ const onDialogCancel = () => {
                     <div class="mb-2 text-base font-medium">Tin nhắn tới doanh nghiệp</div>
                     <UTextarea :rows="5" v-model="recruitmentRequest.messageToBusiness" type="text" size="lg"
                                color="gray"
-                               aria-required="true"
-                               required
+                               aria-required="true" required
                                placeholder="Viết giới thiệu ngắn gọn về bản thân (điểm mạnh, điểm yếu) và nêu rõ mong muốn, lý do bạn muốn ứng tuyển cho vị trí này." />
                 </div>
 
@@ -208,6 +214,26 @@ const onDialogCancel = () => {
                         </UButton>
                     </div>
                 </template>
+            </UCard>
+        </form>
+    </UModal>
+
+    <UModal :ui="{ width: 'sm:max-w-3xl' }" v-model="inviteStudentModal.isOpen" prevent-close>
+        <form @submit.prevent="onDialogConfirm">
+            <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <div class="text-base font-semibold">
+                            Mời sinh viên ứng tuyển vào công việc
+                        </div>
+                        <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                                 @click="closeInviteStudentModal" />
+                    </div>
+                </template>
+
+                <div class="w-full space-y-1 py-2">
+
+                </div>
             </UCard>
         </form>
     </UModal>

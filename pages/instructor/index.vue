@@ -146,46 +146,46 @@ const handleUpdateProfile = async () => {
     </UCard>
 
     <UModal :ui="{ width: 'sm:max-w-3xl' }" v-model="updateModal.isOpen" prevent-close>
-        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <div class="text-base font-semibold">
-                        Cập nhật thông tin
+        <form @submit.prevent="handleUpdateProfile">
+            <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <div class="text-base font-semibold">
+                            Cập nhật thông tin
+                        </div>
+                        <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                                 @click="updateModal.isOpen = false" />
                     </div>
-                    <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
-                             @click="updateModal.isOpen = false" />
-                </div>
-            </template>
-
-            <div class="flex flex-col gap-3">
-                <div class="flex flex-col gap-4 md:flex-row">
+                </template>
+                <div class="flex flex-col gap-3">
+                    <div class="flex flex-col gap-4 md:flex-row">
+                        <div class="w-full space-y-1">
+                            <div class="font-medium">Số điện thoại</div>
+                            <UInput required v-model="instructor.profile.phoneNumber" />
+                        </div>
+                        <div class="w-full space-y-1">
+                            <div class="font-medium">Giới tính</div>
+                            <USelect color="gray" size="md" :options="['Nữ', 'Nam']" v-model:model-value="gender" />
+                        </div>
+                    </div>
                     <div class="w-full space-y-1">
-                        <div class="font-medium">Số điện thoại</div>
-                        <UInput v-model="instructor.profile.phoneNumber" />
-                    </div>
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Giới tính</div>
-                        <USelect color="gray" size="md" :options="['Nữ', 'Nam']" v-model:model-value="gender" />
+                        <div class="font-medium">Bio</div>
+                        <UTextarea required size="lg" color="gray" :rows="5" class="w-full"
+                                   v-model="instructor.profile.bio">
+                        </UTextarea>
                     </div>
                 </div>
-
-                <div class="w-full space-y-1">
-                    <div class="font-medium">Bio</div>
-                    <UTextarea size="lg" color="gray" :rows="5" class="w-full" v-model="instructor.profile.bio">
-                    </UTextarea>
-                </div>
-            </div>
-
-            <template #footer>
-                <div class="flex justify-end">
-                    <UButton class="mr-2" color="gray" variant="ghost" @click="updateModal.isOpen = false">
-                        Huỷ
-                    </UButton>
-                    <UButton color="primary" @click="handleUpdateProfile" :loading="updateModal.isSubmitting">
-                        Cập nhật
-                    </UButton>
-                </div>
-            </template>
-        </UCard>
+                <template #footer>
+                    <div class="flex justify-end">
+                        <UButton class="mr-2" color="gray" variant="ghost" @click="updateModal.isOpen = false">
+                            Huỷ
+                        </UButton>
+                        <UButton color="primary" type="submit" :loading="updateModal.isSubmitting">
+                            Cập nhật
+                        </UButton>
+                    </div>
+                </template>
+            </UCard>
+        </form>
     </UModal>
 </template>

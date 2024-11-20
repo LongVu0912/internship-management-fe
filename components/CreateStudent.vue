@@ -163,123 +163,127 @@ watch(faculty.value, async () => {
     </UButton>
 
     <UModal :ui="{ width: 'sm:max-w-3xl' }" v-model="createStudentModal.isOpen" prevent-close>
-        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <div class="text-base font-semibold">
-                        Thêm học sinh
+        <form @submit.prevent="handleCreateStudent">
+            <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <div class="text-base font-semibold">
+                            Thêm học sinh
+                        </div>
+                        <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                                 @click="closeModal" />
                     </div>
-                    <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
-                             @click="closeModal" />
-                </div>
-            </template>
+                </template>
 
-            <div class="flex flex-col gap-3">
-                <div>
-                    <div class="font-medium">Khoa</div>
-                    <USelectMenu v-model="faculty.selectedFaculty" size="md" color="gray"
-                                 :options="faculty.facultyList">
-                        <template #label>
-                            <div>
-                                {{ (faculty.selectedFaculty.facultyId != undefined) ? `${faculty.selectedFaculty.facultyId} - ${faculty.selectedFaculty.name}` : "Chọn khoa" }}
-                            </div>
-                        </template>
-                        <template #option="{ option: faculty }">
-                            <div>{{ faculty.facultyId + ' - ' + faculty.name }}</div>
-                        </template>
-                    </USelectMenu>
-                </div>
-
-                <div>
-                    <div class="font-medium">Ngành</div>
-                    <USelectMenu v-model="major.selectedMajor"
-                                 :disabled="faculty.selectedFaculty.facultyId == undefined && !faculty.isLoading"
-                                 size="md" color="gray"
-                                 :options="major.majorList">
-                        <template #label>
-                            <div>
-                                {{ (major.selectedMajor.majorId != undefined) ? `${major.selectedMajor.name}` : "Chọn ngành" }}
-                            </div>
-                        </template>
-                        <template #option="{ option: major }">
-                            <div>{{ major.name }}</div>
-                        </template>
-                    </USelectMenu>
-                </div>
-
-                <div class="flex flex-col gap-4 md:flex-row">
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Họ tên</div>
-                        <UInput v-model="newStudent.profile.fullname" placeholder="Nguyễn Văn A" />
-                    </div>
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Mã số sinh viên</div>
-                        <UInput v-model="newStudent.profile.username" placeholder="21110000" autocomplete="off" />
-                    </div>
-                </div>
-
-                <div class="flex flex-col gap-4 md:flex-row">
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Mật khẩu</div>
-                        <UInput type="password" v-model="newStudent.profile.password" autocomplete="off" />
-                    </div>
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Email</div>
-                        <UInput type="email" v-model="newStudent.profile.email"
-                                placeholder="21110000@student.hcmute.edu.vn" />
-                    </div>
-                </div>
-
-                <div class="flex flex-col gap-4 md:flex-row">
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Năm học</div>
-                        <UInput v-model="newStudent.year" placeholder="2024" />
-                    </div>
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Ngày sinh</div>
-                        <UPopover class="w-full" :popper="{ placement: 'bottom-start' }">
-                            <UButton class="w-full" :label="format(birthday, 'd MMM, yyy', { locale: vi })"
-                                     color="white" size="md">
-                            </UButton>
-
-                            <template #panel="{ close }">
-                                <DatePicker class="w-full" v-model="birthday" @close="close" />
+                <div class="flex flex-col gap-3">
+                    <div>
+                        <div class="font-medium">Khoa</div>
+                        <USelectMenu required v-model="faculty.selectedFaculty" size="md" color="gray"
+                                     :options="faculty.facultyList">
+                            <template #label>
+                                <div>
+                                    {{ (faculty.selectedFaculty.facultyId != undefined) ? `${faculty.selectedFaculty.facultyId} - ${faculty.selectedFaculty.name}` : "Chọn khoa" }}
+                                </div>
                             </template>
-                        </UPopover>
+                            <template #option="{ option: faculty }">
+                                <div>{{ faculty.facultyId + ' - ' + faculty.name }}</div>
+                            </template>
+                        </USelectMenu>
                     </div>
-                </div>
 
-                <div class="flex flex-col gap-4 md:flex-row">
+                    <div>
+                        <div class="font-medium">Ngành</div>
+                        <USelectMenu required v-model="major.selectedMajor"
+                                     :disabled="faculty.selectedFaculty.facultyId == undefined && !faculty.isLoading"
+                                     size="md" color="gray"
+                                     :options="major.majorList">
+                            <template #label>
+                                <div>
+                                    {{ (major.selectedMajor.majorId != undefined) ? `${major.selectedMajor.name}` : "Chọn ngành" }}
+                                </div>
+                            </template>
+                            <template #option="{ option: major }">
+                                <div>{{ major.name }}</div>
+                            </template>
+                        </USelectMenu>
+                    </div>
+
+                    <div class="flex flex-col gap-4 md:flex-row">
+                        <div class="w-full space-y-1">
+                            <div class="font-medium">Họ tên</div>
+                            <UInput required v-model="newStudent.profile.fullname" placeholder="Nguyễn Văn A" />
+                        </div>
+                        <div class="w-full space-y-1">
+                            <div class="font-medium">Mã số sinh viên</div>
+                            <UInput required v-model="newStudent.profile.username" placeholder="21110000"
+                                    autocomplete="off" />
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-4 md:flex-row">
+                        <div class="w-full space-y-1">
+                            <div class="font-medium">Mật khẩu</div>
+                            <UInput required type="password" v-model="newStudent.profile.password" autocomplete="off" />
+                        </div>
+                        <div class="w-full space-y-1">
+                            <div class="font-medium">Email</div>
+                            <UInput required type="email" v-model="newStudent.profile.email"
+                                    placeholder="21110000@student.hcmute.edu.vn" />
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-4 md:flex-row">
+                        <div class="w-full space-y-1">
+                            <div class="font-medium">Năm học</div>
+                            <UInput required v-model="newStudent.year" placeholder="2024" />
+                        </div>
+                        <div class="w-full space-y-1">
+                            <div class="font-medium">Ngày sinh</div>
+                            <UPopover class="w-full" :popper="{ placement: 'bottom-start' }">
+                                <UButton class="w-full" :label="format(birthday, 'd MMM, yyy', { locale: vi })"
+                                         color="white" size="md">
+                                </UButton>
+
+                                <template #panel="{ close }">
+                                    <DatePicker class="w-full" v-model="birthday" @close="close" />
+                                </template>
+                            </UPopover>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-4 md:flex-row">
+                        <div class="w-full space-y-1">
+                            <div class="font-medium">Số điện thoại</div>
+                            <UInput v-model="newStudent.profile.phoneNumber" placeholder="09999999999" />
+                        </div>
+                        <div class="w-full space-y-1">
+                            <div class="font-medium">Giới tính</div>
+                            <USelect required color="gray" size="md" :options="['Nữ', 'Nam']"
+                                     v-model:model-value="gender" />
+                        </div>
+                    </div>
+
                     <div class="w-full space-y-1">
-                        <div class="font-medium">Số điện thoại</div>
-                        <UInput v-model="newStudent.profile.phoneNumber" placeholder="09999999999" />
-                    </div>
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Giới tính</div>
-                        <USelect color="gray" size="md" :options="['Nữ', 'Nam']" v-model:model-value="gender" />
+                        <div class="font-medium">Bio</div>
+                        <UTextarea size="lg" color="gray" :rows="5" class="w-full" v-model="newStudent.profile.bio"
+                                   placeholder="Giới thiệu ngắn về bản thân...">
+                        </UTextarea>
                     </div>
                 </div>
 
-                <div class="w-full space-y-1">
-                    <div class="font-medium">Bio</div>
-                    <UTextarea size="lg" color="gray" :rows="5" class="w-full" v-model="newStudent.profile.bio"
-                               placeholder="Giới thiệu ngắn về bản thân...">
-                    </UTextarea>
-                </div>
-            </div>
-
-            <template #footer>
-                <div class="flex justify-end">
-                    <UButton class="mr-2" color="gray" variant="ghost" @click="closeModal">
-                        Huỷ
-                    </UButton>
-                    <UButton color="primary"
-                             @click="handleCreateStudent"
-                             :loading="createStudentModal.isSubmitting">
-                        Tạo
-                    </UButton>
-                </div>
-            </template>
-        </UCard>
+                <template #footer>
+                    <div class="flex justify-end">
+                        <UButton class="mr-2" color="gray" variant="ghost" @click="closeModal">
+                            Huỷ
+                        </UButton>
+                        <UButton color="primary"
+                                 type="submit"
+                                 :loading="createStudentModal.isSubmitting">
+                            Tạo
+                        </UButton>
+                    </div>
+                </template>
+            </UCard>
+        </form>
     </UModal>
 </template>

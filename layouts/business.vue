@@ -10,7 +10,7 @@ const sidebarItems: SidebarItem[] = [
         to: "/business",
     },
     {
-        icon: "mingcute:group-line",
+        icon: "mingcute:bookmarks-line",
         label: "Tuyển dụng",
         to: "/business/recruitment",
     },
