@@ -10,5 +10,6 @@ export default interface Business {
     workingHour: string;
     instructorId: string;
     businessWebsite: string;
+    businessImage: string;
     managedBy: Profile;
 }

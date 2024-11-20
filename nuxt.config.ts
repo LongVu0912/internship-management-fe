@@ -18,6 +18,8 @@ export default defineNuxtConfig({
     runtimeConfig: {
         public: {
             backendUrl: process.env.BACKEND_URL ?? "http://localhost:8080/api",
+            imageUrl: process.env.IMAGE_URL ?? "http://localhost:8080/api/avatar/",
+            geminiKey: process.env.VITE_GEMINI_API_KEY ?? "",
         },
     },
     modules: [

@@ -79,11 +79,31 @@ export const BusinessRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         }
     };
 
+    const uploadImage = async (payload: { image: File }) => {
+        const formData = new FormData();
+        formData.append("imageFile", payload.image);
+
+        try {
+            const response: ApiResponse = await fetch(
+                `/avatar/UploadImage`,
+                {
+                    method: "POST",
+                    body: formData,
+                }
+            );
+
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
     return {
         getBusinessData,
         getMyBusinessData,
         getBusinessPaging,
         createBusiness,
-        updateProfile
+        updateProfile,
+        uploadImage
     };
 };

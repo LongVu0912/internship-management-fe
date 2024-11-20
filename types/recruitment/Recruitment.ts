@@ -11,6 +11,7 @@ export default interface Recruitment {
     keySkills:     string;
     position:      string;
     business:      Business;
-    businessName:      string;
+    businessImage?: string;
+    businessName?:      string;
     status: "OPEN" | "CLOSED";
 }

@@ -11,6 +11,7 @@ definePageMeta({
 const { $apiToken } = useNuxtApp();
 const businessRepository = BusinessRepository($apiToken);
 const nuxtToast = useNuxtToast();
+const imageUrl = useRuntimeConfig().public.imageUrl;
 
 // * Refs
 const isPageLoading = ref(true);
@@ -23,6 +24,12 @@ const updateModal = ref({
     isSubmitting: false,
 })
 
+const avatarModal = ref({
+    isOpen: false,
+    isSubmitting: false,
+    imageFile: null as File | null,
+})
+
 const gender = computed({
     get: () => (business.value.managedBy.isMale ? 'Nam' : 'Nữ'),
     set: (value: string) => {
@@ -31,12 +38,13 @@ const gender = computed({
 });
 
 // * Lifecycle
-onBeforeMount(() => {
+onBeforeMount(async () => {
     fetchData();
 })
 
 // * Functions
 const fetchData = async () => {
+    isPageLoading.value = true;
     const apiResponse = await businessRepository.getMyBusinessData();
 
     if (apiResponse.code !== 200) {
@@ -72,6 +80,51 @@ const handleUpdateProfile = async () => {
 
     updateModal.value.isSubmitting = false;
 }
+
+const closeUploadAvatarModal = () => {
+    avatarModal.value.imageFile = null;
+    avatarModal.value.isOpen = false;
+}
+
+const handleInputImageFile = (event: any) => {
+    if (event && event.length > 0) {
+        avatarModal.value.imageFile = event[0];
+    } else {
+        avatarModal.value.imageFile = null;
+    }
+};
+
+const handleUploadAvatar = async () => {
+    avatarModal.value.isSubmitting = true;
+
+    if (avatarModal.value.imageFile == null) {
+        nuxtToast({
+            description: "Hãy chọn file ảnh"
+        })
+        avatarModal.value.isSubmitting = false;
+        return;
+    }
+
+    const apiResponse = await businessRepository.uploadImage({
+        image: avatarModal.value.imageFile,
+    });
+
+    if (apiResponse.code === 200) {
+        nuxtToast({
+            description: "Cập nhật avatar thành công",
+            type: "success",
+        });
+        fetchData();
+        avatarModal.value.isOpen = false;
+    } else {
+        nuxtToast({
+            description: apiResponse.message,
+            type: 'error',
+        });
+    }
+
+    avatarModal.value.isSubmitting = false;
+}
 </script>
 
 <template>
@@ -81,13 +134,21 @@ const handleUpdateProfile = async () => {
     <UCard v-else class="w-full shadow-md">
         <template #header>
             <div class="flex flex-row items-center gap-4">
-                <div class="shrink-0">
+                <div class="flex shrink-0 items-center">
                     <UAvatar
-                             size="xl"
-                             :alt="business?.name" />
+                             imgClass="object-cover"
+                             size="2xl"
+                             :src="imageUrl + business.businessImage"
+                             icon="mingcute:user-4-line" />
                 </div>
-                <div class="text-xl font-bold">
-                    {{ business?.name }}
+                <div class="flex flex-col gap-1">
+                    <div class="text-xl font-bold">
+                        {{ business?.name }}
+                    </div>
+                    <div>
+                        <UButton color="primary" variant="soft" icon="mingcute:photo-album-line"
+                                 @click="avatarModal.isOpen = true" />
+                    </div>
                 </div>
             </div>
         </template>
@@ -257,6 +318,32 @@ const handleUpdateProfile = async () => {
                         Cập nhật
                     </UButton>
                 </div>
+            </template>
+        </UCard>
+    </UModal>
+
+    <UModal v-model="avatarModal.isOpen" prevent-close>
+        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <div class="text-base font-semibold">
+                        Cập nhật ảnh đại diện
+                    </div>
+                    <UButton :disabled="avatarModal.isSubmitting" color="gray" variant="ghost"
+                             icon="mingcute:close-fill" class="-my-1"
+                             @click="closeUploadAvatarModal" />
+                </div>
+            </template>
+            <div>
+                <UInput :disabled="avatarModal.isSubmitting" type="file" size="sm" icon="mingcute:photo-album-line"
+                        accept=".png, .jpg" @change="handleInputImageFile" />
+            </div>
+
+            <template #footer>
+                <UButton class="w-full rounded-md" size="lg" block @click="handleUploadAvatar" color="primary"
+                         :loading="avatarModal.isSubmitting">
+                    Cập nhật
+                </UButton>
             </template>
         </UCard>
     </UModal>

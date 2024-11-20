@@ -10,6 +10,7 @@ definePageMeta({
 const { $apiToken } = useNuxtApp();
 const businessRepository = BusinessRepository($apiToken);
 const route = useRoute();
+const imageUrl = useRuntimeConfig().public.imageUrl;
 
 // * Refs
 const isPageLoading = ref(true);
@@ -45,10 +46,12 @@ onBeforeMount(async () => {
         <UCard class="w-full shadow-md md:w-4/5 lg:w-2/3">
             <template #header>
                 <div class="flex flex-row items-center gap-4">
-                    <div class="shrink-0">
+                    <div class="flex shrink-0 items-center">
                         <UAvatar
-                                 size="xl"
-                                 :alt="business?.name" />
+                                 imgClass="object-cover"
+                                 size="2xl"
+                                 :src="imageUrl + business?.businessImage"
+                                 icon="mingcute:user-4-line" />
                     </div>
                     <div class="text-xl font-bold">
                         {{ business?.name }}
