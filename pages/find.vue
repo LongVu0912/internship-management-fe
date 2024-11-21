@@ -52,7 +52,7 @@ const processCV = async () => {
 
         const businesses = businessesResponse.result.data;
 
-        const responseRecruitments = await cvUtils.compareWithRecruitments(apiResponse.result, businesses);
+        const responseRecruitments = await cvUtils.findSuitableInternship(apiResponse.result, businesses);
 
         if (responseRecruitments.code != 200) {
             nuxtToast({

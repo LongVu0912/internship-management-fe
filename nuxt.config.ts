@@ -16,11 +16,11 @@ export default defineNuxtConfig({
         },
     ],
     runtimeConfig: {
+        geminiKey: process.env.GEMINI_API_KEY ?? "",
         public: {
             backendUrl: process.env.BACKEND_URL ?? "http://localhost:8080/api",
             imageUrl:
                 process.env.IMAGE_URL ?? "http://localhost:8080/api/avatar/",
-            geminiKey: process.env.GEMINI_API_KEY ?? "",
         },
     },
     modules: [

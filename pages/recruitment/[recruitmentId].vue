@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import Role from '~/types/enums/Role';
+import { Filter } from '~/types/page_config/Filter';
+import { PageConfig } from '~/types/page_config/PageConfig';
 import type Recruitment from '~/types/recruitment/Recruitment';
 import type RecruitmentRequest from '~/types/recruitment/RecruitmentRequest';
+import type Student from '~/types/student/Student';
 
 definePageMeta({
     layout: 'home',
@@ -11,6 +14,7 @@ definePageMeta({
 // * Imports
 const { $apiToken } = useNuxtApp();
 const recruitmentRepository = RecruitmentRepository($apiToken);
+const studentRepository = StudentRepository($apiToken);
 const nuxtToast = useNuxtToast();
 const route = useRoute();
 
@@ -21,9 +25,19 @@ const confirmDialog = ref({
     isSendingRequest: false,
 })
 
+const studentPageConfig = reactive(new PageConfig());
+studentPageConfig.filters.push(new Filter("profile.fullname"));
+const studentList = ref<Student[]>([]);
+
+const sort = ref<any>({
+    column: 'profile.fullname',
+    direction: 'desc'
+})
+
 const inviteStudentModal = ref({
     isOpen: false,
-    isSubmitting: false
+    isLoading: false,
+    isSubmitting: false,
 })
 
 const recruitment = ref<Recruitment>();
@@ -48,6 +62,25 @@ onBeforeMount(async () => {
 })
 
 // * Functions
+const fetchStudentData = async () => {
+    inviteStudentModal.value.isLoading = true;
+
+    const apiResponse = await studentRepository.getAllStudentWithSeekingIntern(studentPageConfig);
+
+    if (apiResponse.code === 200) {
+        studentList.value = apiResponse.result.data;
+
+        studentPageConfig.update(apiResponse.result.pageConfig);
+
+        inviteStudentModal.value.isLoading = false;
+    } else {
+        nuxtToast({
+            description: apiResponse.message,
+            type: 'error',
+        });
+    }
+}
+
 const openConfirmDialog = async (recruitmentId: string) => {
     recruitmentRequest.value.recruitmentId = recruitmentId;
     confirmDialog.value.isOpen = true;
@@ -79,10 +112,99 @@ const onDialogCancel = () => {
     confirmDialog.value.isOpen = false;
 }
 
+const openInviteStudentModal = async () => {
+    await fetchStudentData();
+    inviteStudentModal.value.isOpen = true;
+}
+
 const closeInviteStudentModal = () => {
     inviteStudentModal.value.isOpen = false;
 }
 
+const searchTable = async () => {
+    if (studentPageConfig.currentPage !== 1) {
+        studentPageConfig.currentPage = 1;
+    } else {
+        fetchStudentData();
+    }
+}
+
+const handleInviteStudent = async (row: Student) => {
+    inviteStudentModal.value.isSubmitting = true;
+
+    const apiResponse = await recruitmentRepository.inviteStudent({
+        recruitmentId: route.params.recruitmentId as string,
+        studentId: row.profile.profileId
+    });
+
+    if (apiResponse.code !== 200 || apiResponse.result === false) {
+        nuxtToast({
+            description: apiResponse.message,
+            type: "error",
+        })
+    }
+    else {
+        nuxtToast({
+            description: `Mời thực tập thành công, sinh viên ${row.profile.fullname}`,
+            type: 'success',
+        });
+    }
+
+    inviteStudentModal.value.isSubmitting = false;
+}
+
+// * Watches
+watch(
+    [() => studentPageConfig.currentPage, () => studentPageConfig.pageSize],
+    ([newCurrentPage, newPageSize], [oldCurrentPage, oldPageSize]) => {
+        if (!inviteStudentModal.value.isLoading) {
+            if (newPageSize !== oldPageSize) {
+                studentPageConfig.currentPage = 1;
+            }
+            fetchStudentData();
+        }
+    }
+)
+
+watch(sort, () => {
+    if (!inviteStudentModal.value.isLoading) {
+        studentPageConfig.orders[0].sort = sort.value.column;
+        studentPageConfig.orders[0].sortOrderType = sort.value.direction.toUpperCase();
+
+        fetchStudentData();
+    }
+})
+
+// * Data
+const columns = [
+    {
+        key: "profile.fullname",
+        label: "Tên",
+        sortable: true,
+    },
+    {
+        key: "dob",
+        label: "Ngày sinh",
+        sortable: true,
+    },
+    {
+        key: "profile.email",
+        label: "Email",
+        sortable: true,
+    },
+    {
+        key: "major.name",
+        label: "Ngành",
+        sortable: true,
+    },
+    {
+        key: "actions",
+        label: "Hành động",
+        class: "text-center"
+    }
+]
+
+const selectedColumns = ref([...columns]);
 </script>
 
 <template>
@@ -176,7 +298,7 @@ const closeInviteStudentModal = () => {
                         <UButton v-if="useUserState().value.username == recruitment?.business.managedBy.username"
                                  label="Mời sinh viên" size="lg"
                                  color="primary"
-                                 @click="inviteStudentModal.isOpen = true" />
+                                 @click="openInviteStudentModal" />
                     </div>
                 </div>
             </template>
@@ -218,7 +340,7 @@ const closeInviteStudentModal = () => {
         </form>
     </UModal>
 
-    <UModal :ui="{ width: 'sm:max-w-3xl' }" v-model="inviteStudentModal.isOpen" prevent-close>
+    <UModal :ui="{ width: 'sm:max-w-6xl' }" v-model="inviteStudentModal.isOpen" prevent-close>
         <form @submit.prevent="onDialogConfirm">
             <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
                 <template #header>
@@ -232,7 +354,97 @@ const closeInviteStudentModal = () => {
                 </template>
 
                 <div class="w-full space-y-1 py-2">
+                    <UCard class="w-full" :ui="{
+                        divide: 'divide-y divide-gray-200 dark:divide-gray-700',
+                        header: { padding: 'px-4 py-5' },
+                        body: { padding: '', base: 'divide-y divide-gray-200 dark:divide-gray-700' },
+                        footer: { padding: 'p-4' }
+                    }">
 
+                        <template #header>
+                            <h1 class="text-center text-xl font-semibold text-gray-900 dark:text-white">
+                                Danh sách sinh viên chưa thực tập
+                            </h1>
+                        </template>
+
+                        <div class="flex flex-col justify-between gap-2 px-4 py-3 md:flex-row">
+                            <form @submit.prevent="searchTable">
+                                <UInput placeholder="Tìm tên sinh viên..." class="min-w-64" size="sm" color="white"
+                                        v-model="studentPageConfig.filters[0].value"
+                                        :ui="{ icon: { trailing: { pointer: 'pointer-events-auto' } } }">
+                                    <template #trailing>
+                                        <UButton icon="heroicons:magnifying-glass-16-solid" color="primary"
+                                                 class="-me-2.5 rounded-none rounded-r-md" type="submit" />
+                                    </template>
+                                </UInput>
+                            </form>
+                            <div class="flex flex-col gap-2 md:flex-row">
+                                <USelectMenu class="min-w-56" v-model="selectedColumns" :options="columns" multiple
+                                             icon="mingcute:columns-3-line" placeholder="Columns">
+                                    <template #label>
+                                        <span>Chọn cột</span>
+                                    </template>
+                                </USelectMenu>
+                                <USelectMenu v-model.number="studentPageConfig.pageSize"
+                                             :options="['5', '6', '7', '8', '9', '10']" icon="mingcute:rows-3-line"
+                                             :placeholder="studentPageConfig.pageSize.toString()">
+                                </USelectMenu>
+                                <UPagination :max="7" v-model="studentPageConfig.currentPage"
+                                             :page-count="studentPageConfig.pageSize"
+                                             :total="studentPageConfig.totalRecords"
+                                             :disabled="inviteStudentModal.isLoading" />
+                            </div>
+                        </div>
+
+                        <UTable class="rounded-lg" :columns="selectedColumns" :loading="inviteStudentModal.isLoading"
+                                :rows="studentList" sort-mode="manual" v-model:sort="sort">
+                            <template #profile.fullname-data="{ row }">
+                                <div class="flex flex-col">
+                                    <NuxtLink class="font-semibold" :to="`/student/${row.studentId}`"
+                                              target="_blank">
+                                        {{ row.profile.fullname }}
+                                    </NuxtLink>
+                                    <div>
+                                        <UBadge class="mt-1" color="primary" variant="subtle">
+                                            {{ row.studentId }}
+                                        </UBadge>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <template #dob-data="{ row }">
+                                <div class="font-medium">
+                                    {{ row.dob }}
+                                </div>
+                                <UBadge class="mt-1 w-10 justify-center" color="gray" variant="subtle">
+                                    {{ row.profile.isMale ? "Nam" : "Nữ" }}
+                                </UBadge>
+                            </template>
+
+                            <template #profile.email-data="{ row }">
+                                <div class="font-medium">
+                                    {{ row.profile.email }}
+                                </div>
+                            </template>
+
+                            <template #major.name-data="{ row }">
+                                <div class="font-medium">
+                                    {{ row.major.name }}
+                                </div>
+                                <UBadge class="mt-1 justify-center" color="gray" variant="subtle">
+                                    {{ row.major.faculty.name }}
+                                </UBadge>
+                            </template>
+
+                            <template #actions-data="{ row }">
+                                <div class="text-center">
+                                    <UButton label="Mời" variant="soft" color="primary"
+                                             :disabled="inviteStudentModal.isSubmitting"
+                                             @click="handleInviteStudent(row)" />
+                                </div>
+                            </template>
+                        </UTable>
+                    </UCard>
                 </div>
             </UCard>
         </form>
