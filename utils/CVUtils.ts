@@ -244,7 +244,7 @@ Your tasks:
    If the data does not resemble a job find request, return the following JSON object with no codeblock or markdown:
    {
         "isValidRequest" : boolean,
-        "matchingJobs": [
+        "matchingRecruitments": [
     {
       "recruitmentId": string,
       "title": string
@@ -253,7 +253,7 @@ Your tasks:
    }
    - recruitmentId is must be the recruitmentId input the provided data, not any field else.
    - isValidRequest: true if the input resembles a request to find or a description of a job, otherwise false.
-   - matchingJobs: A list of the top 5 job recruitmentIds and titles ranked by suitability or if it. If no jobs match or the data is not a request, return an empty array.
+   - matchingRecruitments: A list of the top 5 job recruitmentIds and titles ranked by suitability or if it. If no jobs match or the data is not a request, return an empty array.
 `,
             });
 

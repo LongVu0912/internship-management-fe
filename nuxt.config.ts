@@ -36,6 +36,9 @@ export default defineNuxtConfig({
     app: {
         head: {
             title: "HCMUTE INTERNSHIP",
+            htmlAttrs: {
+                lang: "vi",
+            },
             link: [
                 {
                     rel: "icon",

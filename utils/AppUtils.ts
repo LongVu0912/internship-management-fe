@@ -1,19 +1,19 @@
-import BusinessStatus from "~/types/enums/BusinessStatus";
+import Status from "~/types/enums/Status";
 
 export const AppUtils = () => {
     const convertStatus = (status: string) => {
-        if (status == BusinessStatus.PENDING) return "Đang duyệt";
-        if (status == BusinessStatus.REJECT) return "Từ chối";
-        if (status == BusinessStatus.APPROVED) return "Được duyệt";
-        if (status == BusinessStatus.COMPLETED) return "Hoàn thành";
+        if (status == Status.PENDING) return "Đang duyệt";
+        if (status == Status.REJECT) return "Từ chối";
+        if (status == Status.APPROVED) return "Đồng ý";
+        if (status == Status.COMPLETED) return "Hoàn thành";
         return status;
     };
 
     const statusBadge = (status: string) => {
-        if (status == BusinessStatus.PENDING) return "gray";
-        if (status == BusinessStatus.REJECT) return "red";
-        if (status == BusinessStatus.APPROVED) return "green";
-        if (status == BusinessStatus.COMPLETED) return "teal";
+        if (status == Status.PENDING) return "gray";
+        if (status == Status.REJECT) return "red";
+        if (status == Status.APPROVED) return "teal";
+        if (status == Status.COMPLETED) return "green";
         return "primary";
     };
 

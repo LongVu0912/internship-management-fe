@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type GradePoint from '~/types/business/GradePoint';
-import BusinessStatus from '~/types/enums/BusinessStatus';
+import Status from '~/types/enums/Status';
 import { Filter } from '~/types/page_config/Filter';
 import { Order } from '~/types/page_config/Order';
 import { PageConfig } from '~/types/page_config/PageConfig';
@@ -41,17 +41,18 @@ const gradePointModal = ref({
 })
 
 const sort = ref<any>({
-    column: 'student.profile.fullname',
-    direction: 'desc'
+    column: 'businessStatus',
+    direction: 'asc'
 })
 
 const pageConfig = reactive(new PageConfig());
-pageConfig.orders.push(new Order("student.profile.fullname"));
+pageConfig.orders.push(new Order("businessStatus"));
 pageConfig.filters.push(new Filter("student.profile.fullname"));
 const studentRequestRecruitmentList = ref<StudentRequestRecruitment[]>([]);
 
 // * Lifecycle
 onBeforeMount(async () => {
+    pageConfig.orders[0].sortOrderType = "ASC";
     await fetchTableData();
 });
 
@@ -94,7 +95,7 @@ const openMessageModal = (message: string) => {
 const approveStudentRequest = async (recruitmentRequestId: string) => {
     const apiResponse = await recruitmentRepository.setRecruitmentRequestStatus({
         recruitmentRequestId: recruitmentRequestId,
-        status: BusinessStatus.APPROVED,
+        status: Status.APPROVED,
     })
 
     if (apiResponse.code !== 200 || apiResponse.result === false) {
@@ -115,7 +116,7 @@ const approveStudentRequest = async (recruitmentRequestId: string) => {
 const rejectStudentRequest = async (recruitmentRequestId: string) => {
     const apiResponse = await recruitmentRepository.setRecruitmentRequestStatus({
         recruitmentRequestId: recruitmentRequestId,
-        status: BusinessStatus.REJECT,
+        status: Status.REJECT,
     })
 
     if (apiResponse.code !== 200 || apiResponse.result === false) {
@@ -155,6 +156,14 @@ const openGradePointModal = (studentRequestRecruitment: StudentRequestRecruitmen
     gradePointModal.value.isOpen = true;
 }
 
+const closeGradePointModal = () => {
+    gradePointModal.value = {
+        isOpen: false,
+        isSubmitting: false,
+        gradePoint: {} as GradePoint,
+    }
+}
+
 const handleGradePoint = async () => {
     if (gradePointModal.value.gradePoint.point < 0 || gradePointModal.value.gradePoint.point > 10) {
         nuxtToast({
@@ -180,6 +189,7 @@ const handleGradePoint = async () => {
             type: 'success',
         });
         fetchTableData();
+        closeGradePointModal();
     }
 
     gradePointModal.value.isSubmitting = false;
@@ -225,9 +235,10 @@ const columns = [
         sortable: true
     },
     {
-        key: 'grade',
-        label: 'Chấm điểm',
-        class: "text-center"
+        key: 'point',
+        label: 'Điểm thực tập',
+        class: 'text-center',
+        sortable: true
     },
     {
         key: 'actions',
@@ -235,7 +246,20 @@ const columns = [
     }
 ]
 
-const items = (row: any) => [
+const itemsPending = (row: any) => [
+    [
+        {
+            label: 'Hồ sơ sinh viên',
+            icon: 'mingcute:profile-line',
+            click: () => {
+                navigateTo(`/student/${row.student.studentId}`, {
+                    open: {
+                        target: '_blank',
+                    }
+                })
+            }
+        },
+    ],
     [
         {
             label: 'Đồng ý',
@@ -249,6 +273,47 @@ const items = (row: any) => [
             icon: 'mingcute:close-fill',
             click: () => {
                 openConfirmDialog(row.recruitmentRequestId, "Bạn có chắc muốn từ chối sinh viên này", false);
+            }
+        },
+    ]
+]
+
+const itemsApprovedAndCompleted = (row: any) => [
+    [
+        {
+            label: 'Hồ sơ sinh viên',
+            icon: 'mingcute:profile-line',
+            click: () => {
+                navigateTo(`/student/${row.student.studentId}`, {
+                    open: {
+                        target: '_blank',
+                    }
+                })
+            }
+        },
+    ],
+    [
+        {
+            label: 'Chấm điểm',
+            icon: 'mingcute:edit-2-line',
+            click: () => {
+                openGradePointModal(row);
+            }
+        },
+    ]
+]
+
+const itemsReject = (row: any) => [
+    [
+        {
+            label: 'Hồ sơ sinh viên',
+            icon: 'mingcute:profile-line',
+            click: () => {
+                navigateTo(`/student/${row.student.studentId}`, {
+                    open: {
+                        target: '_blank',
+                    }
+                })
             }
         },
     ]
@@ -324,16 +389,22 @@ const selectedColumns = ref([...columns]);
                     </div>
                 </template>
 
-                <template #grade-data="{ row }">
-                    <div class="text-center">
-                        <UButton icon="mingcute:edit-2-line"
-                                 v-if="row.businessStatus == BusinessStatus.APPROVED || row.businessStatus == BusinessStatus.COMPLETED"
-                                 color="primary" variant="soft" @click="openGradePointModal(row)" />
+                <template #point-data="{ row }">
+                    <div class="text-center" v-if="row.point != null">
+                        <UBadge class="w-10 justify-center" :label="row.point" size="md" variant="outline"/>
                     </div>
                 </template>
 
                 <template #actions-data="{ row }">
-                    <UDropdown :items="items(row)">
+                    <UDropdown v-if="row.businessStatus == Status.PENDING" :items="itemsPending(row)">
+                        <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
+                    </UDropdown>
+
+                    <UDropdown v-else-if="row.businessStatus == Status.REJECT" :items="itemsReject(row)">
+                        <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
+                    </UDropdown>
+
+                    <UDropdown v-else :items="itemsApprovedAndCompleted(row)">
                         <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
                     </UDropdown>
                 </template>
@@ -368,7 +439,7 @@ const selectedColumns = ref([...columns]);
                             Chấm điểm cho sinh viên
                         </div>
                         <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
-                                 @click="gradePointModal.isOpen = false" />
+                                 @click="closeGradePointModal" />
                     </div>
                 </template>
 
