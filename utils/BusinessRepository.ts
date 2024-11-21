@@ -50,6 +50,21 @@ export const BusinessRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         }
     };
 
+    const getBusinessWithRecruitmentsPaging = async (payload: PageConfig) => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/business/GetBusinessWithRecruitmentsPaging`,
+                {
+                    method: "POST",
+                    body: JSON.stringify(payload),
+                }
+            );
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
     const createBusiness = async (payload: Business): Promise<ApiResponse> => {
         try {
             const response: ApiResponse = await fetch(
@@ -112,6 +127,7 @@ export const BusinessRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         getBusinessData,
         getMyBusinessData,
         getBusinessPaging,
+        getBusinessWithRecruitmentsPaging,
         createBusiness,
         updateProfile,
         uploadImage,

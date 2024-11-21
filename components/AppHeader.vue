@@ -66,6 +66,13 @@ const toggleMenu = () => {
                                  label="Sinh viên yêu cầu hướng dẫn">
                         </UButton>
                     </div>
+                    <div>
+                        <UDivider size="xs" />
+                        <UButton @click="isOpen = false" to="find"
+                                 variant="ghost" size="lg" icon="mingcute:android-2-line"
+                                 label="Tìm việc bằng AI với CV">
+                        </UButton>
+                    </div>
                 </div>
             </div>
         </div>
@@ -174,6 +181,30 @@ const toggleMenu = () => {
                                     </span>
                                     <span class="text-xs">
                                         Danh sách sinh viên yêu cầu hướng dẫn thực tập
+                                    </span>
+                                </div>
+                            </NuxtLink>
+                        </li>
+                    </ul>
+                </template>
+            </UPopover>
+            <UPopover mode="hover">
+                <UButton color="black" variant="ghost" label="Tìm việc bằng AI"
+                         class="hover:text-primary-500 dark:hover-text-400"
+                         trailing-icon="heroicons:chevron-down-16-solid" />
+
+                <template #panel>
+                    <ul class="flex flex-col gap-y-1 p-2">
+                        <li
+                            class="rounded-lg p-2 duration-300 hover:bg-black/5 dark:hover:bg-white/5">
+                            <NuxtLink to="/find" class="flex items-center gap-x-4">
+                                <UIcon class="h-6 w-6 self-start" name="mingcute:android-2-line" />
+                                <div class="flex w-32 flex-col gap-y-1">
+                                    <span class="text-sm font-bold">
+                                        AI
+                                    </span>
+                                    <span class="text-xs">
+                                        Tìm việc bằng AI với CV
                                     </span>
                                 </div>
                             </NuxtLink>

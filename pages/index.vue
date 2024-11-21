@@ -1,7 +1,47 @@
 <script setup lang="ts">
+import { PageConfig } from '~/types/page_config/PageConfig';
+import type Recruitment from '~/types/recruitment/Recruitment';
+
 definePageMeta({
     layout: "home",
 });
+
+const cvUtils = CVUtils();
+const { $api } = useNuxtApp();
+const nuxtToast = useNuxtToast();
+const businessRepository = BusinessRepository($api);
+
+const isCalled = ref(false);
+const isLoading = ref(false);
+const message = ref('');
+
+const matchingRecruitments = ref<Recruitment[]>([]);
+
+const submitChat = async () => {
+    isLoading.value = true;
+
+    let pageConfig = new PageConfig();
+    pageConfig.pageSize = -1;
+
+    const businessesResponse = await businessRepository.getBusinessWithRecruitmentsPaging(pageConfig);
+
+    const businesses = businessesResponse.result.data;
+
+    const responseRecruitments = await cvUtils.compareWithRecruitments(message.value, businesses);
+
+    if (responseRecruitments.code != 200) {
+        nuxtToast({
+            description: responseRecruitments.message,
+            type: "error"
+        })
+    }
+    else {
+        matchingRecruitments.value = responseRecruitments.result.matchingRecruitments;
+    }
+
+    isCalled.value = true;
+    isLoading.value = false;
+}
 
 interface Skill {
     name: string,
@@ -70,16 +110,36 @@ const selectSkill = (skill: Skill) => {
                         Công nghệ AI, cá nhân hoá việc làm.
                     </p>
                     <div class="w-full max-w-md">
-                        <UInput placeholder="Tìm theo ngành..." size="lg"
-                                icon="i-heroicons-magnifying-glass-20-solid"
-                                :ui="{ icon: { trailing: { pointer: 'pointer-events-auto', padding: { lg: 'px-1' } } } }">
-                            <template #trailing>
-                                <UButton color="primary"
-                                         @click="navigateTo('/recruitment')"
-                                         class="rounded-md" label="Tìm kiếm" />
-                            </template>
-                        </UInput>
+                        <form @submit.prevent="submitChat">
+                            <UInput placeholder="Tôi muốn tìm việc lập trình NodeJS..." size="lg"
+                                    icon="i-heroicons-magnifying-glass-20-solid"
+                                    required
+                                    v-model="message"
+                                    :ui="{ icon: { trailing: { pointer: 'pointer-events-auto', padding: { lg: 'px-1' } } } }">
+                                <template #trailing>
+                                    <UButton color="primary"
+                                             type="submit"
+                                             :loading="isLoading"
+                                             class="rounded-md" label="Tìm kiếm" />
+                                </template>
+                            </UInput>
+                        </form>
                     </div>
+                    <template v-if="isCalled">
+                        <div v-if="matchingRecruitments.length == 0" class="text-xl font-medium">
+                            Không tìm thấy kết quả
+                        </div>
+                        <div v-else class="flex flex-col justify-center space-y-4">
+                            <div v-for="recruitment in matchingRecruitments" :key="recruitment.recruitmentId"
+                                 class="hover:border-primary-500 dark:hover:border-primary-500 flex h-auto w-full max-w-2xl transform flex-row gap-4 self-center rounded-lg bg-white p-4 shadow-md transition-transform duration-300 hover:scale-105 dark:bg-gray-800">
+                                <NuxtLink :to="`/recruitment/${recruitment.recruitmentId}`"
+                                          class="flex w-full items-center justify-center text-center text-lg font-medium hover:underline dark:text-white"
+                                          target="_blank">
+                                    {{ recruitment.title }}
+                                </NuxtLink>
+                            </div>
+                        </div>
+                    </template>
                 </div>
             </div>
         </section>
@@ -151,5 +211,4 @@ const selectSkill = (skill: Skill) => {
             </div>
         </section>
     </main>
-
 </template>

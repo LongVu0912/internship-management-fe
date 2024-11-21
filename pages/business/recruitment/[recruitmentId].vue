@@ -326,7 +326,8 @@ const selectedColumns = ref([...columns]);
 
                 <template #grade-data="{ row }">
                     <div class="text-center">
-                        <UButton icon="mingcute:edit-2-line" v-if="row.businessStatus == BusinessStatus.APPROVED"
+                        <UButton icon="mingcute:edit-2-line"
+                                 v-if="row.businessStatus == BusinessStatus.APPROVED || row.businessStatus == BusinessStatus.COMPLETED"
                                  color="primary" variant="soft" @click="openGradePointModal(row)" />
                     </div>
                 </template>
