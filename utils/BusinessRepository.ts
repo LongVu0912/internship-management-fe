@@ -1,6 +1,7 @@
 import type { NitroFetchRequest, $Fetch } from "nitropack";
 import type ApiResponse from "~/types/ApiResponse";
 import type Business from "~/types/business/Business";
+import type GradePoint from "~/types/business/GradePoint";
 import type { PageConfig } from "~/types/page_config/PageConfig";
 export const BusinessRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
     const getBusinessData = async (payload: { businessId?: string }) => {
@@ -49,6 +50,21 @@ export const BusinessRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         }
     };
 
+    const getBusinessWithRecruitmentsPaging = async (payload: PageConfig) => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/business/GetBusinessWithRecruitmentsPaging`,
+                {
+                    method: "POST",
+                    body: JSON.stringify(payload),
+                }
+            );
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
     const createBusiness = async (payload: Business): Promise<ApiResponse> => {
         try {
             const response: ApiResponse = await fetch(
@@ -84,14 +100,23 @@ export const BusinessRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         formData.append("imageFile", payload.image);
 
         try {
-            const response: ApiResponse = await fetch(
-                `/avatar/UploadImage`,
-                {
-                    method: "POST",
-                    body: formData,
-                }
-            );
+            const response: ApiResponse = await fetch(`/avatar/UploadImage`, {
+                method: "POST",
+                body: formData,
+            });
 
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
+    const gradePoint = async (payload: GradePoint): Promise<ApiResponse> => {
+        try {
+            const response: ApiResponse = await fetch(`/business/GradePoint`, {
+                method: "POST",
+                body: JSON.stringify(payload),
+            });
             return response;
         } catch (error: any) {
             return HandleError(error);
@@ -102,8 +127,10 @@ export const BusinessRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         getBusinessData,
         getMyBusinessData,
         getBusinessPaging,
+        getBusinessWithRecruitmentsPaging,
         createBusiness,
         updateProfile,
-        uploadImage
+        uploadImage,
+        gradePoint,
     };
 };

@@ -272,7 +272,7 @@ const items = (row: Student) => [
                                  icon="mingcute:rows-3-line" :placeholder="pageConfig.pageSize.toString()">
                     </USelectMenu>
                     <UPagination :max="7" v-model="pageConfig.currentPage" :page-count="pageConfig.pageSize"
-                                 :total="pageConfig.totalRecords" />
+                                 :total="pageConfig.totalRecords" :disabled="isTableLoading" />
                 </div>
             </div>
 
@@ -333,66 +333,68 @@ const items = (row: Student) => [
     </div>
 
     <UModal v-model="inputModel.isOpen" prevent-close>
-        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-                        Nhập dữ liệu từ file Excel
-                    </h3>
-                    <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
-                             @click="inputModel.isOpen = false" />
+        <form @submit.prevent="handleImportStudents">
+            <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                            Nhập dữ liệu từ file Excel
+                        </h3>
+                        <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                                 @click="inputModel.isOpen = false" />
+                    </div>
+                </template>
+
+                <div class="flex flex-col justify-center">
+                    <UInput required type="file" size="sm" icon="i-heroicons-folder" accept=".xlsx"
+                            @change="handleInputExcelFile" />
                 </div>
-            </template>
 
-            <div class="flex flex-col justify-center">
-                <UInput type="file" size="sm" icon="i-heroicons-folder" accept=".xlsx" @change="handleInputExcelFile" />
-            </div>
-
-            <template #footer>
-                <UButton :loading="inputModel.isSendingRequest" color="primary" class="w-full rounded-md" size="lg"
-                         block
-                         @click="handleImportStudents">
-                    Nhập dữ liệu
-                </UButton>
-            </template>
-        </UCard>
+                <template #footer>
+                    <UButton :loading="inputModel.isSendingRequest" color="primary" class="w-full rounded-md" size="lg"
+                             block
+                             type="submit">
+                        Nhập dữ liệu
+                    </UButton>
+                </template>
+            </UCard>
+        </form>
     </UModal>
 
     <UModal v-model="changePasswordModal.isOpen" prevent-close>
-        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <div class="text-base font-semibold">
-                        Đổi mật khẩu
+        <form @submit.prevent="handleChangePassword">
+            <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <div class="text-base font-semibold">
+                            Đổi mật khẩu
+                        </div>
+                        <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                                 @click="changePasswordModal.isOpen = false" />
                     </div>
-                    <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
-                             @click="changePasswordModal.isOpen = false" />
+                </template>
+                <div class="space-y-4">
+                    <div class="w-full space-y-1">
+                        <div class="font-medium">Mật khẩu mới</div>
+                        <UInput required size="lg" v-model="changePasswordModal.newPassword" type="password"
+                                icon="mingcute:mail-line" />
+                    </div>
+                    <div class="w-full space-y-1">
+                        <div class="font-medium">Xác nhận mật khẩu</div>
+                        <UInput required size="lg" v-model="changePasswordModal.confirmPassword" type="password"
+                                icon="mingcute:mail-line" />
+                    </div>
                 </div>
-            </template>
-
-            <div class="space-y-4">
-                <div class="w-full space-y-1">
-                    <div class="font-medium">Mật khẩu mới</div>
-                    <UInput size="lg" v-model="changePasswordModal.newPassword" type="password"
-                            icon="mingcute:mail-line" />
-                </div>
-
-                <div class="w-full space-y-1">
-                    <div class="font-medium">Xác nhận mật khẩu</div>
-                    <UInput size="lg" v-model="changePasswordModal.confirmPassword" type="password"
-                            icon="mingcute:mail-line" />
-                </div>
-            </div>
-
-            <template #footer>
-                <UButton :loading="changePasswordModal.isSubmitting" class="w-full rounded-md" size="lg" color="primary"
-                         type="submit"
-                         @click="handleChangePassword"
-                         block>
-                    Đổi mật khẩu
-                </UButton>
-            </template>
-        </UCard>
+                <template #footer>
+                    <UButton :loading="changePasswordModal.isSubmitting" class="w-full rounded-md" size="lg"
+                             color="primary"
+                             type="submit"
+                             block>
+                        Đổi mật khẩu
+                    </UButton>
+                </template>
+            </UCard>
+        </form>
     </UModal>
 
     <AdminChangePassword @hideModal="adminChangePasswordModal.isOpen = false"

@@ -256,7 +256,7 @@ const items = (row: Instructor) => [
                                  icon="mingcute:rows-3-line" :placeholder="pageConfig.pageSize.toString()">
                     </USelectMenu>
                     <UPagination :max="7" v-model="pageConfig.currentPage" :page-count="pageConfig.pageSize"
-                                 :total="pageConfig.totalRecords" />
+                                 :total="pageConfig.totalRecords" :disabled="isTableLoading" />
                 </div>
             </div>
 
@@ -300,87 +300,86 @@ const items = (row: Instructor) => [
     </div>
 
     <UModal :ui="{ width: 'sm:max-w-3xl' }" v-model="createInstructorModal.isOpen" prevent-close>
-        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-                        Tạo giảng viên
-                    </h3>
-                    <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
-                             @click="createInstructorModal.isOpen = false" />
-                </div>
-            </template>
-
-            <div class="flex flex-col gap-3">
-                <div>
-                    <div class="font-medium">Khoa</div>
-                    <USelectMenu v-model="selectedFaculty" size="md" color="gray" :options="facultyList">
-                        <template #label>
-                            <div>
-                                {{ (selectedFaculty) ? `${selectedFaculty.facultyId} - ${selectedFaculty.name}` : "Chọn khoa" }}
-                            </div>
-                        </template>
-                        <template #option="{ option: faculty }">
-                            <div>{{ faculty.facultyId + ' - ' + faculty.name }}</div>
-                        </template>
-                    </USelectMenu>
-                </div>
-
-                <div class="flex flex-col gap-4 md:flex-row">
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Họ tên</div>
-                        <UInput v-model="newInstructor.profile.fullname" placeholder="Nguyễn Văn A" />
+        <form @submit.prevent="handleCreateInstructor">
+            <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                            Tạo giảng viên
+                        </h3>
+                        <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                                 @click="createInstructorModal.isOpen = false" />
+                    </div>
+                </template>
+                <div class="flex flex-col gap-3">
+                    <div>
+                        <div class="font-medium">Khoa</div>
+                        <USelectMenu v-model="selectedFaculty" size="md" color="gray" :options="facultyList">
+                            <template #label>
+                                <div>
+                                    {{ (selectedFaculty) ? `${selectedFaculty.facultyId} - ${selectedFaculty.name}` : "Chọn khoa" }}
+                                </div>
+                            </template>
+                            <template #option="{ option: faculty }">
+                                <div>{{ faculty.facultyId + ' - ' + faculty.name }}</div>
+                            </template>
+                        </USelectMenu>
+                    </div>
+                    <div class="flex flex-col gap-4 md:flex-row">
+                        <div class="w-full space-y-1">
+                            <div class="font-medium">Họ tên</div>
+                            <UInput required v-model="newInstructor.profile.fullname" placeholder="Nguyễn Văn A" />
+                        </div>
+                        <div class="w-full space-y-1">
+                            <div class="font-medium">Tài khoản</div>
+                            <UInput required v-model="newInstructor.profile.username" placeholder="nguyenvana"
+                                    autocomplete="off" />
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-4 md:flex-row">
+                        <div class="w-full space-y-1">
+                            <div class="font-medium">Mật khẩu</div>
+                            <UInput required type="password" v-model="newInstructor.profile.password"
+                                    autocomplete="off" />
+                        </div>
+                        <div class="w-full space-y-1">
+                            <div class="font-medium">Email</div>
+                            <UInput required type="email" v-model="newInstructor.profile.email"
+                                    placeholder="nguyenvana@hcmute.edu.vn" />
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-4 md:flex-row">
+                        <div class="w-full space-y-1">
+                            <div class="font-medium">Số điện thoại</div>
+                            <UInput required v-model="newInstructor.profile.phoneNumber" placeholder="09999999999" />
+                        </div>
+                        <div class="w-full space-y-1">
+                            <div class="font-medium">Giới tính</div>
+                            <USelect color="gray" size="md" :options="['Nữ', 'Nam']" v-model:model-value="gender" />
+                        </div>
                     </div>
                     <div class="w-full space-y-1">
-                        <div class="font-medium">Tài khoản</div>
-                        <UInput v-model="newInstructor.profile.username" placeholder="nguyenvana" autocomplete="off" />
+                        <div class="font-medium">Bio</div>
+                        <UTextarea required size="lg" color="gray" :rows="5" class="w-full"
+                                   v-model="newInstructor.profile.bio" placeholder="Giới thiệu ngắn về bản thân...">
+                        </UTextarea>
                     </div>
                 </div>
-
-                <div class="flex flex-col gap-4 md:flex-row">
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Mật khẩu</div>
-                        <UInput type="password" v-model="newInstructor.profile.password" autocomplete="off" />
+                <template #footer>
+                    <div class="flex justify-end">
+                        <UButton class="mr-2" color="gray" variant="ghost"
+                                 @click="createInstructorModal.isOpen = false">
+                            Huỷ
+                        </UButton>
+                        <UButton color="primary"
+                                 type="submit"
+                                 :loading="createInstructorModal.isCreatingInstructor">
+                            Tạo
+                        </UButton>
                     </div>
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Email</div>
-                        <UInput type="email" v-model="newInstructor.profile.email"
-                                placeholder="nguyenvana@hcmute.edu.vn" />
-                    </div>
-                </div>
-
-                <div class="flex flex-col gap-4 md:flex-row">
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Số điện thoại</div>
-                        <UInput v-model="newInstructor.profile.phoneNumber" placeholder="09999999999" />
-                    </div>
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Giới tính</div>
-                        <USelect color="gray" size="md" :options="['Nữ', 'Nam']" v-model:model-value="gender" />
-                    </div>
-                </div>
-
-                <div class="w-full space-y-1">
-                    <div class="font-medium">Bio</div>
-                    <UTextarea size="lg" color="gray" :rows="5" class="w-full" v-model="newInstructor.profile.bio"
-                               placeholder="Giới thiệu ngắn về bản thân...">
-                    </UTextarea>
-                </div>
-            </div>
-
-            <template #footer>
-                <div class="flex justify-end">
-                    <UButton class="mr-2" color="gray" variant="ghost" @click="createInstructorModal.isOpen = false">
-                        Huỷ
-                    </UButton>
-                    <UButton color="primary"
-                             @click="handleCreateInstructor"
-                             :loading="createInstructorModal.isCreatingInstructor">
-                        Tạo
-                    </UButton>
-                </div>
-            </template>
-        </UCard>
+                </template>
+            </UCard>
+        </form>
     </UModal>
 
     <AdminChangePassword @hideModal="adminChangePasswordModal.isOpen = false"

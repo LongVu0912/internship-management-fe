@@ -281,7 +281,7 @@ const selectedColumns = ref([...columns]);
                                  icon="mingcute:rows-3-line" :placeholder="pageConfig.pageSize.toString()">
                     </USelectMenu>
                     <UPagination :max="7" v-model="pageConfig.currentPage" :page-count="pageConfig.pageSize"
-                                 :total="pageConfig.totalRecords" />
+                                 :total="pageConfig.totalRecords" :disabled="isTableLoading" />
                 </div>
             </div>
 
@@ -313,76 +313,74 @@ const selectedColumns = ref([...columns]);
     </div>
 
     <UModal :ui="{ width: 'sm:max-w-3xl' }" v-model="createRecruitmentModal.isOpen" prevent-close>
-        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-                        Tạo tuyển dụng
-                    </h3>
-                    <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
-                             @click="createRecruitmentModal.isOpen = false" />
-                </div>
-            </template>
-
-            <div class="flex flex-col gap-3">
-                <div class="w-full space-y-1">
-                    <div class="font-medium">Tựa đề</div>
-                    <UInput v-model="recruitment.title" placeholder="Tuyển dụng lập trình viên" />
-                </div>
-
-                <div class="w-full space-y-1">
-                    <div class="font-medium">Mô tả</div>
-                    <UTextarea size="lg" color="gray" :rows="5" class="w-full" v-model="recruitment.description"
-                               placeholder="Mô tả chi tiết về công việc, yêu cầu và quyền lợi">
-                    </UTextarea>
-                </div>
-
-                <div class="w-full space-y-1">
-                    <div class="font-medium">Kỹ năng</div>
-                    <UTextarea size="lg" color="gray" :rows="5" class="w-full" v-model="recruitment.keySkills"
-                               placeholder="JavaScript, React, Node.js">
-                    </UTextarea>
-                </div>
-
-                <div class="w-full space-y-1">
-                    <div class="font-medium">Địa điểm</div>
-                    <UInput v-model="recruitment.location" placeholder="Hà Nội, Việt Nam" />
-                </div>
-
-                <div class="flex flex-col gap-4 md:flex-row">
+        <form @submit.prevent="handleCreateRecruitment">
+            <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                            Tạo tuyển dụng
+                        </h3>
+                        <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                                 @click="createRecruitmentModal.isOpen = false" />
+                    </div>
+                </template>
+                <div class="flex flex-col gap-3">
                     <div class="w-full space-y-1">
-                        <div class="font-medium">Loại</div>
-                        <UInput v-model="recruitment.type" placeholder="Toàn thời gian, Bán thời gian" />
+                        <div class="font-medium">Tựa đề</div>
+                        <UInput required v-model="recruitment.title" placeholder="Tuyển dụng lập trình viên" />
                     </div>
                     <div class="w-full space-y-1">
-                        <div class="font-medium">Vị trí</div>
-                        <UInput v-model="recruitment.position" placeholder="Lập trình viên Frontend" />
-                    </div>
-                </div>
-
-                <div class="flex flex-col gap-4 md:flex-row">
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Ngày làm việc</div>
-                        <UInput v-model="recruitment.workingDay" placeholder="Thứ 2 - Thứ 6" />
+                        <div class="font-medium">Mô tả</div>
+                        <UTextarea required size="lg" color="gray" :rows="5" class="w-full"
+                                   v-model="recruitment.description"
+                                   placeholder="Mô tả chi tiết về công việc, yêu cầu và quyền lợi">
+                        </UTextarea>
                     </div>
                     <div class="w-full space-y-1">
-                        <div class="font-medium">Giờ làm việc</div>
-                        <UInput v-model="recruitment.workingHour" placeholder="9:00 - 18:00" />
+                        <div class="font-medium">Kỹ năng</div>
+                        <UTextarea required size="lg" color="gray" :rows="5" class="w-full"
+                                   v-model="recruitment.keySkills"
+                                   placeholder="JavaScript, React, Node.js">
+                        </UTextarea>
+                    </div>
+                    <div class="w-full space-y-1">
+                        <div class="font-medium">Địa điểm</div>
+                        <UInput required v-model="recruitment.location" placeholder="Hà Nội, Việt Nam" />
+                    </div>
+                    <div class="flex flex-col gap-4 md:flex-row">
+                        <div class="w-full space-y-1">
+                            <div class="font-medium">Loại</div>
+                            <UInput required v-model="recruitment.type" placeholder="Toàn thời gian, Bán thời gian" />
+                        </div>
+                        <div class="w-full space-y-1">
+                            <div class="font-medium">Vị trí</div>
+                            <UInput required v-model="recruitment.position" placeholder="Lập trình viên Frontend" />
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-4 md:flex-row">
+                        <div class="w-full space-y-1">
+                            <div class="font-medium">Ngày làm việc</div>
+                            <UInput required v-model="recruitment.workingDay" placeholder="Thứ 2 - Thứ 6" />
+                        </div>
+                        <div class="w-full space-y-1">
+                            <div class="font-medium">Giờ làm việc</div>
+                            <UInput required v-model="recruitment.workingHour" placeholder="9:00 - 18:00" />
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <template #footer>
-                <div class="flex justify-end">
-                    <UButton class="mr-2" color="gray" variant="ghost" @click="createRecruitmentModal.isOpen = false">
-                        Huỷ
-                    </UButton>
-                    <UButton color="primary" @click="handleCreateRecruitment">
-                        Tạo
-                    </UButton>
-                </div>
-            </template>
-        </UCard>
+                <template #footer>
+                    <div class="flex justify-end">
+                        <UButton class="mr-2" color="gray" variant="ghost"
+                                 @click="createRecruitmentModal.isOpen = false">
+                            Huỷ
+                        </UButton>
+                        <UButton color="primary" type="submit">
+                            Tạo
+                        </UButton>
+                    </div>
+                </template>
+            </UCard>
+        </form>
     </UModal>
 
     <UModal :ui="{ width: 'sm:max-w-3xl' }" v-model="updateRecruitmentModal.isOpen" prevent-close>

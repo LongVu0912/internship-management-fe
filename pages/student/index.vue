@@ -286,30 +286,31 @@ const handleUpdateProfile = async () => {
 
     <!-- * Modal for uploading CV -->
     <UModal v-model="uploadCVModal.isOpen" prevent-close>
-        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <div class="text-base font-semibold">
-                        Cập nhật CV
+        <form @submit.prevent="handleUploadCV">
+            <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <div class="text-base font-semibold">
+                            Cập nhật CV
+                        </div>
+                        <UButton :disabled="uploadCVModal.isSubmitting" color="gray" variant="ghost"
+                                 icon="mingcute:close-fill" class="-my-1"
+                                 @click="uploadCVModal.isOpen = false" />
                     </div>
-                    <UButton :disabled="uploadCVModal.isSubmitting" color="gray" variant="ghost"
-                             icon="mingcute:close-fill" class="-my-1"
-                             @click="uploadCVModal.isOpen = false" />
+                </template>
+                <div>
+                    <UInput required :disabled="uploadCVModal.isSubmitting" type="file" size="sm"
+                            icon="i-heroicons-folder"
+                            accept=".pdf" @change="handleInputCVFile" />
                 </div>
-            </template>
-            <div>
-                <UInput :disabled="uploadCVModal.isSubmitting" type="file" size="sm" icon="i-heroicons-folder"
-                        accept=".pdf"
-                        @change="handleInputCVFile" />
-            </div>
-
-            <template #footer>
-                <UButton class="w-full rounded-md" size="lg" block @click="handleUploadCV" color="primary"
-                         :loading="uploadCVModal.isSubmitting">
-                    Xác nhận
-                </UButton>
-            </template>
-        </UCard>
+                <template #footer>
+                    <UButton class="w-full rounded-md" size="lg" block type="submit" color="primary"
+                             :loading="uploadCVModal.isSubmitting">
+                        Xác nhận
+                    </UButton>
+                </template>
+            </UCard>
+        </form>
     </UModal>
 
     <UModal :ui="{ width: 'sm:max-w-3xl' }" v-model="updateStudentModal.isOpen" prevent-close>

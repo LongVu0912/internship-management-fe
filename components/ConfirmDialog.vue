@@ -13,6 +13,7 @@ const props = defineProps<{
 
 // * Refs
 const isOpen = ref(false);
+const isSubmitting = ref(false);
 
 // * Watches
 watch(() => props.isOpen, (newValue) => {
@@ -30,8 +31,10 @@ const onCancelButton = () => {
     hideDialog();
 };
 
-const onConfirmButton = () => {
-    props.onConfirm();
+const onConfirmButton = async () => {
+    isSubmitting.value = true;
+    await props.onConfirm();
+    isSubmitting.value = false;
     hideDialog();
 };
 </script>
@@ -56,7 +59,7 @@ const onConfirmButton = () => {
                     <UButton class="mr-2" color="gray" variant="ghost" @click="onCancelButton">
                         Huỷ
                     </UButton>
-                    <UButton color="primary" @click="onConfirmButton">
+                    <UButton color="primary" @click="onConfirmButton" :loading="isSubmitting">
                         Xác nhận
                     </UButton>
                 </div>

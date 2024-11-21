@@ -168,14 +168,6 @@ const handleCreateMajor = async (index: any) => {
         majorModal.value.isCreatingMajor = true;
     }
     else {
-        if (majorModal.value.newMajor.name == '') {
-            nuxtToast({
-                description: "Tên ngành không được để trống",
-                type: "info",
-            })
-            return;
-        }
-
         majorModal.value.newMajor.majorId = '';
         majorModal.value.newMajor.facultyId = majorModal.value.currentFacultyId;
         const apiResponse = await facultyRepository.saveMajor(majorModal.value.newMajor);
@@ -318,7 +310,7 @@ const items = (row: Faculty) => [
                                  icon="mingcute:rows-3-line" :placeholder="pageConfig.pageSize.toString()">
                     </USelectMenu>
                     <UPagination :max="7" v-model="pageConfig.currentPage" :page-count="pageConfig.pageSize"
-                                 :total="pageConfig.totalRecords" />
+                                 :total="pageConfig.totalRecords" :disabled="isTableLoading" />
                 </div>
             </div>
 
@@ -345,77 +337,82 @@ const items = (row: Faculty) => [
     </div>
 
     <UModal v-model="majorModal.isOpen" prevent-close>
-        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-                        Các ngành {{ majorModal.currentFacultyId }}
-                    </h3>
-                    <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
-                             @click="handleCloseMajorModal" />
-                </div>
-            </template>
-
-            <div class="space-y-2 py-2">
-                <div class="flex flex-col gap-2">
-                    <div v-for="(major, index) in majorList" class="flex w-full flex-row items-center gap-2">
-                        <UInput class="w-full" size="md" color="gray" v-model:model-value="major.name" />
-                        <UButton icon="mingcute:save-2-line" color="primary" variant="soft"
-                                 @click="handleEditMajor(index)" />
+        <form @submit="handleCloseMajorModal">
+            <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                            Các ngành {{ majorModal.currentFacultyId }}
+                        </h3>
+                        <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                                 @click="handleCloseMajorModal" />
                     </div>
-                    <div class="flex w-full flex-row items-center gap-2">
-                        <UInput :disabled="!majorModal.isCreatingMajor" class="w-full" size="md" color="gray"
-                                v-model="majorModal.newMajor.name" placeholder="Ngành mới..." />
-                        <UButton :icon="majorModal.isCreatingMajor ? 'mingcute:save-2-line' : 'mingcute:add-fill'"
-                                 color="primary" variant="soft" @click="handleCreateMajor" />
+                </template>
+
+                <div class="space-y-2 py-2">
+                    <div class="flex flex-col gap-2">
+                        <div v-for="(major, index) in majorList" class="flex w-full flex-row items-center gap-2">
+                            <UInput required class="w-full" size="md" color="gray" v-model:model-value="major.name" />
+                            <UButton icon="mingcute:save-2-line" color="primary" variant="soft"
+                                     @click="handleEditMajor(index)" />
+                        </div>
+                        <div class="flex w-full flex-row items-center gap-2">
+                            <UInput required :disabled="!majorModal.isCreatingMajor" class="w-full" size="md"
+                                    color="gray"
+                                    v-model="majorModal.newMajor.name" placeholder="Ngành mới..." />
+                            <UButton :icon="majorModal.isCreatingMajor ? 'mingcute:save-2-line' : 'mingcute:add-fill'"
+                                     color="primary" variant="soft" @click="handleCreateMajor" />
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <template #footer>
-                <div class="flex justify-end">
-                    <UButton color="primary" @click="handleCloseMajorModal" label="Hủy" />
-                </div>
-            </template>
-        </UCard>
+                <template #footer>
+                    <div class="flex justify-end">
+                        <UButton color="primary" type="submit" label="Hủy" />
+                    </div>
+                </template>
+            </UCard>
+        </form>
     </UModal>
 
     <UModal v-model="saveFacultyModal.isOpen" prevent-close>
-        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-                        {{ saveFacultyModal.isCreateMode ? 'Thêm khoa' : 'Chỉnh sửa khoa' }}
-                    </h3>
-                    <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
-                             @click="saveFacultyModal.isOpen = false" />
-                </div>
-            </template>
+        <form @submit.prevent="handleSaveFaculty">
+            <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                            {{ saveFacultyModal.isCreateMode ? 'Thêm khoa' : 'Chỉnh sửa khoa' }}
+                        </h3>
+                        <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                                 @click="saveFacultyModal.isOpen = false" />
+                    </div>
+                </template>
 
-            <div class="flex flex-col gap-3">
-                <div class="w-full space-y-1">
-                    <div class="font-medium">Mã khoa</div>
-                    <UInput :disabled="!saveFacultyModal.isCreateMode" v-model="saveFacultyModal.faculty.facultyId"
-                            placeholder="FIE" />
+                <div class="flex flex-col gap-3">
+                    <div class="w-full space-y-1">
+                        <div class="font-medium">Mã khoa</div>
+                        <UInput required :disabled="!saveFacultyModal.isCreateMode"
+                                v-model="saveFacultyModal.faculty.facultyId" placeholder="FIE" />
+                    </div>
+                    <div class="w-full space-y-1">
+                        <div class="font-medium">Tên khoa</div>
+                        <UInput required v-model="saveFacultyModal.faculty.name" placeholder="Khoa đào tạo quốc tế" />
+                    </div>
                 </div>
-                <div class="w-full space-y-1">
-                    <div class="font-medium">Tên khoa</div>
-                    <UInput v-model="saveFacultyModal.faculty.name" placeholder="Khoa đào tạo quốc tế" />
-                </div>
-            </div>
 
-            <template #footer>
-                <div class="flex justify-end">
-                    <UButton class="mr-2" color="gray" variant="ghost" @click="saveFacultyModal.isOpen = false">
-                        Huỷ
-                    </UButton>
-                    <UButton color="primary"
-                             @click="handleSaveFaculty"
-                             :loading="saveFacultyModal.isSavingFaculty">
-                        Lưu
-                    </UButton>
-                </div>
-            </template>
-        </UCard>
+                <template #footer>
+                    <div class="flex justify-end">
+                        <UButton class="mr-2" color="gray" variant="ghost" @click="saveFacultyModal.isOpen = false">
+                            Huỷ
+                        </UButton>
+                        <UButton color="primary"
+                                 type="submit"
+                                 :loading="saveFacultyModal.isSavingFaculty">
+                            Lưu
+                        </UButton>
+                    </div>
+                </template>
+            </UCard>
+        </form>
     </UModal>
 </template>

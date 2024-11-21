@@ -79,36 +79,38 @@ watch(() => props.isOpen, (newValue) => {
 
 <template>
     <UModal v-model="changePasswordModal.isOpen" prevent-close>
-        <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <div class="text-base font-semibold">
-                        Đổi mật khẩu
+        <form @submit.prevent="submitChangePassword">
+            <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <div class="text-base font-semibold">
+                            Đổi mật khẩu
+                        </div>
+                        <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
+                                 @click="hideModal" />
                     </div>
-                    <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
-                             @click="hideModal" />
+                </template>
+
+                <div class="space-y-2">
+                    <div class="mb-2 text-sm font-medium">Mật khẩu mới</div>
+                    <UInput v-model="changePasswordState.newPassword" type="password" icon="mingcute:key-2-line"
+                            size="lg" color="gray"
+                            required autocomplete="on" />
+                    <div class="mb-2 mt-4 text-sm font-medium">Xác nhận mật khẩu</div>
+                    <UInput v-model="changePasswordState.confirmPassword" type="password" icon="mingcute:key-2-line"
+                            size="lg" required
+                            color="gray" autocomplete="on" />
                 </div>
-            </template>
 
-            <div class="space-y-2">
-                <div class="mb-2 text-sm font-medium">Mật khẩu mới</div>
-                <UInput v-model="changePasswordState.newPassword" type="password" icon="mingcute:key-2-line" size="lg"
-                        color="gray"
-                        autocomplete="on" />
-                <div class="mb-2 mt-4 text-sm font-medium">Xác nhận mật khẩu</div>
-                <UInput v-model="changePasswordState.confirmPassword" type="password" icon="mingcute:key-2-line"
-                        size="lg"
-                        color="gray" autocomplete="on" />
-            </div>
-
-            <template #footer>
-                <UButton :loading="changePasswordModal.isSubmitting" class="w-full rounded-md" size="lg" color="primary"
-                         type="submit"
-                         @click="submitChangePassword"
-                         block>
-                    Đổi mật khẩu
-                </UButton>
-            </template>
-        </UCard>
+                <template #footer>
+                    <UButton :loading="changePasswordModal.isSubmitting" class="w-full rounded-md" size="lg"
+                             color="primary"
+                             type="submit"
+                             block>
+                        Đổi mật khẩu
+                    </UButton>
+                </template>
+            </UCard>
+        </form>
     </UModal>
 </template>

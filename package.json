@@ -12,6 +12,7 @@
         "update": "yarn upgrade-interactive --latest"
     },
     "dependencies": {
+        "@google/generative-ai": "^0.21.0",
         "@nuxt/icon": "^1.5.1",
         "@nuxt/image": "^1.8.0",
         "@nuxt/ui": "^2.18.4",
@@ -20,6 +21,8 @@
         "date-fns": "^4.1.0",
         "jwt-decode": "^4.0.0",
         "nuxt": "^3.12.4",
+        "pdfjs-dist": "^4.6.82",
+        "tesseract.js": "^5.1.1",
         "v-calendar": "^3.1.2",
         "vue": "latest"
     },

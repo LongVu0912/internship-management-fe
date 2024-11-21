@@ -1,7 +1,8 @@
 import type Profile from "../profile/Profile";
+import type Recruitment from "../recruitment/Recruitment";
 
 export default interface Business {
-    businessId: string,
+    businessId: string;
     name: string;
     overview: string;
     location: string;
@@ -12,4 +13,5 @@ export default interface Business {
     businessWebsite: string;
     businessImage: string;
     managedBy: Profile;
+    recruitments?: Recruitment[];
 }
