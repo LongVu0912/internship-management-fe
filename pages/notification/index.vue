@@ -154,7 +154,7 @@ const columns = [
         </UCard>
     </div>
 
-    <UModal v-model="notificationModal.isOpen" prevent-close>
+    <UModal :ui="{ width: 'sm:max-w-4xl' }" v-model="notificationModal.isOpen" prevent-close>
         <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
             <template #header>
                 <div class="flex items-center justify-between">

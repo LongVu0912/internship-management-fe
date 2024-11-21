@@ -164,9 +164,10 @@ watch(
                 <div v-for="recruitment in recruitmentPaging"
                      class="hover:border-primary-500 dark:hover:border-primary-500 flex h-auto w-full transform flex-row gap-4 self-center rounded-lg bg-white p-4 shadow-md transition-transform duration-300 hover:scale-105 dark:bg-gray-800">
                     <div class="flex flex-shrink-0 items-center">
-                        <NuxtImg :src="imageUrl + recruitment.businessImage" :placeholder="img(`/job.png`, { q: 50 })"
-                                 alt="avatar"
-                                 class="h-16 w-16 rounded-full object-cover md:h-32 md:w-32" format="webp" />
+                        <NuxtImg :src="imageUrl + recruitment.businessImage"
+                                 :placeholder="img(`/job.png`, { h: 128, q: 50 })"
+                                 alt="avatar" class="h-16 w-16 rounded-full object-cover md:h-32 md:w-32"
+                                 format="webp" />
                     </div>
                     <div class="flex w-full flex-col justify-between gap-4">
                         <div class="flex flex-col justify-between gap-2">

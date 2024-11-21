@@ -12,16 +12,16 @@ const toggleMenu = () => {
 
 <template>
     <div
-         class="bg-app-primary fixed left-0 right-0 top-0 z-50 flex h-16 flex-row items-center justify-between border-b border-gray-200 px-3 md:px-14 lg:px-28 dark:border-gray-800">
+         class="bg-app-primary fixed left-0 right-0 top-0 z-50 flex h-16 flex-row items-center justify-between border-b border-gray-200 px-3 md:px-8 lg:px-28 dark:border-gray-800">
         <!-- * Start -->
         <div class="flex flex-1 flex-row gap-2">
-            <UButton class="md:hidden"
+            <UButton class="lg:hidden"
                      icon="mingcute:menu-fill"
                      color="gray"
                      variant="ghost"
                      @click="toggleMenu"
                      aria-label="Menu" />
-            <div class="hidden items-center gap-2 md:flex">
+            <div class="hidden items-center gap-2 lg:flex">
                 <NuxtImg src="/hcmute.png" width="40" height="40"
                          format="webp"
                          alt="hcmute" />
@@ -31,7 +31,7 @@ const toggleMenu = () => {
             </div>
 
             <!-- * Menu bar in mobile -->
-            <div class="fixed left-0 right-0 top-16 z-40 overflow-hidden shadow-md transition-all duration-300 ease-in-out md:hidden"
+            <div class="fixed left-0 right-0 top-16 z-40 overflow-hidden shadow-md transition-all duration-300 ease-in-out lg:hidden"
                  :class="{ 'max-h-64 opacity-100': isOpen, 'max-h-0 opacity-0': !isOpen }">
                 <div class="bg-app-primary flex flex-col shadow-lg">
                     <UButton @click="isOpen = false" to="/recruitment"
@@ -78,7 +78,7 @@ const toggleMenu = () => {
         </div>
 
         <!-- * Center -->
-        <div class="hidden flex-row md:flex">
+        <div class="hidden flex-row lg:flex">
             <UPopover mode="hover">
                 <UButton color="black" variant="ghost" label="Tìm tuyển dụng"
                          class="hover:text-primary-500 dark:hover-text-400"

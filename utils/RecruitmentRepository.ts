@@ -132,8 +132,8 @@ export const RecruitmentRepository = <T>(
     };
 
     const updateRecruitment = async (payload: {
-        recruitment: Recruitment,
-        businessId?: string,
+        recruitment: Recruitment;
+        businessId?: string;
     }) => {
         try {
             const response: ApiResponse = await fetch(
@@ -142,8 +142,29 @@ export const RecruitmentRepository = <T>(
                     method: "POST",
                     body: JSON.stringify(payload.recruitment),
                     params: {
-                        businessId: payload.businessId || '',
-                    }
+                        businessId: payload.businessId || "",
+                    },
+                }
+            );
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
+    const inviteStudent = async (payload: {
+        recruitmentId: string;
+        studentId: string;
+    }) => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/recruitment/InviteStudent`,
+                {
+                    method: "POST",
+                    params: {
+                        recruitmentId: payload.recruitmentId || "",
+                        studentId: payload.studentId || "",
+                    },
                 }
             );
             return response;
@@ -160,6 +181,7 @@ export const RecruitmentRepository = <T>(
         getAllBusinessRecruitmentPaging,
         getAllRecruitmentRequestOfRecruitmentPaging,
         setRecruitmentRequestStatus,
-        updateRecruitment
+        updateRecruitment,
+        inviteStudent,
     };
 };

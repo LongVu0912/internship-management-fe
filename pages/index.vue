@@ -27,7 +27,7 @@ const submitChat = async () => {
 
     const businesses = businessesResponse.result.data;
 
-    const responseRecruitments = await cvUtils.compareWithRecruitments(message.value, businesses);
+    const responseRecruitments = await cvUtils.findSuitableInternship(message.value, businesses);
 
     if (responseRecruitments.code != 200) {
         nuxtToast({
