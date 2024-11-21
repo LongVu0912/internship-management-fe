@@ -66,6 +66,26 @@ const openMessageModal = (message: string) => {
     messageModal.value.isOpen = true;
 }
 
+const deleteRecruitmentRequests = async (recruitmentRequestIds: string[]) => {
+    const apiResponse = await studentRepository.deleteRecruitmentRequests({
+        recruitmentRequestIds: recruitmentRequestIds,
+    });
+
+    if (apiResponse.code !== 200) {
+        nuxtToast({
+            description: apiResponse.message,
+            type: "error",
+        })
+    }
+    else {
+        nuxtToast({
+            description: "Xóa thành công",
+            type: "success",
+        })
+        fetchTableData();
+    }
+}
+
 // * Watches
 watch(
     [() => pageConfig.currentPage, () => pageConfig.pageSize],
@@ -137,7 +157,9 @@ const items = (row: any) => [
         {
             label: 'Xoá',
             icon: 'mingcute:delete-2-line',
-            click: nuxtToast,
+            click: () => {
+                deleteRecruitmentRequests([row.recruitmentRequestId])
+            },
         }
     ]
 ]
@@ -215,7 +237,7 @@ const items = (row: any) => [
 
                 <template #point-data="{ row }">
                     <div class="text-center" v-if="row.point != null">
-                        <UBadge class="w-10 justify-center" :label="row.point" size="md" variant="outline"/>
+                        <UBadge class="w-10 justify-center" :label="row.point" size="md" variant="outline" />
                     </div>
                 </template>
 

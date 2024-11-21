@@ -185,6 +185,40 @@ export const StudentRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         }
     };
 
+    const deleteRecruitmentRequests = async (payload: {
+        recruitmentRequestIds: string[];
+    }): Promise<ApiResponse> => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/student/DeleteRecruitmentRequests`,
+                {
+                    method: "POST",
+                    body: payload.recruitmentRequestIds,
+                }
+            );
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
+    const deleteInstructorRequests = async (payload: {
+        instructorRequestIds: string[];
+    }): Promise<ApiResponse> => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/student/DeleteInstructorRequests`,
+                {
+                    method: "POST",
+                    body: payload.instructorRequestIds,
+                }
+            );
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
     return {
         getStudentProfile,
         getStudentProfileById,
@@ -197,5 +231,7 @@ export const StudentRepository = <T>(fetch: $Fetch<T, NitroFetchRequest>) => {
         requestInstructor,
         createStudent,
         getAllStudentWithSeekingIntern,
+        deleteRecruitmentRequests,
+        deleteInstructorRequests
     };
 };
