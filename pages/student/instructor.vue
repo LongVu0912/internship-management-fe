@@ -144,6 +144,26 @@ const openMessageModal = (message: string) => {
     messageModal.value.isOpen = true;
 }
 
+const deleteInstructorRequests = async (instructorRequestIds: string[]) => {
+    const apiResponse = await studentRepository.deleteInstructorRequests({
+        instructorRequestIds: instructorRequestIds,
+    });
+
+    if (apiResponse.code !== 200) {
+        nuxtToast({
+            description: apiResponse.message,
+            type: "error",
+        })
+    }
+    else {
+        nuxtToast({
+            description: "Xóa thành công",
+            type: "success",
+        })
+        fetchTableData();
+    }
+}
+
 // * Watches
 watch(
     [() => pageConfig.currentPage, () => pageConfig.pageSize],
@@ -209,7 +229,9 @@ const items = (row: any) => [
         {
             label: 'Xoá',
             icon: 'mingcute:delete-2-line',
-            click: nuxtToast,
+            click: () => {
+                deleteInstructorRequests([row.instructorRequestId])
+            },
         }
     ]
 ]
