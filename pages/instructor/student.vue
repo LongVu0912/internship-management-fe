@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import InstructorStatus from '~/types/enums/InstructorStatus';
+import Status from '~/types/enums/Status';
 import { Filter } from '~/types/page_config/Filter';
 import { Order } from '~/types/page_config/Order';
 import { PageConfig } from '~/types/page_config/PageConfig';
@@ -22,11 +22,13 @@ const messageModal = ref({
     isOpen: false,
     message: '',
 })
+
 const pageConfig = reactive(new PageConfig());
-pageConfig.orders.push(new Order("student.profile.fullname"));
+pageConfig.orders.push(new Order("instructorStatus"));
 pageConfig.filters.push(new Filter("student.profile.fullname"));
+
 const sort = ref<any>({
-    column: 'student.profile.fullname',
+    column: 'instructorStatus',
     direction: 'desc'
 })
 
@@ -59,10 +61,30 @@ const fetchTableData = async () => {
     }
 }
 
-const approveRequest = async (instructorRequestId: string) => {
+const completeRequest = async (instructorRequestIds: string[]) => {
+    const apiResponse = await instructorRepository.completeRequest({
+        instructorRequestIds: instructorRequestIds
+    })
+
+    if (apiResponse.code !== 200 || apiResponse.result === false) {
+        nuxtToast({
+            description: apiResponse.message,
+            type: "error",
+        })
+    }
+    else {
+        nuxtToast({
+            description: "Hoàn thành thực tập thành công",
+            type: 'success',
+        });
+        fetchTableData();
+    }
+}
+
+const approveRequest = async (instructorRequestIds: string[]) => {
     const apiResponse = await instructorRepository.setRequestStatus({
-        instructorRequestId: instructorRequestId,
-        status: InstructorStatus.APPROVED,
+        instructorRequestIds: instructorRequestIds,
+        status: Status.APPROVED,
     })
 
     if (apiResponse.code !== 200 || apiResponse.result === false) {
@@ -80,10 +102,10 @@ const approveRequest = async (instructorRequestId: string) => {
     }
 }
 
-const rejectRequest = async (instructorRequestId: string) => {
+const rejectRequest = async (instructorRequestIds: string[]) => {
     const apiResponse = await instructorRepository.setRequestStatus({
-        instructorRequestId: instructorRequestId,
-        status: InstructorStatus.REJECT,
+        instructorRequestIds: instructorRequestIds,
+        status: Status.REJECT,
     })
 
     if (apiResponse.code !== 200 || apiResponse.result === false) {
@@ -137,7 +159,7 @@ watch(sort, () => {
 })
 
 // * Data
-const items = (row: any) => [
+const itemsPending = (row: any) => [
     [
         {
             label: 'Hồ sơ sinh viên',
@@ -156,23 +178,57 @@ const items = (row: any) => [
             label: 'Đồng ý',
             icon: 'mingcute:check-line',
             click: () => {
-                approveRequest(row.instructorRequestId)
+                approveRequest([row.instructorRequestId])
             },
         },
         {
             label: 'Từ chối',
             icon: 'mingcute:close-line',
             click: () => {
-                rejectRequest(row.instructorRequestId)
+                rejectRequest([row.instructorRequestId])
             },
         }
+    ]
+]
+
+const itemsApproved = (row: any) => [
+    [
+        {
+            label: 'Hồ sơ sinh viên',
+            icon: 'mingcute:profile-line',
+            click: () => {
+                navigateTo(`/student/${row.student.studentId}`, {
+                    open: {
+                        target: '_blank',
+                    }
+                })
+            }
+        },
     ],
     [
         {
-            label: 'Xoá',
-            icon: 'mingcute:delete-2-line',
-            click: nuxtToast,
-        }
+            label: 'Hoàn thành',
+            icon: 'mingcute:checks-line',
+            click: () => {
+                completeRequest([row.instructorRequestId])
+            }
+        },
+    ]
+]
+
+const itemsRejectAndCompleted = (row: any) => [
+    [
+        {
+            label: 'Hồ sơ sinh viên',
+            icon: 'mingcute:profile-line',
+            click: () => {
+                navigateTo(`/student/${row.student.studentId}`, {
+                    open: {
+                        target: '_blank',
+                    }
+                })
+            }
+        },
     ]
 ]
 
@@ -195,6 +251,12 @@ const columns = [
     {
         key: 'messageToInstructor',
         label: 'Tin nhắn',
+        sortable: true
+    },
+    {
+        key: 'point',
+        label: 'Điểm thực tập',
+        class: 'text-center',
         sortable: true
     },
     {
@@ -286,8 +348,22 @@ const selectedColumns = ref([...columns]);
                     </div>
                 </template>
 
+                <template #point-data="{ row }">
+                    <div class="text-center" v-if="row.point != null">
+                        <UBadge class="w-10 justify-center" :label="row.point" size="md" variant="outline" />
+                    </div>
+                </template>
+
                 <template #actions-data="{ row }">
-                    <UDropdown :items="items(row)">
+                    <UDropdown v-if="row.instructorStatus == Status.PENDING" :items="itemsPending(row)">
+                        <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
+                    </UDropdown>
+
+                    <UDropdown v-else-if="row.instructorStatus == Status.APPROVED" :items="itemsApproved(row)">
+                        <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
+                    </UDropdown>
+
+                    <UDropdown v-else :items="itemsRejectAndCompleted(row)">
                         <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
                     </UDropdown>
                 </template>

@@ -1,4 +1,4 @@
-import type InstructorStatus from "../enums/InstructorStatus";
+import type Status from "../enums/Status";
 import type Instructor from "../instructor/Instructor";
 import type Student from "./Student";
 
@@ -7,8 +7,9 @@ export default interface StudentRequestInstructor {
     instructorRequestId?: string;
     student?: Student;
     instructor: Instructor;
-    instructorStatus: InstructorStatus;
+    instructorStatus: Status;
     messageToInstructor: string;
     recruitmentId?: string;
     recruitmentTitle?: string;
+    point?: number;
 }

@@ -1,6 +1,6 @@
 import type { NitroFetchRequest, $Fetch } from "nitropack";
 import type ApiResponse from "~/types/ApiResponse";
-import type InstructorStatus from "~/types/enums/InstructorStatus";
+import type Status from "~/types/enums/Status";
 import type Instructor from "~/types/instructor/Instructor";
 import type { PageConfig } from "~/types/page_config/PageConfig";
 
@@ -44,18 +44,35 @@ export const InstructorRepository = <T>(
     };
 
     const setRequestStatus = async (payload: {
-        instructorRequestId: string;
-        status: InstructorStatus;
+        instructorRequestIds: string[];
+        status: Status;
     }) => {
         try {
             const response: ApiResponse = await fetch(
                 `/instructor/SetRequestStatus`,
                 {
                     method: "POST",
-                    body: JSON.stringify(payload.status),
+                    body: JSON.stringify(payload.instructorRequestIds),
                     params: {
-                        instructorRequestId: payload.instructorRequestId,
+                        requestStatus: payload.status,
                     },
+                }
+            );
+            return response;
+        } catch (error: any) {
+            return HandleError(error);
+        }
+    };
+
+    const completeRequest = async (payload: {
+        instructorRequestIds: string[];
+    }) => {
+        try {
+            const response: ApiResponse = await fetch(
+                `/instructor/CompleteRequest`,
+                {
+                    method: "POST",
+                    body: JSON.stringify(payload.instructorRequestIds),
                 }
             );
             return response;
@@ -110,7 +127,9 @@ export const InstructorRepository = <T>(
         }
     };
 
-    const updateInstructor = async (payload: Instructor): Promise<ApiResponse> => {
+    const updateInstructor = async (
+        payload: Instructor
+    ): Promise<ApiResponse> => {
         try {
             const response: ApiResponse = await fetch(
                 `/instructor/UpdateInstructor`,
@@ -129,6 +148,7 @@ export const InstructorRepository = <T>(
         getInstructorPaging,
         getAllInstructorRequestOfInstructorPaging,
         setRequestStatus,
+        completeRequest,
         createInstructor,
         getInstructorData,
         getMyInstructorData,

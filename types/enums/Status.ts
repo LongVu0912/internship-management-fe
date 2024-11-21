@@ -1,8 +1,8 @@
-enum InstructorStatus {
+enum Status {
     PENDING = "PENDING",
     REJECT = "REJECT",
     APPROVED = "APPROVED",
     COMPLETED = "COMPLETED",
 }
 
-export default InstructorStatus;
+export default Status;

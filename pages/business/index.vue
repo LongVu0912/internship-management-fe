@@ -9,6 +9,7 @@ definePageMeta({
 
 // * Imports
 const { $apiToken } = useNuxtApp();
+const img = useImage();
 const businessRepository = BusinessRepository($apiToken);
 const nuxtToast = useNuxtToast();
 const imageUrl = useRuntimeConfig().public.imageUrl;
@@ -28,6 +29,7 @@ const avatarModal = ref({
     isOpen: false,
     isSubmitting: false,
     imageFile: null as File | null,
+    imageUrl: '',
 })
 
 const gender = computed({
@@ -83,6 +85,7 @@ const handleUpdateProfile = async () => {
 
 const closeUploadAvatarModal = () => {
     avatarModal.value.imageFile = null;
+    avatarModal.value.imageUrl = '';
     avatarModal.value.isOpen = false;
 }
 
@@ -92,6 +95,8 @@ const handleInputImageFile = (event: any) => {
     } else {
         avatarModal.value.imageFile = null;
     }
+
+    avatarModal.value.imageUrl = URL.createObjectURL(event[0]);
 };
 
 const handleUploadAvatar = async () => {
@@ -115,7 +120,7 @@ const handleUploadAvatar = async () => {
             type: "success",
         });
         fetchData();
-        avatarModal.value.isOpen = false;
+        closeUploadAvatarModal();
     } else {
         nuxtToast({
             description: apiResponse.message,
@@ -325,7 +330,11 @@ const handleUploadAvatar = async () => {
                              @click="closeUploadAvatarModal" />
                 </div>
             </template>
-            <div>
+            <div class="space-y-4">
+                <div v-if="avatarModal.imageUrl != ''"
+                     class="border-primary-500 flex justify-center rounded-lg border-2 py-4">
+                    <NuxtImg class="h-48 w-48 rounded-full object-cover" :src="avatarModal.imageUrl" format="webp" />
+                </div>
                 <UInput :disabled="avatarModal.isSubmitting" type="file" size="sm" icon="mingcute:photo-album-line"
                         accept=".png, .jpg" @change="handleInputImageFile" />
             </div>

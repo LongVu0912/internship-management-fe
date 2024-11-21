@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import InstructorStatus from '~/types/enums/InstructorStatus';
+import Status from '~/types/enums/Status';
 import type Instructor from '~/types/instructor/Instructor';
 import { Filter } from '~/types/page_config/Filter';
 import { Order } from '~/types/page_config/Order';

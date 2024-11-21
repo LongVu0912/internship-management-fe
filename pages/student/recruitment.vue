@@ -106,6 +106,12 @@ const columns = [
         sortable: true,
     },
     {
+        key: 'point',
+        label: 'Điểm thực tập',
+        class: 'text-center',
+        sortable: true
+    },
+    {
         key: 'actions',
         label: 'Hành động'
     }
@@ -204,6 +210,12 @@ const items = (row: any) => [
                 <template #messageToBusiness-data="{ row }">
                     <div @click="openMessageModal(row.messageToBusiness)" class="cursor-pointer">
                         {{ appUtils.subLongText(row.messageToBusiness) }}
+                    </div>
+                </template>
+
+                <template #point-data="{ row }">
+                    <div class="text-center" v-if="row.point != null">
+                        <UBadge class="w-10 justify-center" :label="row.point" size="md" variant="outline"/>
                     </div>
                 </template>
 

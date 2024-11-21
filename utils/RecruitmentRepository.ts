@@ -1,6 +1,6 @@
 import type { NitroFetchRequest, $Fetch } from "nitropack";
 import type ApiResponse from "~/types/ApiResponse";
-import type BusinessStatus from "~/types/enums/BusinessStatus";
+import type Status from "~/types/enums/Status";
 import { PageConfig } from "~/types/page_config/PageConfig";
 import type Recruitment from "~/types/recruitment/Recruitment";
 import type RecruitmentRequest from "~/types/recruitment/RecruitmentRequest";
@@ -112,7 +112,7 @@ export const RecruitmentRepository = <T>(
 
     const setRecruitmentRequestStatus = async (payload: {
         recruitmentRequestId: string;
-        status: BusinessStatus;
+        status: Status;
     }) => {
         try {
             const response: ApiResponse = await fetch(

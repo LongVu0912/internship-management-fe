@@ -76,6 +76,7 @@ const processCV = async () => {
 
             <div class="flex flex-col items-center gap-2">
                 <UInput required type="file" size="lg" icon="i-heroicons-folder" accept=".pdf"
+                        class="w-full max-w-6xl"
                         @change="handleInputCVFile"
                         :ui="{ icon: { trailing: { pointer: 'pointer-events-auto', padding: { lg: 'px-1' } } } }">
                     <template #trailing>
