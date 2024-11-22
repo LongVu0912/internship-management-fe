@@ -157,7 +157,7 @@ const exportScore = async () => {
         let recruitmentRequests: StudentRequestInstructor[] = apiResponse.result.data;
 
         recruitmentRequests = recruitmentRequests.filter(
-            (request: StudentRequestInstructor) => request.point !== null
+            (request: StudentRequestInstructor) => request.point !== null && request.instructorStatus == Status.COMPLETED
         );
 
         const headers = ['MSSV', 'Họ tên', 'Thực tập', 'Điểm', 'Khoa', 'Ngành', 'Khóa'];
