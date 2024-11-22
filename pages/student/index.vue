@@ -18,6 +18,7 @@ const backendUrl = window.localStorage.getItem("backendUrl") || useRuntimeConfig
 const isPageLoading = ref(true);
 
 const student = ref<Student>({} as Student);
+const updateStudent = ref<Student>({} as Student);
 
 const uploadCVModal = ref({
     isOpen: false,
@@ -25,22 +26,22 @@ const uploadCVModal = ref({
     cvFile: null as File | null,
 })
 
-const updateStudentModal = ref({
+const updateModal = ref({
     isOpen: false,
     isUpdating: false,
 })
 
 const gender = computed({
-    get: () => (student.value.profile.isMale ? 'Nam' : 'Nữ'),
+    get: () => (updateStudent.value.profile.isMale ? 'Nam' : 'Nữ'),
     set: (value: string) => {
-        student.value.profile.isMale = (value === 'Nam');
+        updateStudent.value.profile.isMale = (value === 'Nam');
     }
 });
 
 const birthday = computed({
-    get: () => (new Date(student.value.dob)),
+    get: () => (new Date(updateStudent.value.dob)),
     set: (value: Date) => {
-        student.value.dob = format(value, 'yyyy-MM-dd');
+        updateStudent.value.dob = format(value, 'yyyy-MM-dd');
     }
 })
 
@@ -106,15 +107,20 @@ const handleUploadCV = async () => {
     uploadCVModal.value.isSubmitting = false;
 }
 
+const handleOpenUpdateModal = () => {
+    updateStudent.value = JSON.parse(JSON.stringify(student.value));
+    updateModal.value.isOpen = true;
+}
+
 const handleCloseUpdateModal = async () => {
-    await fetchData();
-    updateStudentModal.value.isOpen = false;
+    updateStudent.value = JSON.parse(JSON.stringify(student.value));
+    updateModal.value.isOpen = false;
 }
 
 const handleUpdateProfile = async () => {
-    updateStudentModal.value.isUpdating = true;
+    updateModal.value.isUpdating = true;
 
-    const apiResponse = await studentRepository.updateProfile(student.value);
+    const apiResponse = await studentRepository.updateProfile(updateStudent.value);
 
     if (apiResponse.code !== 200) {
         nuxtToast({
@@ -128,11 +134,11 @@ const handleUpdateProfile = async () => {
             type: 'success',
         });
         fetchData();
-        updateStudentModal.value.isOpen = false;
+        updateModal.value.isOpen = false;
     }
 
     fetchData();
-    updateStudentModal.value.isUpdating = false;
+    updateModal.value.isUpdating = false;
 }
 </script>
 
@@ -276,7 +282,7 @@ const handleUpdateProfile = async () => {
 
             <template #footer>
                 <div class="flex justify-end">
-                    <UButton color="primary" @click="updateStudentModal.isOpen = true">
+                    <UButton color="primary" @click="handleOpenUpdateModal">
                         Cập nhật
                     </UButton>
                 </div>
@@ -295,7 +301,7 @@ const handleUpdateProfile = async () => {
                         </div>
                         <UButton :disabled="uploadCVModal.isSubmitting" color="gray" variant="ghost"
                                  icon="mingcute:close-fill" class="-my-1"
-                                 @click="uploadCVModal.isOpen = false" />
+                                 @click="handleCloseUpdateModal" />
                     </div>
                 </template>
                 <div>
@@ -313,14 +319,14 @@ const handleUpdateProfile = async () => {
         </form>
     </UModal>
 
-    <UModal :ui="{ width: 'sm:max-w-3xl' }" v-model="updateStudentModal.isOpen" prevent-close>
+    <UModal :ui="{ width: 'sm:max-w-3xl' }" v-model="updateModal.isOpen" prevent-close>
         <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
             <template #header>
                 <div class="flex items-center justify-between">
                     <div class="text-base font-semibold">
                         Cập nhật CV
                     </div>
-                    <UButton :disabled="updateStudentModal.isUpdating" color="gray" variant="ghost"
+                    <UButton :disabled="updateModal.isUpdating" color="gray" variant="ghost"
                              icon="mingcute:close-fill" class="-my-1"
                              @click="handleCloseUpdateModal" />
                 </div>
@@ -335,7 +341,8 @@ const handleUpdateProfile = async () => {
                 <div class="w-full space-y-1">
                     <div class="font-medium">Ngày sinh</div>
                     <UPopover class="w-full" :popper="{ placement: 'bottom-start' }">
-                        <UButton class="w-full" :label="format(new Date(student.dob), 'd MMM, yyy', { locale: vi })"
+                        <UButton class="w-full"
+                                 :label="format(new Date(updateStudent.dob), 'd MMM, yyy', { locale: vi })"
                                  color="white" size="md">
                         </UButton>
 
@@ -347,12 +354,12 @@ const handleUpdateProfile = async () => {
 
                 <div class="w-full space-y-1">
                     <div class="font-medium">Số điện thoại</div>
-                    <UInput color="gray" v-model="student.profile.phoneNumber" />
+                    <UInput color="gray" v-model="updateStudent.profile.phoneNumber" />
                 </div>
 
                 <div class="w-full space-y-1">
                     <div class="font-medium">Bio</div>
-                    <UTextarea size="lg" color="gray" :rows="5" v-model="student.profile.bio" class="w-full">
+                    <UTextarea size="lg" color="gray" :rows="5" v-model="updateStudent.profile.bio" class="w-full">
                     </UTextarea>
                 </div>
             </div>
@@ -362,7 +369,7 @@ const handleUpdateProfile = async () => {
                     <UButton class="mr-2" color="gray" variant="ghost" @click="handleCloseUpdateModal">
                         Huỷ
                     </UButton>
-                    <UButton color="primary" @click="handleUpdateProfile" :loading="updateStudentModal.isUpdating">
+                    <UButton color="primary" @click="handleUpdateProfile" :loading="updateModal.isUpdating">
                         Cập nhật
                     </UButton>
                 </div>

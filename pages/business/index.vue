@@ -9,13 +9,15 @@ definePageMeta({
 
 // * Imports
 const { $apiToken } = useNuxtApp();
-const img = useImage();
 const businessRepository = BusinessRepository($apiToken);
 const nuxtToast = useNuxtToast();
 const imageUrl = useRuntimeConfig().public.imageUrl;
 
 // * Refs
 const isPageLoading = ref(true);
+const updateBusiness = ref<Business>({
+    managedBy: {} as Profile,
+} as Business);
 const business = ref<Business>({
     managedBy: {} as Profile,
 } as Business);
@@ -33,9 +35,9 @@ const avatarModal = ref({
 })
 
 const gender = computed({
-    get: () => (business.value.managedBy.isMale ? 'Nam' : 'Nữ'),
+    get: () => (updateBusiness.value.managedBy.isMale ? 'Nam' : 'Nữ'),
     set: (value: string) => {
-        business.value.managedBy.isMale = (value === 'Nam');
+        updateBusiness.value.managedBy.isMale = (value === 'Nam');
     }
 });
 
@@ -61,9 +63,19 @@ const fetchData = async () => {
     isPageLoading.value = false;
 }
 
+const handleOpenUpdateModal = () => {
+    updateBusiness.value = JSON.parse(JSON.stringify(business.value));
+    updateModal.value.isOpen = true;
+}
+
+const handleCloseUpdateModal = async () => {
+    updateBusiness.value = JSON.parse(JSON.stringify(business.value));
+    updateModal.value.isOpen = false;
+}
+
 const handleUpdateProfile = async () => {
     updateModal.value.isSubmitting = true;
-    const apiResponse = await businessRepository.updateProfile(business.value);
+    const apiResponse = await businessRepository.updateProfile(updateBusiness.value);
 
     if (apiResponse.code !== 200) {
         nuxtToast({
@@ -235,7 +247,7 @@ const handleUploadAvatar = async () => {
 
         <template #footer>
             <div class="flex justify-end">
-                <UButton label="Cập nhật" color="primary" @click="updateModal.isOpen = true" />
+                <UButton label="Cập nhật" color="primary" @click="handleOpenUpdateModal" />
             </div>
         </template>
     </UCard>
@@ -249,40 +261,41 @@ const handleUploadAvatar = async () => {
                             Cập nhật thông tin
                         </div>
                         <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
-                                 @click="updateModal.isOpen = false" />
+                                 @click="handleCloseUpdateModal" />
                     </div>
                 </template>
                 <div class="flex flex-col gap-3">
                     <div class="text-base font-bold">THÔNG TIN CÔNG TY</div>
                     <div class="space-y-1">
                         <div class="font-medium">Tên công ty</div>
-                        <UInput required v-model="business.name" />
+                        <UInput required v-model="updateBusiness.name" />
                     </div>
                     <div class="space-y-1">
                         <div class="font-medium">Địa điểm</div>
-                        <UInput required v-model="business.location" />
+                        <UInput required v-model="updateBusiness.location" />
                     </div>
                     <div class="space-y-1">
                         <div class="font-medium">Website</div>
-                        <UInput required v-model="business.businessWebsite" />
+                        <UInput required v-model="updateBusiness.businessWebsite" />
                     </div>
                     <div class="space-y-1">
                         <div class="font-medium">Ngành</div>
-                        <UInput required v-model="business.industry" />
+                        <UInput required v-model="updateBusiness.industry" />
                     </div>
                     <div class="flex flex-col gap-4 md:flex-row">
                         <div class="w-full space-y-1">
                             <div class="font-medium">Ngày làm việc</div>
-                            <UInput required v-model="business.workingDay" />
+                            <UInput required v-model="updateBusiness.workingDay" />
                         </div>
                         <div class="w-full space-y-1">
                             <div class="font-medium">Giờ làm việc</div>
-                            <UInput required v-model="business.workingHour" />
+                            <UInput required v-model="updateBusiness.workingHour" />
                         </div>
                     </div>
                     <div class="w-full space-y-1">
                         <div class="font-medium">Tổng quát</div>
-                        <UTextarea required size="lg" color="gray" :rows="5" class="w-full" v-model="business.overview">
+                        <UTextarea required size="lg" color="gray" :rows="5" class="w-full"
+                                   v-model="updateBusiness.overview">
                         </UTextarea>
                     </div>
                     <UDivider size="xs" class="my-2" />
@@ -290,7 +303,7 @@ const handleUploadAvatar = async () => {
                     <div class="flex flex-col gap-4 md:flex-row">
                         <div class="w-full space-y-1">
                             <div class="font-medium">Số điện thoại</div>
-                            <UInput required v-model="business.managedBy.phoneNumber" />
+                            <UInput required v-model="updateBusiness.managedBy.phoneNumber" />
                         </div>
                         <div class="w-full space-y-1">
                             <div class="font-medium">Giới tính</div>
@@ -300,13 +313,13 @@ const handleUploadAvatar = async () => {
                     <div class="w-full space-y-1">
                         <div class="font-medium">Bio</div>
                         <UTextarea required size="lg" color="gray" :rows="5" class="w-full"
-                                   v-model="business.managedBy.bio">
+                                   v-model="updateBusiness.managedBy.bio">
                         </UTextarea>
                     </div>
                 </div>
                 <template #footer>
                     <div class="flex justify-end">
-                        <UButton class="mr-2" color="gray" variant="ghost" @click="updateModal.isOpen = false">
+                        <UButton class="mr-2" color="gray" variant="ghost" @click="handleCloseUpdateModal">
                             Huỷ
                         </UButton>
                         <UButton color="primary" type="submit" :loading="updateModal.isSubmitting">

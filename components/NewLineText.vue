@@ -3,15 +3,11 @@ const props = defineProps<{
     text?: string;
 }>();
 
-const splitLines = computed(() => {
-    return props.text?.split('\n');
+const formattedText = computed(() => {
+    return props.text ? props.text.replace(/\n/g, '<br>') : '';
 });
 </script>
 
 <template>
-    <p class="break-words">
-        <p v-for="(line, index) in splitLines" :key="index">
-            {{ line }}
-        </p>
-    </p>
+    <div class="break-words" v-html="formattedText"></div>
 </template>

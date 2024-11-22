@@ -14,6 +14,8 @@ const nuxtToast = useNuxtToast();
 
 // * Refs
 const instructor = ref<Instructor>({} as Instructor);
+const updateInstructor = ref<Instructor>({} as Instructor);
+
 const isPageLoading = ref(true);
 const updateModal = ref({
     isOpen: false,
@@ -21,9 +23,9 @@ const updateModal = ref({
 })
 
 const gender = computed({
-    get: () => (instructor.value.profile.isMale ? 'Nam' : 'Nữ'),
+    get: () => (updateInstructor.value.profile.isMale ? 'Nam' : 'Nữ'),
     set: (value: string) => {
-        instructor.value.profile.isMale = (value === 'Nam');
+        updateInstructor.value.profile.isMale = (value === 'Nam');
     }
 });
 
@@ -49,8 +51,8 @@ const fetchData = async () => {
 
 const handleUpdateProfile = async () => {
     updateModal.value.isSubmitting = true;
-    instructor.value.facultyId = instructor.value.faculty.facultyId;
-    const apiResponse = await instructorRepository.updateInstructor(instructor.value);
+    updateInstructor.value.facultyId = updateInstructor.value.faculty.facultyId;
+    const apiResponse = await instructorRepository.updateInstructor(updateInstructor.value);
 
     if (apiResponse.code !== 200) {
         nuxtToast({
@@ -69,6 +71,17 @@ const handleUpdateProfile = async () => {
 
     updateModal.value.isSubmitting = false;
 }
+
+const handleOpenUpdateModal = () => {
+    updateInstructor.value = JSON.parse(JSON.stringify(instructor.value));
+    updateModal.value.isOpen = true;
+}
+
+const handleCloseUpdateModal = async () => {
+    updateInstructor.value = JSON.parse(JSON.stringify(instructor.value));
+    updateModal.value.isOpen = false;
+}
+
 </script>
 
 <template>
@@ -140,7 +153,7 @@ const handleUpdateProfile = async () => {
         <template #footer>
             <div class="flex justify-end">
                 <UButton icon="mingcute:save-2-line" label="Cập nhật" color="primary"
-                         @click="updateModal.isOpen = true" />
+                         @click="handleOpenUpdateModal" />
             </div>
         </template>
     </UCard>
@@ -154,14 +167,14 @@ const handleUpdateProfile = async () => {
                             Cập nhật thông tin
                         </div>
                         <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
-                                 @click="updateModal.isOpen = false" />
+                                 @click="handleCloseUpdateModal" />
                     </div>
                 </template>
                 <div class="flex flex-col gap-3">
                     <div class="flex flex-col gap-4 md:flex-row">
                         <div class="w-full space-y-1">
                             <div class="font-medium">Số điện thoại</div>
-                            <UInput required v-model="instructor.profile.phoneNumber" />
+                            <UInput required v-model="updateInstructor.profile.phoneNumber" />
                         </div>
                         <div class="w-full space-y-1">
                             <div class="font-medium">Giới tính</div>
@@ -171,13 +184,13 @@ const handleUpdateProfile = async () => {
                     <div class="w-full space-y-1">
                         <div class="font-medium">Bio</div>
                         <UTextarea required size="lg" color="gray" :rows="5" class="w-full"
-                                   v-model="instructor.profile.bio">
+                                   v-model="updateInstructor.profile.bio">
                         </UTextarea>
                     </div>
                 </div>
                 <template #footer>
                     <div class="flex justify-end">
-                        <UButton class="mr-2" color="gray" variant="ghost" @click="updateModal.isOpen = false">
+                        <UButton class="mr-2" color="gray" variant="ghost" @click="handleCloseUpdateModal">
                             Huỷ
                         </UButton>
                         <UButton color="primary" type="submit" :loading="updateModal.isSubmitting">
