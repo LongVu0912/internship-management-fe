@@ -240,7 +240,7 @@ const items = (row: Business) => [
                 </h1>
             </template>
 
-            <div class="flex flex-col justify-between gap-2 px-4 py-3 md:flex-row">
+            <div class="flex flex-col justify-between gap-2 px-4 py-3 xl:flex-row">
                 <form @submit.prevent="searchTable">
                     <UInput placeholder="Tìm tên công ty..." class="min-w-64" size="sm" color="white"
                             v-model="pageConfig.filters[0].value"
