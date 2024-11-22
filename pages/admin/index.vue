@@ -132,6 +132,15 @@ const openAdminChangePasswordModal = (row: Student) => {
     adminChangePasswordModal.value.isOpen = true;
 }
 
+const downloadTemplate = () => {
+    const link = document.createElement('a');
+    link.href = '/template.xlsx';
+    link.download = 'template.xlsx';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+};
+
 // * Watches
 watch(
     [() => pageConfig.currentPage, () => pageConfig.pageSize],
@@ -345,7 +354,11 @@ const items = (row: Student) => [
                     </div>
                 </template>
 
-                <div class="flex flex-col justify-center">
+                <div class="space-y-4">
+                    <div class="flex justify-end">
+                        <UButton size="md" color="primary" variant="soft" icon="mingcute:download-2-fill"
+                                 @click="downloadTemplate" label="Template" />
+                    </div>
                     <UInput required type="file" size="sm" icon="i-heroicons-folder" accept=".xlsx"
                             @change="handleInputExcelFile" />
                 </div>
