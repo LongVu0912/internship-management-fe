@@ -17,6 +17,7 @@ const appUtils = AppUtils();
 const nuxtToast = useNuxtToast();
 
 // * Refs
+const isExportingCSV = ref(false);
 const isTableLoading = ref(true);
 const messageModal = ref({
     isOpen: false,
@@ -135,6 +136,57 @@ const openMessageModal = (message: string) => {
     messageModal.value.message = message;
     messageModal.value.isOpen = true;
 }
+
+const exportScore = async () => {
+    isExportingCSV.value = true;
+    let pageConfig = new PageConfig();
+    pageConfig.pageSize = -1;
+
+    const apiResponse = await instructorRepository.getAllInstructorRequestOfInstructorPaging({
+        pageConfig: pageConfig
+    });
+
+    if (apiResponse.code !== 200) {
+        nuxtToast({
+            description: apiResponse.message,
+            type: "error",
+        })
+        isExportingCSV.value = false;
+    }
+    else {
+        let recruitmentRequests: StudentRequestInstructor[] = apiResponse.result.data;
+
+        recruitmentRequests = recruitmentRequests.filter(
+            (request: StudentRequestInstructor) => request.point !== null
+        );
+
+        const headers = ['MSSV', 'Họ tên', 'Thực tập', 'Điểm', 'Khoa', 'Ngành', 'Khóa'];
+        const rows = recruitmentRequests.map(request => [
+            request.student?.studentId,
+            request.student?.profile.fullname,
+            request.recruitmentTitle,
+            request.point,
+            request.student?.major.faculty.name,
+            request.student?.major.name,
+            request.student?.year,
+        ]);
+
+        let csvContent = '\uFEFF'; // Add BOM for UTF-8
+        csvContent += headers.join(',') + '\n';
+        rows.forEach(row => {
+            csvContent += row.join(',') + '\n';
+        });
+
+        const encodedUri = encodeURI('data:text/csv;charset=utf-8,' + csvContent);
+        const link = document.createElement('a');
+        link.setAttribute('href', encodedUri);
+        link.setAttribute('download', 'point.csv');
+        document.body.appendChild(link);
+        link.click();
+    }
+    isExportingCSV.value = false;
+}
+
 
 // * Watches
 watch(
@@ -256,8 +308,7 @@ const columns = [
     {
         key: 'point',
         label: 'Điểm thực tập',
-        class: 'text-center',
-        sortable: true
+        class: 'text-center'
     },
     {
         key: 'actions',
@@ -270,7 +321,11 @@ const selectedColumns = ref([...columns]);
 
 <template>
     <div class="flex flex-col gap-2">
-        <div class="flex justify-end">
+        <div class="flex flex-row justify-end gap-2">
+            <div>
+                <UButton icon="mingcute:edit-4-line" label="Xuất bảng điểm" color="primary" @click="exportScore"
+                         :loading="isExportingCSV" />
+            </div>
             <CreateStudent />
         </div>
 

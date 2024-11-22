@@ -237,8 +237,7 @@ const columns = [
     {
         key: 'point',
         label: 'Điểm thực tập',
-        class: 'text-center',
-        sortable: true
+        class: 'text-center'
     },
     {
         key: 'actions',
