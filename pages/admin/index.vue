@@ -2,7 +2,6 @@
 import { Filter } from '~/types/page_config/Filter';
 import { Order } from '~/types/page_config/Order';
 import { PageConfig } from '~/types/page_config/PageConfig';
-import type Profile from '~/types/profile/Profile';
 import type Student from '~/types/student/Student';
 
 definePageMeta({
@@ -117,14 +116,6 @@ const searchTable = async () => {
     } else {
         fetchTableData();
     }
-}
-
-const handleChangePassword = () => {
-    changePasswordModal.value.isSubmitting = true;
-
-    console.log(changePasswordModal.value);
-
-    changePasswordModal.value.isSubmitting = false;
 }
 
 const openAdminChangePasswordModal = (row: Student) => {
@@ -368,42 +359,6 @@ const items = (row: Student) => [
                              block
                              type="submit">
                         Nhập dữ liệu
-                    </UButton>
-                </template>
-            </UCard>
-        </form>
-    </UModal>
-
-    <UModal v-model="changePasswordModal.isOpen" prevent-close>
-        <form @submit.prevent="handleChangePassword">
-            <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-                <template #header>
-                    <div class="flex items-center justify-between">
-                        <div class="text-base font-semibold">
-                            Đổi mật khẩu
-                        </div>
-                        <UButton color="gray" variant="ghost" icon="mingcute:close-fill" class="-my-1"
-                                 @click="changePasswordModal.isOpen = false" />
-                    </div>
-                </template>
-                <div class="space-y-4">
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Mật khẩu mới</div>
-                        <UInput required size="lg" v-model="changePasswordModal.newPassword" type="password"
-                                icon="mingcute:mail-line" />
-                    </div>
-                    <div class="w-full space-y-1">
-                        <div class="font-medium">Xác nhận mật khẩu</div>
-                        <UInput required size="lg" v-model="changePasswordModal.confirmPassword" type="password"
-                                icon="mingcute:mail-line" />
-                    </div>
-                </div>
-                <template #footer>
-                    <UButton :loading="changePasswordModal.isSubmitting" class="w-full rounded-md" size="lg"
-                             color="primary"
-                             type="submit"
-                             block>
-                        Đổi mật khẩu
                     </UButton>
                 </template>
             </UCard>
