@@ -157,11 +157,6 @@ const columns = [
         sortable: true,
     },
     {
-        key: "type",
-        label: "Loại",
-        sortable: true,
-    },
-    {
         key: "industry",
         label: "Lĩnh vực",
         sortable: true,

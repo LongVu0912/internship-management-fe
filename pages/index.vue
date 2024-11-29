@@ -181,7 +181,7 @@ const selectSkill = (skill: Skill) => {
                 </h2>
                 <div class="grid gap-10 sm:grid-cols-2 md:grid-cols-3">
                     <div
-                         class="flex transform flex-col items-center space-y-2 rounded-lg border-gray-200 p-4 shadow-lg transition-transform hover:scale-105">
+                         class="flex transform flex-col items-center space-y-2 rounded-lg border-gray-200 bg-gray-400/5 p-4 shadow-lg transition-transform hover:scale-105">
                         <UIcon name="mingcute:search-3-line" class="text-primary h-14 w-14"></UIcon>
                         <h3 class="text-xl font-bold">Ghép nối thông minh</h3>
                         <p class="text-justify text-gray-500 dark:text-gray-400">
@@ -190,7 +190,7 @@ const selectSkill = (skill: Skill) => {
                         </p>
                     </div>
                     <div
-                         class="flex transform flex-col items-center space-y-2 rounded-lg border-gray-200 p-4 shadow-lg transition-transform hover:scale-105">
+                         class="flex transform flex-col items-center space-y-2 rounded-lg border-gray-200 bg-gray-400/5 p-4 shadow-lg transition-transform hover:scale-105">
                         <UIcon name="mingcute:globe-2-line" class="text-primary h-14 w-14"></UIcon>
                         <h3 class="text-xl font-bold">Cơ hội toàn cầu</h3>
                         <p class="text-justify text-gray-500 dark:text-gray-400">
@@ -198,7 +198,7 @@ const selectSkill = (skill: Skill) => {
                         </p>
                     </div>
                     <div
-                         class="flex transform flex-col items-center space-y-2 rounded-lg border-gray-200 p-4 shadow-lg transition-transform hover:scale-105">
+                         class="flex transform flex-col items-center space-y-2 rounded-lg border-gray-200 bg-gray-400/5 p-4 shadow-lg transition-transform hover:scale-105">
                         <UIcon name="mingcute:rocket-line" class="text-primary h-14 w-14"></UIcon>
                         <h3 class="text-xl font-bold">Phát triển sự nghiệp</h3>
                         <p class="text-justify text-gray-500 dark:text-gray-400">

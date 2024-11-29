@@ -91,7 +91,8 @@ const processCV = async () => {
 
             <div class="pt-12 text-center">
                 <div class="flex flex-col justify-center space-y-4">
-                    <div v-for="recruitment in matchingRecruitments" :key="recruitment.recruitmentId"
+                    <div v-for="(recruitment, index) in matchingRecruitments" :key="recruitment.recruitmentId"
+                         :class="[index == 0 ? 'bg-primary-200 dark:bg-primary-400' : '']"
                          class="hover:border-primary-500 dark:hover:border-primary-500 flex h-auto w-full max-w-2xl transform flex-row gap-4 self-center rounded-lg bg-white p-4 shadow-md transition-transform duration-300 hover:scale-105 dark:bg-gray-800">
                         <NuxtLink :to="`/recruitment/${recruitment.recruitmentId}`"
                                   class="flex w-full items-center justify-center text-center text-lg font-medium hover:underline dark:text-white"
