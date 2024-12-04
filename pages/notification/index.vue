@@ -63,9 +63,9 @@ const openNotificationModal = async (notification: Notification) => {
         fetchTableData();
     }
 
-    notificationModal.value.content = notification.content;
-    notificationModal.value.path = notification.path;
-    notificationModal.value.isOpen = true;
+    // notificationModal.value.content = notification.content;
+    // notificationModal.value.path = notification.path;
+    // notificationModal.value.isOpen = true;
 }
 
 // * Watches
@@ -139,10 +139,15 @@ const columns = [
                     v-model:sort="sort">
 
                 <template #title-data="{ row }">
-                    <p class="cursor-pointer text-base" @click="openNotificationModal(row)"
-                       :class="[row.read ? 'font-normal' : 'font-bold']">
-                        {{ row.title }}
-                    </p>
+                    <div class="cursor-pointer text-base" @click="openNotificationModal(row)"
+                         :class="[row.read ? 'font-normal' : 'font-bold']">
+                        <div class="py-2">
+                            <NewLineText :text="row.content" />
+                            <UButton v-if="row.path != null" size="lg" color="primary" variant="link"
+                                     target="_blank"
+                                     :padded="false" :to="notificationModal.path" label="Chi tiết" />
+                        </div>
+                    </div>
                 </template>
 
                 <template #dateCreated-data="{ row }">
@@ -154,7 +159,7 @@ const columns = [
         </UCard>
     </div>
 
-    <UModal :ui="{ width: 'sm:max-w-4xl' }" v-model="notificationModal.isOpen" prevent-close>
+    <!-- <UModal :ui="{ width: 'sm:max-w-4xl' }" v-model="notificationModal.isOpen" prevent-close>
         <UCard :ui="{ divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
             <template #header>
                 <div class="flex items-center justify-between">
@@ -172,5 +177,5 @@ const columns = [
                          :padded="false" :to="notificationModal.path" label="Chi tiết" />
             </div>
         </UCard>
-    </UModal>
+    </UModal> -->
 </template>
