@@ -10,6 +10,6 @@ export default defineEventHandler(async (event) => {
     const matchingRecruitments = await vectorStore.findSuitableRecruitments(
         body.processedCvText
     );
-
+    
     return matchingRecruitments;
 });

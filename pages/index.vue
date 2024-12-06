@@ -36,7 +36,11 @@ const submitChat = async () => {
         })
     }
     else {
-        matchingRecruitments.value = responseRecruitments.result?.matchingRecruitments as any;
+        nuxtToast({
+            description: "Successfully evaluated matches",
+            type: "success"
+        })
+        matchingRecruitments.value = responseRecruitments.result.matchingRecruitments as any;
     }
 
     isCalled.value = true;
