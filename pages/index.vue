@@ -36,7 +36,7 @@ const submitChat = async () => {
         })
     }
     else {
-        matchingRecruitments.value = responseRecruitments.result.matchingRecruitments;
+        matchingRecruitments.value = responseRecruitments.result?.matchingRecruitments as any;
     }
 
     isCalled.value = true;

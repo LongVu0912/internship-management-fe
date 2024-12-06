@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
 
     const model = genAI.getGenerativeModel({
         model: "gemini-1.5-flash",
-        systemInstruction: `You are a recruitment matcher that validates  find the most suitable job IDs from a given list of recruitments.
+        systemInstruction: `You are a recruitment matcher that validates find the most suitable job IDs from a given list of recruitments.
 
 Your tasks:
 1. Find Jobs Based on User Input

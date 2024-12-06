@@ -68,7 +68,7 @@ export const CVUtils = () => {
                 res = await processPdfFromBlob(blob);
             } else {
                 apiResponse.code = 400;
-                apiResponse.message = "Không phải file cv hợp lệ (pdf)";
+                apiResponse.message = "Không phi file cv hợp lệ (pdf)";
                 return apiResponse;
             }
 
@@ -81,41 +81,50 @@ export const CVUtils = () => {
     };
 
     const processPdfFromFile = async (file: any): Promise<ApiResponse> => {
-        let apiResponse = {
-            code: 200,
-            message: "",
-            result: "",
-        } as ApiResponse;
+        return new Promise((resolve) => {
+            let apiResponse = {
+                code: 200,
+                message: "",
+                result: "",
+            } as ApiResponse;
 
-        const fileReader = new FileReader();
+            const fileReader = new FileReader();
 
-        fileReader.onload = async (e: any) => {
-            const typedarray = new Uint8Array(e.target.result);
-            try {
-                const pdf = await pdfjsLib.getDocument(typedarray).promise; // Tải PDF từ file
-                const numPages = pdf.numPages;
-                let textContent = "";
+            fileReader.onload = async (e: any) => {
+                const typedarray = new Uint8Array(e.target.result);
+                try {
+                    const pdf = await pdfjsLib.getDocument(typedarray).promise;
+                    const numPages = pdf.numPages;
+                    let textContent = "";
 
-                for (let i = 1; i <= numPages; i++) {
-                    const page = await pdf.getPage(i);
-                    const text = await page.getTextContent();
-                    const textItems = text.items.map((item: any) => item.str);
-                    textContent += textItems.join(" ") + " ";
+                    for (let i = 1; i <= numPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const text = await page.getTextContent();
+                        const textItems = text.items.map(
+                            (item: any) => item.str
+                        );
+                        textContent += textItems.join(" ") + " ";
+                    }
+
+                    const processedText =
+                        extractImportantInformation(textContent);
+                    apiResponse.result = processedText;
+                    resolve(apiResponse);
+                } catch (err: any) {
+                    apiResponse.code = 400;
+                    apiResponse.message = err.message;
+                    resolve(apiResponse);
                 }
+            };
 
-                apiResponse.result = textContent;
-            } catch (err: any) {
+            try {
+                fileReader.readAsArrayBuffer(file);
+            } catch {
+                apiResponse.message = "Không phải CV hợp lệ";
                 apiResponse.code = 400;
-                apiResponse.message = err.message;
+                resolve(apiResponse);
             }
-        };
-        try {
-            fileReader.readAsArrayBuffer(file);
-        } catch {
-            apiResponse.message = "Không phải CV hợp lệ";
-            apiResponse.code = 400;
-        }
-        return apiResponse;
+        });
     };
 
     const extractRecruitments = async (businesses: Business[]) => {
@@ -131,6 +140,11 @@ export const CVUtils = () => {
                         type,
                         keySkills,
                         position,
+                        location,
+                        workingDay,
+                        workingHour,
+                        business,
+                        status,
                     } = recruitment;
                     return {
                         recruitmentId,
@@ -139,6 +153,11 @@ export const CVUtils = () => {
                         type: type || "N/A",
                         keySkills: keySkills || "N/A",
                         position: position || "N/A",
+                        location: location || "N/A",
+                        workingDay: workingDay || "N/A",
+                        workingHour: workingHour || "N/A",
+                        business: business,
+                        status: status || "ACTIVE",
                     };
                 }
                 return null;
@@ -146,17 +165,27 @@ export const CVUtils = () => {
             .filter((recruitment) => recruitment !== null);
     };
 
+    const extractImportantInformation = (cvText: string) => {
+        return `
+        Skills and Experience Summary:
+        ${cvText}
+
+        Please analyze my background and experience for job matching.
+    `.trim();
+    };
+
     const findSuitableInternship = async (
-        message: string,
+        cvText: string,
         businesses: Business[]
     ) => {
         try {
             const recruitments = await extractRecruitments(businesses);
+            const processedCvText = extractImportantInformation(cvText);
 
-            const body = await $fetch("/api/find", {
+            const matchingRecruitments = await $fetch("/api/vector", {
                 method: "post",
                 body: {
-                    message: message,
+                    processedCvText: processedCvText,
                     recruitments: recruitments,
                 },
             });
@@ -164,12 +193,12 @@ export const CVUtils = () => {
             return {
                 code: 200,
                 message: "",
-                result: body,
+                result: { matchingRecruitments },
             };
         } catch (error: any) {
             return {
                 code: 400,
-                message: `Failed to compare with recruitments: ${error.message}`,
+                message: `Failed to find suitable jobs: ${error.message}`,
                 result: null,
             };
         }

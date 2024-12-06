@@ -17,6 +17,8 @@ export default defineNuxtConfig({
     ],
     runtimeConfig: {
         geminiKey: process.env.GEMINI_API_KEY ?? "",
+        pineconeApiKey: process.env.PINECONE_API_KEY ?? "",
+        openApiKey: process.env.OPENAI_API_KEY ?? "",
         public: {
             backendUrl: process.env.BACKEND_URL ?? "http://localhost:8080/api",
             imageUrl:

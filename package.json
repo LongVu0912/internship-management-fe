@@ -13,10 +13,13 @@
     },
     "dependencies": {
         "@google/generative-ai": "^0.21.0",
+        "@langchain/core": "^0.3.22",
+        "@langchain/openai": "^0.3.14",
         "@nuxt/icon": "^1.5.1",
         "@nuxt/image": "^1.8.0",
         "@nuxt/ui": "^2.18.4",
         "@nuxtjs/color-mode": "^3.4.4",
+        "@pinecone-database/pinecone": "^4.0.0",
         "@vueuse/nuxt": "^11.0.3",
         "date-fns": "^4.1.0",
         "jwt-decode": "^4.0.0",
