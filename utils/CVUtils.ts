@@ -190,10 +190,18 @@ export const CVUtils = () => {
                 },
             });
 
+            const validatedRecruitments = await $fetch("/api/chatgpt", {
+                method: "post",
+                body: {
+                    message: processedCvText,
+                    recruitments: matchingRecruitments,
+                },
+            });
+
             return {
                 code: 200,
                 message: "",
-                result: { matchingRecruitments },
+                result: validatedRecruitments,
             };
         } catch (error: any) {
             return {
