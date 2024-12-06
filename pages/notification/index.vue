@@ -145,7 +145,7 @@ const columns = [
                             <NewLineText :text="row.content" />
                             <UButton v-if="row.path != null" size="lg" color="primary" variant="link"
                                      target="_blank"
-                                     :padded="false" :to="notificationModal.path" label="Chi tiết" />
+                                     :padded="false" :to="row.path" label="Chi tiết" />
                         </div>
                     </div>
                 </template>
