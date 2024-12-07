@@ -124,7 +124,7 @@ const handleSaveFaculty = async () => {
 }
 
 const handleEditMajor = async (index: any) => {
-    if (majorList.value && (majorList.value[index].facultyId == null || majorList.value[index].facultyId == '' || majorList.value[index].name == '')) {
+    if (majorList.value && majorList.value[index].name == '') {
         nuxtToast({
             description: "Không được để trống thông tin",
             type: "info",
