@@ -2,7 +2,44 @@ import * as pdfjsLib from "pdfjs-dist";
 import "pdfjs-dist/build/pdf.worker.mjs";
 import type ApiResponse from "~/types/ApiResponse";
 import type Business from "~/types/business/Business";
+interface CacheEntry {
+    timestamp: number;
+    results: any;
+}
 
+interface Cache {
+    [key: string]: CacheEntry;
+}
+
+const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes in milliseconds
+const searchCache: Cache = {};
+
+const generateCacheKey = (query: string): string => {
+    return btoa(query.toLowerCase().trim());
+};
+
+const getCachedResults = (query: string) => {
+    const key = generateCacheKey(query);
+    const entry = searchCache[key];
+    
+    if (!entry) return null;
+    
+    // Check if cache has expired
+    if (Date.now() - entry.timestamp > CACHE_DURATION) {
+        delete searchCache[key];
+        return null;
+    }
+    
+    return entry.results;
+};
+
+const cacheResults = (query: string, results: any) => {
+    const key = generateCacheKey(query);
+    searchCache[key] = {
+        timestamp: Date.now(),
+        results
+    };
+};
 export const CVUtils = () => {
     const processPdfFromBlob = async (blob: any): Promise<ApiResponse> => {
         let apiResponse = {
@@ -179,6 +216,15 @@ export const CVUtils = () => {
         businesses: Business[]
     ) => {
         try {
+            const cachedResults = getCachedResults(cvText);
+            if (cachedResults) {
+                return {
+                    code: 200,
+                    message: "Retrieved from cache",
+                    result: cachedResults
+                };
+            }
+
             const recruitments = await extractRecruitments(businesses);
             const processedCvText = extractImportantInformation(cvText);
 
@@ -197,6 +243,9 @@ export const CVUtils = () => {
                     recruitments: matchingRecruitments,
                 },
             });
+
+            // Cache the results
+            cacheResults(cvText, validatedRecruitments);
 
             return {
                 code: 200,
