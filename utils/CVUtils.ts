@@ -15,7 +15,10 @@ const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes in milliseconds
 const searchCache: Cache = {};
 
 const generateCacheKey = (query: string): string => {
-    return btoa(query.toLowerCase().trim());
+    // Convert string to UTF-8 bytes, then to hex string for safe caching
+    return Array.from(new TextEncoder().encode(query.toLowerCase().trim()))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
 };
 
 const getCachedResults = (query: string) => {
