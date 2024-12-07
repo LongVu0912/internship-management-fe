@@ -27,7 +27,6 @@ export default defineEventHandler(async (event) => {
     const content = completion.choices[0].message.content;
 
     if (content) {
-        console.log(JSON.parse(content));
         return JSON.parse(content);
     } else {
         console.error("Completion content is null");
