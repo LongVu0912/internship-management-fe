@@ -239,7 +239,7 @@ export const CVUtils = () => {
                 },
             });
 
-            const validatedRecruitments = await $fetch("/api/chatgpt", {
+            const validatedRecruitments = await $fetch("/api/gemini", {
                 method: "post",
                 body: {
                     message: processedCvText,

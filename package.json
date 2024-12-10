@@ -12,6 +12,7 @@
         "update": "yarn upgrade-interactive --latest"
     },
     "dependencies": {
+        "@google/generative-ai": "^0.21.0",
         "@langchain/core": "^0.3.22",
         "@langchain/openai": "^0.3.14",
         "@nuxt/icon": "^1.5.1",
