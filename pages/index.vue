@@ -37,7 +37,7 @@ const submitChat = async () => {
     }
     else {
         nuxtToast({
-            description: "Successfully evaluated matches",
+            description: "Tìm kiếm thành công",
             type: "success"
         })
         matchingRecruitments.value = responseRecruitments.result.matchingRecruitments as any;
