@@ -17,6 +17,7 @@ const nuxtToast = useNuxtToast();
 const appUtils = AppUtils();
 
 // * Refs
+const isPasswordVisible = ref(false);
 const isTableLoading = ref(true);
 const businessModal = ref({
     isOpen: false,
@@ -365,7 +366,16 @@ const items = (row: Business) => [
                         <div class="w-full space-y-1">
                             <div class="font-medium">Mật khẩu</div>
                             <UInput required type="password" v-model="newBusiness.managedBy.password" autocomplete="off"
-                                    placeholder="********" />
+                                    placeholder="********"
+                                    :ui="{ icon: { trailing: { pointer: 'pointer-events-auto', padding: { lg: 'px-1' } } } }">
+                                <template #trailing>
+                                    <UButton color="gray"
+                                             variant="ghost"
+                                             class="rounded-md"
+                                             @click="isPasswordVisible = !isPasswordVisible"
+                                             :icon="isPasswordVisible ? 'heroicons:eye' : 'heroicons:eye-20-solid'" />
+                                </template>
+                            </UInput>
                         </div>
                         <div class="w-full space-y-1">
                             <div class="font-medium">Email</div>

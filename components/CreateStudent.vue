@@ -15,6 +15,7 @@ const facultyRepository = FacultyRepository($apiToken);
 const nuxtToast = useNuxtToast();
 
 // * Refs
+const isPasswordVisible = ref(false);
 const createStudentModal = ref({
     isOpen: false,
     isSubmitting: false,
@@ -223,7 +224,16 @@ watch(faculty.value, async () => {
                     <div class="flex flex-col gap-4 md:flex-row">
                         <div class="w-full space-y-1">
                             <div class="font-medium">Mật khẩu</div>
-                            <UInput required type="password" v-model="newStudent.profile.password" autocomplete="off" />
+                            <UInput required type="password" v-model="newStudent.profile.password" autocomplete="off"
+                                    :ui="{ icon: { trailing: { pointer: 'pointer-events-auto', padding: { lg: 'px-1' } } } }">
+                                <template #trailing>
+                                    <UButton color="gray"
+                                             variant="ghost"
+                                             class="rounded-md"
+                                             @click="isPasswordVisible = !isPasswordVisible"
+                                             :icon="isPasswordVisible ? 'heroicons:eye' : 'heroicons:eye-20-solid'" />
+                                </template>
+                            </UInput>
                         </div>
                         <div class="w-full space-y-1">
                             <div class="font-medium">Email</div>
