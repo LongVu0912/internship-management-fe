@@ -16,6 +16,10 @@
     @apply bg-gray-200 text-gray-900 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-50 dark:hover:bg-gray-700;
 }
 
+input::-ms-reveal,
+input::-ms-clear {
+    display: none;
+}
 /* Apply transition to body */
 /* body {
     @apply transition-colors duration-500;

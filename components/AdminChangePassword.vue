@@ -13,6 +13,7 @@ const nuxtToast = useNuxtToast();
 const authRepository = AuthRepository($apiToken);
 
 // * Refs
+const isPasswordVisible = ref(false);
 const changePasswordModal = ref({
     isOpen: false,
     isSubmitting: false,
@@ -95,11 +96,29 @@ watch(() => props.isOpen, (newValue) => {
                     <div class="mb-2 text-sm font-medium">Mật khẩu mới</div>
                     <UInput v-model="changePasswordState.newPassword" type="password" icon="mingcute:key-2-line"
                             size="lg" color="gray"
-                            required autocomplete="on" />
+                            required autocomplete="on"
+                            :ui="{ icon: { trailing: { pointer: 'pointer-events-auto', padding: { lg: 'px-1' } } } }">
+                        <template #trailing>
+                            <UButton color="gray"
+                                     variant="ghost"
+                                     class="rounded-md"
+                                     @click="isPasswordVisible = !isPasswordVisible"
+                                     :icon="isPasswordVisible ? 'heroicons:eye' : 'heroicons:eye-20-solid'" />
+                        </template>
+                    </UInput>
                     <div class="mb-2 mt-4 text-sm font-medium">Xác nhận mật khẩu</div>
                     <UInput v-model="changePasswordState.confirmPassword" type="password" icon="mingcute:key-2-line"
                             size="lg" required
-                            color="gray" autocomplete="on" />
+                            color="gray" autocomplete="on"
+                            :ui="{ icon: { trailing: { pointer: 'pointer-events-auto', padding: { lg: 'px-1' } } } }">
+                        <template #trailing>
+                            <UButton color="gray"
+                                     variant="ghost"
+                                     class="rounded-md"
+                                     @click="isPasswordVisible = !isPasswordVisible"
+                                     :icon="isPasswordVisible ? 'heroicons:eye' : 'heroicons:eye-20-solid'" />
+                        </template>
+                    </UInput>
                 </div>
 
                 <template #footer>

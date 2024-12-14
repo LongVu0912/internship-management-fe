@@ -11,6 +11,7 @@ const nuxtToast = useNuxtToast();
 const authRepository = AuthRepository($api);
 
 // * Refs
+const isPasswordVisible = ref(false);
 const isPasswordModalOpen = ref(false);
 const isLoading = ref(false);
 const userState = useUserState();
@@ -87,10 +88,18 @@ const handleLoginSubmit = async () => {
                             autocomplete="on" />
                     <div class="mb-2 mt-4 text-sm font-medium">Mật khẩu</div>
                     <UInput v-model="loginState.password"
-                            type="password"
+                            :type="isPasswordVisible ? 'text' : 'password'"
                             icon="mingcute:key-2-line"
                             size="lg"
-                            autocomplete="on" />
+                            :ui="{ icon: { trailing: { pointer: 'pointer-events-auto', padding: { lg: 'px-1' } } } }">
+                        <template #trailing>
+                            <UButton color="gray"
+                                     variant="ghost"
+                                     class="rounded-md"
+                                     @click="isPasswordVisible = !isPasswordVisible"
+                                     :icon="isPasswordVisible ? 'heroicons:eye' : 'heroicons:eye-20-solid'" />
+                        </template>
+                    </UInput>
                     <div class="mt-4 text-sm font-medium">
                         Quên mật khẩu?
                         <button class="text-primary-600" @click="isPasswordModalOpen = true" type="button">
