@@ -107,6 +107,11 @@ const handleUploadCV = async () => {
     uploadCVModal.value.isSubmitting = false;
 }
 
+const handleCloseUploadCVModal = async () => {
+    uploadCVModal.value.cvFile = null;
+    uploadCVModal.value.isOpen = false
+}
+
 const handleOpenUpdateModal = () => {
     updateStudent.value = JSON.parse(JSON.stringify(student.value));
     updateModal.value.isOpen = true;
@@ -301,7 +306,7 @@ const handleUpdateProfile = async () => {
                         </div>
                         <UButton :disabled="uploadCVModal.isSubmitting" color="gray" variant="ghost"
                                  icon="mingcute:close-fill" class="-my-1"
-                                 @click="handleCloseUpdateModal" />
+                                 @click="handleCloseUploadCVModal" />
                     </div>
                 </template>
                 <div>
@@ -324,7 +329,7 @@ const handleUpdateProfile = async () => {
             <template #header>
                 <div class="flex items-center justify-between">
                     <div class="text-base font-semibold">
-                        Cập nhật CV
+                        Cập nhật thông tin
                     </div>
                     <UButton :disabled="updateModal.isUpdating" color="gray" variant="ghost"
                              icon="mingcute:close-fill" class="-my-1"
