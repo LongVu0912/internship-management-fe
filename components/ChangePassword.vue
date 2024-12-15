@@ -6,7 +6,9 @@ const nuxtToast = useNuxtToast();
 const authRepository = AuthRepository($apiToken);
 
 // * Refs
-const isPasswordVisible = ref(false);
+const isPasswordVisible1 = ref(false);
+const isPasswordVisible2 = ref(false);
+const isPasswordVisible3 = ref(false);
 const isChangePasswordModalOpen = ref(false);
 const isSubmitting = ref(false);
 
@@ -85,42 +87,40 @@ const submitChangePassword = async () => {
 
                 <div class="flex w-full flex-col justify-start">
                     <div class="mb-2 text-sm font-medium">Mật khẩu cũ</div>
-                    <UInput v-model="changePasswordState.oldPassword" type="password" icon="mingcute:key-2-line"
-                            size="lg" color="gray"
-                            required autocomplete="on"
+                    <UInput v-model="changePasswordState.oldPassword" :type="isPasswordVisible1 ? 'text' : 'password'"
+                            icon="mingcute:key-2-line" size="lg" color="gray" required autocomplete="on"
                             :ui="{ icon: { trailing: { pointer: 'pointer-events-auto', padding: { lg: 'px-1' } } } }">
                         <template #trailing>
                             <UButton color="gray"
                                      variant="ghost"
                                      class="rounded-md"
-                                     @click="isPasswordVisible = !isPasswordVisible"
-                                     :icon="isPasswordVisible ? 'heroicons:eye' : 'heroicons:eye-20-solid'" />
+                                     @click="isPasswordVisible1 = !isPasswordVisible1"
+                                     :icon="isPasswordVisible1 ? 'heroicons:eye' : 'heroicons:eye-20-solid'" />
                         </template>
                     </UInput>
                     <div class="mb-2 mt-4 text-sm font-medium">Mật khẩu mới</div>
-                    <UInput v-model="changePasswordState.newPassword" type="password" icon="mingcute:key-1-line"
-                            size="lg" color="gray"
-                            required autocomplete="on"
+                    <UInput v-model="changePasswordState.newPassword" :type="isPasswordVisible2 ? 'text' : 'password'"
+                            icon="mingcute:key-1-line" size="lg" color="gray" required autocomplete="on"
                             :ui="{ icon: { trailing: { pointer: 'pointer-events-auto', padding: { lg: 'px-1' } } } }">
                         <template #trailing>
                             <UButton color="gray"
                                      variant="ghost"
                                      class="rounded-md"
-                                     @click="isPasswordVisible = !isPasswordVisible"
-                                     :icon="isPasswordVisible ? 'heroicons:eye' : 'heroicons:eye-20-solid'" />
+                                     @click="isPasswordVisible2 = !isPasswordVisible2"
+                                     :icon="isPasswordVisible2 ? 'heroicons:eye' : 'heroicons:eye-20-solid'" />
                         </template>
                     </UInput>
                     <div class="mb-2 mt-4 text-sm font-medium">Xác nhận mật khẩu</div>
-                    <UInput v-model="changePasswordState.confirmPassword" type="password" icon="mingcute:key-1-line"
-                            size="lg" required
-                            color="gray" autocomplete="on"
+                    <UInput v-model="changePasswordState.confirmPassword"
+                            :type="isPasswordVisible3 ? 'text' : 'password'"
+                            icon="mingcute:key-1-line" size="lg" required color="gray" autocomplete="on"
                             :ui="{ icon: { trailing: { pointer: 'pointer-events-auto', padding: { lg: 'px-1' } } } }">
                         <template #trailing>
                             <UButton color="gray"
                                      variant="ghost"
                                      class="rounded-md"
-                                     @click="isPasswordVisible = !isPasswordVisible"
-                                     :icon="isPasswordVisible ? 'heroicons:eye' : 'heroicons:eye-20-solid'" />
+                                     @click="isPasswordVisible3 = !isPasswordVisible3"
+                                     :icon="isPasswordVisible3 ? 'heroicons:eye' : 'heroicons:eye-20-solid'" />
                         </template>
                     </UInput>
                 </div>
